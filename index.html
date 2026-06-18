@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Émile — Création web, prise de rendez-vous & devis · Rouen</title>
+<meta name="description" content="Émile crée des sites web sur-mesure, des systèmes de prise de rendez-vous avec tableau de bord et des formulaires de devis pour les professionnels. À Rouen et à distance. Payé une fois, sans abonnement." />
+<style>
+/* ===========================================================
+   ÉMILE — Site (hi-fi)
+   Monochrome éditorial. Fonds alternés noir / crème.
+   Titres manuscrits (Caveat) · accents serif (Cormorant) · texte sans (Hanken)
+   =========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --black: #0c0b0a;
+  --black-2: #161412;
+  --cream: #f4f1ea;
+  --cream-2: #eae6dc;
+  --ink: #14110d;
+  --muted-dark: rgba(244,241,234,0.62);   /* on black */
+  --muted-light: rgba(20,17,13,0.58);     /* on cream */
+  --line-dark: rgba(244,241,234,0.16);
+  --line-light: rgba(20,17,13,0.16);
+
+  --font-hand: 'Caveat', cursive;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+
+  --maxw: 1240px;
+  --ease: cubic-bezier(.4,0,.1,1);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  font-size: 17px;
+  line-height: 1.6;
+}
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding: 0 40px; }
+@media (max-width: 760px){ .container { padding: 0 22px; } }
+
+/* ---------- type system ---------- */
+.eyebrow {
+  font-family: var(--font-serif); font-style: italic; font-weight: 500;
+  font-size: clamp(20px, 2.4vw, 30px); letter-spacing: .01em;
+  display: inline-flex; align-items: baseline; gap: 12px;
+}
+.eyebrow .idx { font-family: var(--font-sans); font-style: normal; font-weight: 500;
+  font-size: 12px; letter-spacing: .28em; text-transform: uppercase; opacity: .55; }
+.hand {
+  font-family: var(--font-hand); font-weight: 700; line-height: .92; letter-spacing: 0;
+  margin: 0;
+}
+.h-xl { font-size: clamp(56px, 11vw, 168px); }
+.h-lg { font-size: clamp(44px, 8vw, 104px); }
+.h-md { font-size: clamp(34px, 5.5vw, 72px); }
+.serif-q {
+  font-family: var(--font-serif); font-weight: 400; line-height: 1.12;
+  font-size: clamp(30px, 4.6vw, 64px);
+}
+.lead { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.65; max-width: 56ch; }
+.kicker { font-size: 12px; letter-spacing: .26em; text-transform: uppercase; font-weight: 600; }
+.muted { color: var(--muted-light); }
+.on-black .muted, .muted-d { color: var(--muted-dark); }
+
+/* ---------- sections / themes ---------- */
+.section { padding: clamp(80px, 12vw, 168px) 0; position: relative; }
+.on-black { background: var(--black); color: var(--cream); }
+.on-cream { background: var(--cream); color: var(--ink); }
+.section-head { margin-bottom: clamp(40px, 6vw, 80px); }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--font-sans); font-weight: 600; font-size: 15px; letter-spacing: .01em;
+  padding: 15px 28px; border-radius: 999px; text-decoration: none; cursor: pointer;
+  border: 1px solid currentColor; background: transparent; color: inherit;
+  transition: all .25s var(--ease);
+}
+.btn .ar { transition: transform .25s var(--ease); }
+.btn:hover .ar { transform: translateX(5px); }
+.btn.solid-dark { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.btn.solid-dark:hover { background: transparent; color: var(--ink); }
+.btn.solid-light { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+.btn.solid-light:hover { background: transparent; color: var(--cream); }
+.btn.ghost:hover { background: currentColor; }
+.btn.ghost:hover span { color: var(--black); }
+
+.linkline {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  font-weight: 600; font-size: 15px; padding-bottom: 4px;
+  border-bottom: 1px solid currentColor; transition: gap .25s var(--ease);
+}
+.linkline:hover { gap: 16px; }
+
+/* ---------- logo ---------- */
+.logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo .mark {
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1.5px solid currentColor; display: grid; place-items: center;
+  position: relative; flex: 0 0 auto;
+}
+.logo .mark::before {
+  content: ""; position: absolute; inset: 4px; border-radius: 50%;
+  border: 1px solid currentColor; opacity: .28;
+}
+.logo .mark img {
+  height: 34px; width: auto; display: block;
+  filter: invert(1);
+  transform: translateY(0px);
+}
+.logo .word {
+  font-family: var(--font-hand); font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: .01em;
+  white-space: nowrap;
+}
+.logo .word small {
+  font-family: var(--font-sans); font-weight: 600; font-size: 10px; letter-spacing: .26em;
+  text-transform: uppercase; display: block; opacity: .55; margin-top: -2px;
+}
+
+/* ---------- top nav ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; padding: 22px 40px;
+  color: var(--cream); transition: all .35s var(--ease);
+}
+.nav.scrolled {
+  background: rgba(12,11,10,0.82); backdrop-filter: blur(12px);
+  padding: 14px 40px; border-bottom: 1px solid var(--line-dark);
+}
+.nav .menu { display: flex; gap: 30px; list-style: none; margin: 0 0 0 auto; padding: 0; align-items: center; }
+.nav .menu a { text-decoration: none; font-size: 14px; font-weight: 500; opacity: .8; transition: opacity .2s; }
+.nav .menu a:hover { opacity: 1; }
+.nav .menu .navbtn {
+  padding: 10px 20px; border: 1px solid rgba(244,241,234,.4); border-radius: 999px; opacity: 1;
+  white-space: nowrap;
+}
+.nav .menu .navbtn:hover { background: var(--cream); color: var(--black); border-color: var(--cream); }
+@media (max-width: 820px){ .nav .menu li.hideable { display: none; } .nav { padding: 16px 22px; } }
+
+/* ---------- HERO (black, animated mono shapes) ---------- */
+.hero {
+  position: relative; min-height: 100svh; display: flex; align-items: center;
+  overflow: hidden; background: var(--black); color: var(--cream);
+}
+.hero .glow { position: absolute; inset: 0; background:
+  radial-gradient(60% 50% at 20% 20%, rgba(244,241,234,0.06), transparent 70%),
+  radial-gradient(50% 50% at 85% 80%, rgba(244,241,234,0.05), transparent 70%); }
+.hero .vign { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, var(--black), transparent 26%, transparent 72%, rgba(12,11,10,.7)); }
+.hero-shapes { position: absolute; inset: 0; overflow: hidden; }
+.hero-inner { position: relative; z-index: 5; width: 100%; }
+
+.shape { position: absolute; opacity: 0; animation: shapeIn 2.2s cubic-bezier(.23,.86,.39,.96) forwards; }
+.shape .floater { animation: floaty 13s ease-in-out infinite; }
+.shape .pill {
+  width: 100%; height: 100%; border-radius: 999px; position: relative;
+  background: linear-gradient(105deg, rgba(244,241,234,0.10), transparent 75%);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(244,241,234,0.16);
+  box-shadow: 0 8px 40px rgba(0,0,0,.35), inset 0 0 30px rgba(244,241,234,.04);
+}
+.shape .pill::after { content: ""; position: absolute; inset: 0; border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, rgba(244,241,234,0.12), transparent 70%); }
+@keyframes shapeIn { from { opacity: 0; transform: translateY(-140px) rotate(var(--rot-start,-15deg)); }
+  to { opacity: 1; transform: translateY(0) rotate(var(--rot,0deg)); } }
+@keyframes floaty { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(16px);} }
+@media (prefers-reduced-motion: reduce){
+  .shape { opacity:1; animation:none; transform: rotate(var(--rot,0deg)); }
+  .shape .floater { animation:none; }
+}
+
+.hero .badge {
+  display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px;
+  border: 1px solid var(--line-dark); border-radius: 999px;
+  font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-dark);
+}
+.hero .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cream);
+  box-shadow: 0 0 0 0 rgba(244,241,234,.5); animation: pulse 2.6s infinite; }
+@keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(244,241,234,.4);} 70%{ box-shadow:0 0 0 9px rgba(244,241,234,0);} 100%{ box-shadow:0 0 0 0 rgba(244,241,234,0);} }
+.hero h1 { margin: 26px 0 34px; max-width: 18ch; font-size: clamp(42px, 7.4vw, 100px); line-height: 1.05; }
+.hero h1 em { font-family: var(--font-serif); font-style: italic; font-weight: 500; }
+.hero .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+.scrollcue { position: absolute; bottom: 26px; left: 40px; z-index: 5; display: flex; align-items: center; gap: 14px;
+  font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted-dark); }
+.scrollcue .l { width: 46px; height: 1px; background: currentColor; opacity: .5; }
+
+/* ---------- numbered services list ---------- */
+.serv { border-top: 1px solid var(--line-light); }
+.on-black .serv { border-color: var(--line-dark); }
+.servrow {
+  display: grid; grid-template-columns: 1.1fr 1.4fr auto; gap: 36px; align-items: center;
+  padding: clamp(28px, 4vw, 52px) 0; border-bottom: 1px solid var(--line-light);
+  transition: padding .3s var(--ease);
+}
+.on-black .servrow { border-color: var(--line-dark); }
+.servrow .sv-title { display: flex; align-items: baseline; gap: 22px; }
+.servrow .sv-num { font-family: var(--font-serif); font-style: italic; font-size: clamp(28px,3vw,44px); opacity: .5; }
+.servrow h3 { font-family: var(--font-hand); font-weight: 700; font-size: clamp(34px, 4.4vw, 62px); margin: 0; line-height: .95; }
+.servrow .sv-desc { font-size: 16px; line-height: 1.55; }
+.servrow .sv-go { width: 56px; height: 56px; border-radius: 50%; border: 1px solid currentColor;
+  display: grid; place-items: center; text-decoration: none; font-size: 20px; transition: all .25s var(--ease); flex: 0 0 auto; }
+.servrow:hover .sv-go { background: currentColor; }
+.servrow:hover .sv-go span { color: var(--cream); }
+.on-cream .servrow:hover .sv-go span { color: var(--cream); }
+@media (max-width: 820px){
+  .servrow { grid-template-columns: 1fr; gap: 14px; }
+  .servrow .sv-go { display: none; }
+}
+
+/* ---------- story / pull quote ---------- */
+.story-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(36px, 6vw, 88px); align-items: center; }
+@media (max-width: 860px){ .story-grid { grid-template-columns: 1fr; } }
+.signature { font-family: var(--font-hand); font-weight: 600; font-size: 34px; line-height: 1; }
+
+/* ---------- compare ---------- */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px,3vw,40px); }
+@media (max-width: 760px){ .compare { grid-template-columns: 1fr; } }
+.cmp { padding: clamp(28px,4vw,46px); border: 1px solid var(--line-light); border-radius: 4px; }
+
+/* ---------- lightning split ---------- */
+.lsplit { position: relative; height: clamp(440px, 60vh, 560px); border-radius: 6px; overflow: hidden;
+  cursor: crosshair; user-select: none; isolation: isolate; }
+.lsplit-panel { position: absolute; inset: 0; display: flex; align-items: center; }
+.lsplit-right { background: var(--ink); color: var(--cream); justify-content: flex-end; }
+.lsplit-left { background: #ebe5db; color: var(--ink); justify-content: flex-start; z-index: 2;
+  clip-path: polygon(0 0, 60% 0, 35% 100%, 0 100%); }
+.lsplit-inner { width: min(44%, 430px); padding: clamp(26px, 4.5vw, 60px); }
+.lsplit-inner .kicker { font-size: 12px; letter-spacing: .26em; text-transform: uppercase; font-weight: 600; opacity: .9; }
+.lsplit-inner .price { font-family: var(--font-hand); font-weight: 700; font-size: clamp(38px,4.6vw,60px); line-height: 1; margin: 14px 0 22px; }
+.lsplit-inner ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.lsplit-inner li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; line-height: 1.4; }
+.lsplit-inner li .b { font-family: var(--font-serif); font-style: italic; opacity: .65; }
+.lsplit-arc { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;
+  filter: drop-shadow(0 0 5px rgba(135,206,250,.85)) drop-shadow(0 0 14px rgba(120,190,255,.5)); }
+.lsplit-hint { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 6; pointer-events: none;
+  font-size: 11px; letter-spacing: .22em; text-transform: uppercase; font-weight: 700; color: rgba(255,255,255,.7);
+  mix-blend-mode: difference; }
+@media (max-width: 600px){
+  .lsplit-inner { width: 52%; }
+  .lsplit-inner li { font-size: 13.5px; }
+}
+.on-black .cmp { border-color: var(--line-dark); }
+.cmp.win { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.cmp .price { font-family: var(--font-hand); font-weight: 700; font-size: clamp(40px,5vw,64px); line-height: 1; margin: 14px 0 18px; }
+.cmp ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.cmp li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; }
+.cmp li .b { font-family: var(--font-serif); font-style: italic; opacity: .7; }
+
+/* ---------- réalisations ---------- */
+.real { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px,4vw,64px) clamp(28px,4vw,48px); }
+@media (max-width: 760px){ .real { grid-template-columns: 1fr; } }
+.real-item { text-decoration: none; display: block; }
+.real-item image-slot, .real-item .imgph { width: 100%; aspect-ratio: 16/11; display: block; }
+.real-item .site-thumb { width: 100%; aspect-ratio: 16/11; display: block; position: relative; overflow: hidden; background: #fff; border-radius: 16px; }
+.real-item .site-thumb iframe { position: absolute; top: 0; left: 0; width: 250%; height: 250%; border: 0; transform: scale(.4); transform-origin: top left; pointer-events: none; }
+.real-item:hover .site-thumb iframe { filter: brightness(1.03); }
+.real-item .cap { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; gap: 16px;
+  border-bottom: 1px solid var(--line-light); padding-bottom: 14px; transition: border-color .25s; }
+.on-black .real-item .cap { border-color: var(--line-dark); }
+.real-item:hover .cap { border-color: currentColor; }
+.real-item h3 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(24px,2.6vw,34px); margin: 0; }
+.real-item .tagm { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; opacity: .55; }
+.real-item:nth-child(even) { margin-top: clamp(0px, 6vw, 80px); }
+@media (max-width:760px){ .real-item:nth-child(even){ margin-top: 0; } }
+
+/* image placeholder fallback look (intentional, monochrome) */
+.imgph {
+  position: relative; overflow: hidden; background:
+    linear-gradient(135deg, #d9d4c8, #c3bcab);
+}
+.on-black .imgph { background: linear-gradient(135deg, #2a2723, #1a1816); }
+.imgph::after { content: attr(data-label); position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-sans); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-light); }
+.on-black .imgph::after { color: var(--muted-dark); }
+
+/* ---------- form ---------- */
+.form-wrap { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(36px,6vw,80px); align-items: start; }
+@media (max-width: 860px){ .form-wrap { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+.field label { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; opacity: .7; }
+.field input, .field select, .field textarea {
+  font-family: var(--font-sans); font-size: 16px; color: var(--ink);
+  background: transparent; border: 0; border-bottom: 1px solid var(--line-light);
+  padding: 12px 2px; outline: none; transition: border-color .25s; width: 100%;
+}
+.field textarea { resize: vertical; min-height: 120px; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--ink); }
+.field input::placeholder, .field textarea::placeholder { color: var(--muted-light); }
+.form-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+@media (max-width: 520px){ .form-2 { grid-template-columns: 1fr; } }
+
+/* ---------- contact / footer ---------- */
+#devis { background: #E0D6C0; }   /* fond beige (Grège / taupe doux) — options : #EFE7D6 / #E7DEC9 / #E0D6C0 / #ECE2D2 */
+.foot { background: var(--black); color: var(--cream); padding: clamp(70px,9vw,120px) 0 40px; }
+.foot .cta-big { font-family: var(--font-hand); font-weight: 700; font-size: clamp(52px,10vw,150px); line-height: .9; }
+.foot .cta-big em { font-family: var(--font-serif); font-style: italic; font-weight: 500; }
+.foot-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; margin-top: clamp(40px,6vw,80px);
+  padding-top: 40px; border-top: 1px solid var(--line-dark); }
+@media (max-width: 760px){ .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px 20px; } }
+.foot-grid .lbl { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted-dark); margin-bottom: 10px; }
+.foot-grid a { text-decoration: none; }
+.foot-grid a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.foot-bottom { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line-dark);
+  font-size: 12px; color: var(--muted-dark); }
+.foot-bottom a { text-decoration: none; }
+
+/* ---------- reveal on scroll ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce){ .reveal { opacity:1; transform:none; } }
+
+/* ---------- cookie banner ---------- */
+.cookie {
+  position: fixed; left: 22px; right: 22px; bottom: 22px; z-index: 200; max-width: 560px; margin: 0 auto;
+  background: var(--ink); color: var(--cream); padding: 22px 24px; border-radius: 8px;
+  display: flex; gap: 18px; align-items: center; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  transition: transform .5s var(--ease), opacity .5s var(--ease);
+}
+.cookie.hide { transform: translateY(140%); opacity: 0; pointer-events: none; }
+.cookie p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted-dark); }
+.cookie p a { color: var(--cream); }
+.cookie .acts { display: flex; gap: 10px; flex: 0 0 auto; }
+.cookie .mini { font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line-dark); background: transparent; color: var(--cream); }
+.cookie .mini.ok { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+@media (max-width: 560px){ .cookie { flex-direction: column; align-items: stretch; } }
+
+/* ---------- legal page ---------- */
+.legal { padding-top: 140px; }
+.legal h1 { font-family: var(--font-hand); font-weight: 700; font-size: clamp(44px,7vw,96px); margin: 0 0 12px; }
+.legal h2 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(26px,3vw,38px); margin: 56px 0 16px; }
+.legal h3 { font-size: 17px; font-weight: 700; margin: 28px 0 8px; }
+.legal p, .legal li { color: var(--ink); opacity: .82; max-width: 70ch; }
+.legal .updated { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .5; }
+.legal article { border-top: 1px solid var(--line-light); }
+
+
+/* ---------- page CGV (intégrée) ---------- */
+.legal .toc { border-top: 1px solid var(--line-light); margin-top: 40px; padding-top: 28px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 40px; max-width: 880px; }
+.legal .toc a { display: flex; gap: 14px; align-items: baseline; text-decoration: none; color: var(--ink); padding: 9px 0; border-bottom: 1px solid var(--line-light); font-size: 15px; transition: opacity .2s var(--ease), padding-left .2s var(--ease); opacity: .78; }
+.legal .toc a:hover { opacity: 1; padding-left: 6px; }
+.legal .toc a .n { font-family: var(--font-serif); font-style: italic; opacity: .45; min-width: 22px; }
+@media (max-width: 680px){ .legal .toc { grid-template-columns: 1fr; } }
+.note { font-size: 13.5px; line-height: 1.6; background: var(--cream-2); padding: 14px 18px; border-radius: 6px; max-width: 72ch; }
+.note code { background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 4px; }
+.legal article h2 .anchor-idx { font-family: var(--font-serif); font-style: italic; opacity: .4; margin-right: 4px; }
+.legal .lead-block { max-width: 72ch; }
+.legal ul.tight { margin: 6px 0 0; padding-left: 22px; }
+.legal ul.tight li { margin: 5px 0; }
+.key { display: inline-block; font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .55; margin-bottom: 4px; }
+
+</style>
+<script>
+// @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
+/* BEGIN USAGE */
+/**
+ * <image-slot> — user-fillable image placeholder.
+ *
+ * Drop this into a deck, mockup, or page wherever you want the user to
+ * supply an image. You control the slot's shape and size; the user fills it
+ * by dragging an image file onto it (or clicking to browse). The dropped
+ * image persists across reloads via a .image-slots.state.json sidecar —
+ * same read-via-fetch / write-via-window.omelette pattern as
+ * design_canvas.jsx, so the filled slot shows on share links, downloaded
+ * zips, and PPTX export. Outside the omelette runtime the slot is read-only.
+ *
+ * The host bridge only allows sidecar writes at the project root, so the
+ * HTML that uses this component is assumed to live at the project root too
+ * (same constraint as design_canvas.jsx).
+ *
+ * Attributes:
+ *   id           Persistence key. REQUIRED for the drop to survive reload —
+ *                every slot on the page needs a distinct id.
+ *   shape        'rect' | 'rounded' | 'circle' | 'pill'   (default 'rounded')
+ *                'circle' applies 50% border-radius; on a non-square slot
+ *                that's an ellipse — set equal width and height for a true
+ *                circle.
+ *   radius       Corner radius in px for 'rounded'.       (default 12)
+ *   mask         Any CSS clip-path value. Overrides `shape` — use this for
+ *                hexagons, blobs, arbitrary polygons.
+ *   fit          object-fit: cover | contain | fill.       (default 'cover')
+ *                With cover (the default) double-clicking the filled slot
+ *                enters a reframe mode: the whole image spills past the mask
+ *                (translucent outside, opaque inside), drag to reposition,
+ *                corner-drag to scale. The crop persists alongside the image
+ *                in the sidecar. contain/fill stay static.
+ *   position     object-position for fit=contain|fill.     (default '50% 50%')
+ *   placeholder  Empty-state caption.                      (default 'Drop an image')
+ *   src          Optional initial/fallback image URL. A user drop overrides
+ *                it; clearing the drop reveals src again.
+ *
+ * Size and layout come from ordinary CSS on the element — width/height
+ * inline or from a parent grid — so it composes with any layout.
+ *
+ * Usage:
+ *   <image-slot id="hero"   style="width:800px;height:450px" shape="rounded" radius="20"
+ *               placeholder="Drop a hero image"></image-slot>
+ *   <image-slot id="avatar" style="width:120px;height:120px" shape="circle"></image-slot>
+ *   <image-slot id="kite"   style="width:300px;height:300px"
+ *               mask="polygon(50% 0, 100% 50%, 50% 100%, 0 50%)"></image-slot>
+ */
+/* END USAGE */
+
+(() => {
+  const STATE_FILE = '.image-slots.state.json';
+  // 2× a ~600px slot in a 1920-wide deck — retina-sharp without making the
+  // sidecar enormous. A 1200px WebP at q=0.85 is ~150-300KB.
+  const MAX_DIM = 1200;
+  // Raster formats only. SVG is excluded (can carry script; createImageBitmap
+  // on SVG blobs is inconsistent). GIF is excluded because the canvas
+  // re-encode keeps only the first frame, so an animated GIF would silently
+  // go still — better to reject than surprise.
+  const ACCEPT = ['image/png', 'image/jpeg', 'image/webp', 'image/avif'];
+
+  // ── Shared sidecar store ────────────────────────────────────────────────
+  // One fetch + immediate write-on-change for every <image-slot> on the
+  // page. Reads via fetch() so viewing works anywhere the HTML and sidecar
+  // are served together; writes go through window.omelette.writeFile, which
+  // the host allowlists to *.state.json basenames only.
+  const subs = new Set();
+  let slots = {};
+  // ids explicitly cleared before the sidecar fetch resolved — otherwise
+  // the merge below can't tell "never set" from "just deleted" and would
+  // resurrect the sidecar's stale value.
+  const tombstones = new Set();
+  let loaded = false;
+  let loadP = null;
+
+  function load() {
+    if (loadP) return loadP;
+    loadP = fetch(STATE_FILE)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        // Merge: sidecar loses to any in-memory change that raced ahead of
+        // the fetch (drop or clear) so neither is clobbered by hydration.
+        if (j && typeof j === 'object') {
+          const merged = Object.assign({}, j, slots);
+          // A framing-only write that raced ahead of hydration must not
+          // drop a user image that's only on disk — inherit u from the
+          // sidecar for any in-memory entry that lacks one.
+          for (const k in slots) {
+            if (merged[k] && !merged[k].u && j[k]) {
+              merged[k].u = typeof j[k] === 'string' ? j[k] : j[k].u;
+            }
+          }
+          for (const id of tombstones) delete merged[id];
+          slots = merged;
+        }
+        tombstones.clear();
+      })
+      .catch(() => {})
+      .then(() => { loaded = true; subs.forEach((fn) => fn()); });
+    return loadP;
+  }
+
+  // Serialize writes so two near-simultaneous drops on different slots
+  // can't reorder at the backend and leave the sidecar with only the
+  // first. A save requested mid-flight just marks dirty and re-fires on
+  // completion with the then-current slots.
+  let saving = false;
+  let saveDirty = false;
+  function save() {
+    if (saving) { saveDirty = true; return; }
+    const w = window.omelette && window.omelette.writeFile;
+    if (!w) return;
+    saving = true;
+    Promise.resolve(w(STATE_FILE, JSON.stringify(slots)))
+      .catch(() => {})
+      .then(() => { saving = false; if (saveDirty) { saveDirty = false; save(); } });
+  }
+
+  const S_MAX = 5;
+  const clampS = (s) => Math.max(1, Math.min(S_MAX, s));
+
+  // Normalize a stored slot value. Pre-reframe sidecars stored a bare
+  // data-URL string; newer ones store {u, s, x, y}. Either shape is valid.
+  function getSlot(id) {
+    const v = slots[id];
+    if (!v) return null;
+    return typeof v === 'string' ? { u: v, s: 1, x: 0, y: 0 } : v;
+  }
+
+  function setSlot(id, val) {
+    if (!id) return;
+    if (val) { slots[id] = val; tombstones.delete(id); }
+    else { delete slots[id]; if (!loaded) tombstones.add(id); }
+    subs.forEach((fn) => fn());
+    // A drop is rare + high-value — write immediately so nav-away can't lose
+    // it. Gate on the initial read so we don't overwrite a sidecar we haven't
+    // merged yet; the merge in load() keeps this change once the read lands.
+    if (loaded) save(); else load().then(save);
+  }
+
+  // ── Image downscale ─────────────────────────────────────────────────────
+  // Encode through a canvas so the sidecar carries resized bytes, not the
+  // raw upload. Longest side is capped at 2× the slot's rendered width
+  // (retina) and at MAX_DIM. WebP keeps alpha and is ~10× smaller than PNG
+  // for photos, so there's no need for per-image format picking.
+  async function toDataUrl(file, targetW) {
+    const bitmap = await createImageBitmap(file);
+    try {
+      const cap = Math.min(MAX_DIM, Math.max(1, Math.round(targetW * 2)) || MAX_DIM);
+      const scale = Math.min(1, cap / Math.max(bitmap.width, bitmap.height));
+      const w = Math.max(1, Math.round(bitmap.width * scale));
+      const h = Math.max(1, Math.round(bitmap.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+      return canvas.toDataURL('image/webp', 0.85);
+    } finally {
+      bitmap.close && bitmap.close();
+    }
+  }
+
+  // ── Custom element ──────────────────────────────────────────────────────
+  const stylesheet =
+    ':host{display:inline-block;position:relative;vertical-align:top;' +
+    '  font:13px/1.3 system-ui,-apple-system,sans-serif;color:rgba(0,0,0,.55);width:240px;height:160px}' +
+    '.frame{position:absolute;inset:0;overflow:hidden;background:rgba(0,0,0,.04)}' +
+    // .frame img (clipped) and .spill (unclipped ghost + handles) share the
+    // same left/top/width/height in frame-%, computed by _applyView(), so the
+    // inside-mask crop and the outside-mask spill stay pixel-aligned.
+    '.frame img{position:absolute;max-width:none;transform:translate(-50%,-50%);' +
+    '  -webkit-user-drag:none;user-select:none;touch-action:none}' +
+    // Reframe mode (double-click): the full image spills past the mask. The
+    // spill layer is sized to the IMAGE bounds so its corners are where the
+    // resize handles belong. The ghost <img> inside is translucent; the real
+    // clipped <img> underneath shows the opaque in-mask crop.
+    '.spill{position:absolute;transform:translate(-50%,-50%);display:none;z-index:1;' +
+    '  cursor:grab;touch-action:none}' +
+    ':host([data-panning]) .spill{cursor:grabbing}' +
+    '.spill .ghost{position:absolute;inset:0;width:100%;height:100%;opacity:.35;' +
+    '  pointer-events:none;-webkit-user-drag:none;user-select:none;' +
+    '  box-shadow:0 0 0 1px rgba(0,0,0,.2),0 12px 32px rgba(0,0,0,.2)}' +
+    '.spill .handle{position:absolute;width:12px;height:12px;border-radius:50%;' +
+    '  background:#fff;box-shadow:0 0 0 1.5px #c96442,0 1px 3px rgba(0,0,0,.3);' +
+    '  transform:translate(-50%,-50%)}' +
+    '.spill .handle[data-c=nw]{left:0;top:0;cursor:nwse-resize}' +
+    '.spill .handle[data-c=ne]{left:100%;top:0;cursor:nesw-resize}' +
+    '.spill .handle[data-c=sw]{left:0;top:100%;cursor:nesw-resize}' +
+    '.spill .handle[data-c=se]{left:100%;top:100%;cursor:nwse-resize}' +
+    ':host([data-reframe]){z-index:10}' +
+    ':host([data-reframe]) .spill{display:block}' +
+    ':host([data-reframe]) .frame{box-shadow:0 0 0 2px #c96442}' +
+    '.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;' +
+    '  justify-content:center;gap:6px;text-align:center;padding:12px;box-sizing:border-box;' +
+    '  cursor:pointer;user-select:none}' +
+    '.empty svg{opacity:.45}' +
+    '.empty .cap{max-width:90%;font-weight:500;letter-spacing:.01em}' +
+    '.empty .sub{font-size:11px}' +
+    '.empty .sub u{text-underline-offset:2px;text-decoration-color:rgba(0,0,0,.25)}' +
+    '.empty:hover .sub u{color:rgba(0,0,0,.75);text-decoration-color:currentColor}' +
+    ':host([data-over]) .frame{outline:2px solid #c96442;outline-offset:-2px;' +
+    '  background:rgba(201,100,66,.10)}' +
+    '.ring{position:absolute;inset:0;pointer-events:none;border:1.5px dashed rgba(0,0,0,.25);' +
+    '  transition:border-color .12s}' +
+    ':host([data-over]) .ring{border-color:#c96442}' +
+    ':host([data-filled]) .ring{display:none}' +
+    // Controls sit BELOW the mask (top:100%), absolutely positioned so the
+    // author-declared slot height is unaffected. The gap is padding, not a
+    // top offset, so the hover target stays contiguous with the frame.
+    '.ctl{position:absolute;top:100%;left:50%;transform:translateX(-50%);padding-top:8px;' +
+    '  display:flex;gap:6px;opacity:0;pointer-events:none;transition:opacity .12s;z-index:2;' +
+    '  white-space:nowrap}' +
+    ':host([data-filled][data-editable]:hover) .ctl,:host([data-reframe]) .ctl' +
+    '  {opacity:1;pointer-events:auto}' +
+    '.ctl button{appearance:none;border:0;border-radius:6px;padding:5px 10px;cursor:pointer;' +
+    '  background:rgba(0,0,0,.65);color:#fff;font:11px/1 system-ui,-apple-system,sans-serif;' +
+    '  backdrop-filter:blur(6px)}' +
+    '.ctl button:hover{background:rgba(0,0,0,.8)}' +
+    '.err{position:absolute;left:8px;bottom:8px;right:8px;color:#b3261e;font-size:11px;' +
+    '  background:rgba(255,255,255,.85);padding:4px 6px;border-radius:5px;pointer-events:none}';
+
+  const icon =
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>' +
+    '<path d="m21 15-5-5L5 21"/></svg>';
+
+  class ImageSlot extends HTMLElement {
+    static get observedAttributes() {
+      return ['shape', 'radius', 'mask', 'fit', 'position', 'placeholder', 'src', 'id'];
+    }
+
+    constructor() {
+      super();
+      const root = this.attachShadow({ mode: 'open' });
+      // .spill and .ctl sit OUTSIDE .frame so overflow:hidden + border-radius
+      // on the frame (circle, pill, rounded) can't clip them.
+      root.innerHTML =
+        '<style>' + stylesheet + '</style>' +
+        '<div class="frame" part="frame">' +
+        '  <img part="image" alt="" draggable="false" style="display:none">' +
+        '  <div class="empty" part="empty">' + icon +
+        '    <div class="cap"></div>' +
+        '    <div class="sub">or <u>browse files</u></div></div>' +
+        '  <div class="ring" part="ring"></div>' +
+        '</div>' +
+        '<div class="spill">' +
+        '  <img class="ghost" alt="" draggable="false">' +
+        '  <div class="handle" data-c="nw"></div><div class="handle" data-c="ne"></div>' +
+        '  <div class="handle" data-c="sw"></div><div class="handle" data-c="se"></div>' +
+        '</div>' +
+        '<div class="ctl"><button data-act="replace" title="Replace image">Replace</button>' +
+        '  <button data-act="clear" title="Remove image">Remove</button></div>' +
+        '<input type="file" accept="' + ACCEPT.join(',') + '" hidden>';
+      this._frame = root.querySelector('.frame');
+      this._ring = root.querySelector('.ring');
+      this._img = root.querySelector('.frame img');
+      this._empty = root.querySelector('.empty');
+      this._cap = root.querySelector('.cap');
+      this._sub = root.querySelector('.sub');
+      this._spill = root.querySelector('.spill');
+      this._ghost = root.querySelector('.ghost');
+      this._err = null;
+      this._input = root.querySelector('input');
+      this._depth = 0;
+      this._gen = 0;
+      this._view = { s: 1, x: 0, y: 0 };
+      this._subFn = () => this._render();
+      // Shadow-DOM listeners live with the shadow DOM — bound once here so
+      // disconnect/reconnect (e.g. React remount) doesn't stack handlers.
+      this._empty.addEventListener('click', () => this._input.click());
+      root.addEventListener('click', (e) => {
+        const act = e.target && e.target.getAttribute && e.target.getAttribute('data-act');
+        if (act === 'replace') { this._exitReframe(true); this._input.click(); }
+        if (act === 'clear') {
+          this._exitReframe(false);
+          this._gen++;
+          this._local = null;
+          if (this.id) setSlot(this.id, null); else this._render();
+        }
+      });
+      this._input.addEventListener('change', () => {
+        const f = this._input.files && this._input.files[0];
+        if (f) this._ingest(f);
+        this._input.value = '';
+      });
+      // naturalWidth/Height aren't known until load — re-apply so the cover
+      // baseline is computed from real dimensions, not the 100%×100% fallback.
+      this._img.addEventListener('load', () => this._applyView());
+      // Gated on editable + fit=cover so share links and contain/fill slots
+      // stay static.
+      this.addEventListener('dblclick', (e) => {
+        if (!this.hasAttribute('data-editable') || !this._reframes()) return;
+        e.preventDefault();
+        if (this.hasAttribute('data-reframe')) this._exitReframe(true);
+        else this._enterReframe();
+      });
+      // Pan + resize both originate on the spill layer. A handle pointerdown
+      // drives an aspect-locked resize anchored at the opposite corner; any
+      // other pointerdown on the spill pans. Offsets are frame-% so a
+      // reframed slot survives responsive resize / PPTX export.
+      this._spill.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0 || !this.hasAttribute('data-reframe')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this._spill.setPointerCapture(e.pointerId);
+        const rect = this.getBoundingClientRect();
+        const fw = rect.width || 1, fh = rect.height || 1;
+        const corner = e.target.getAttribute && e.target.getAttribute('data-c');
+        let move;
+        if (corner) {
+          // Resize about the OPPOSITE corner. Viewport-px throughout (rect
+          // fw/fh, not clientWidth) so the math survives a transform:scale()
+          // ancestor — deck_stage renders slides scaled-to-fit.
+          const iw = this._img.naturalWidth || 1, ih = this._img.naturalHeight || 1;
+          const base = Math.max(fw / iw, fh / ih);
+          const sx = corner.includes('e') ? 1 : -1;
+          const sy = corner.includes('s') ? 1 : -1;
+          const s0 = this._view.s;
+          const w0 = iw * base * s0, h0 = ih * base * s0;
+          const cx0 = (50 + this._view.x) / 100 * fw;
+          const cy0 = (50 + this._view.y) / 100 * fh;
+          const ox = cx0 - sx * w0 / 2, oy = cy0 - sy * h0 / 2;
+          const diag0 = Math.hypot(w0, h0);
+          const ux = sx * w0 / diag0, uy = sy * h0 / diag0;
+          move = (ev) => {
+            const proj = (ev.clientX - rect.left - ox) * ux +
+                         (ev.clientY - rect.top - oy) * uy;
+            const s = clampS(s0 * proj / diag0);
+            const d = diag0 * s / s0;
+            this._view.s = s;
+            this._view.x = (ox + ux * d / 2) / fw * 100 - 50;
+            this._view.y = (oy + uy * d / 2) / fh * 100 - 50;
+            this._clampView();
+            this._applyView();
+          };
+        } else {
+          this.setAttribute('data-panning', '');
+          const start = { px: e.clientX, py: e.clientY, x: this._view.x, y: this._view.y };
+          move = (ev) => {
+            this._view.x = start.x + (ev.clientX - start.px) / fw * 100;
+            this._view.y = start.y + (ev.clientY - start.py) / fh * 100;
+            this._clampView();
+            this._applyView();
+          };
+        }
+        const up = () => {
+          try { this._spill.releasePointerCapture(e.pointerId); } catch {}
+          this._spill.removeEventListener('pointermove', move);
+          this._spill.removeEventListener('pointerup', up);
+          this._spill.removeEventListener('pointercancel', up);
+          this.removeAttribute('data-panning');
+          this._dragUp = null;
+        };
+        // Stashed so _exitReframe (Escape / outside-click mid-drag) can
+        // tear the capture + listeners down synchronously.
+        this._dragUp = up;
+        this._spill.addEventListener('pointermove', move);
+        this._spill.addEventListener('pointerup', up);
+        this._spill.addEventListener('pointercancel', up);
+      });
+      // Wheel zoom stays available inside reframe mode as a trackpad nicety —
+      // zooms toward the cursor (offset' = cursor·(1-k) + offset·k).
+      this.addEventListener('wheel', (e) => {
+        if (!this.hasAttribute('data-reframe')) return;
+        e.preventDefault();
+        const r = this.getBoundingClientRect();
+        const cx = (e.clientX - r.left) / r.width * 100 - 50;
+        const cy = (e.clientY - r.top) / r.height * 100 - 50;
+        const prev = this._view.s;
+        const next = clampS(prev * Math.pow(1.0015, -e.deltaY));
+        if (next === prev) return;
+        const k = next / prev;
+        this._view.s = next;
+        this._view.x = cx * (1 - k) + this._view.x * k;
+        this._view.y = cy * (1 - k) + this._view.y * k;
+        this._clampView();
+        this._applyView();
+      }, { passive: false });
+    }
+
+    connectedCallback() {
+      // Warn once per page — an id-less slot works for the session but
+      // cannot persist, and two id-less slots would share nothing.
+      if (!this.id && !ImageSlot._warned) {
+        ImageSlot._warned = true;
+        console.warn('<image-slot> without an id will not persist its dropped image.');
+      }
+      this.addEventListener('dragenter', this);
+      this.addEventListener('dragover', this);
+      this.addEventListener('dragleave', this);
+      this.addEventListener('drop', this);
+      subs.add(this._subFn);
+      // width%/height% in _applyView encode the frame aspect at call time —
+      // a host resize (responsive grid, pane divider) would stretch the
+      // image until the next _render. Re-render on size change: _render()
+      // re-seeds _view from stored before clamp/apply, so a shrink→grow
+      // cycle round-trips instead of ratcheting x/y toward the narrower
+      // frame's clamp range.
+      this._ro = new ResizeObserver(() => this._render());
+      this._ro.observe(this);
+      load();
+      this._render();
+    }
+
+    disconnectedCallback() {
+      subs.delete(this._subFn);
+      this.removeEventListener('dragenter', this);
+      this.removeEventListener('dragover', this);
+      this.removeEventListener('dragleave', this);
+      this.removeEventListener('drop', this);
+      if (this._ro) { this._ro.disconnect(); this._ro = null; }
+      this._exitReframe(false);
+    }
+
+    _enterReframe() {
+      if (this.hasAttribute('data-reframe')) return;
+      this.setAttribute('data-reframe', '');
+      this._applyView();
+      // Close on click outside (the spill handler stopPropagation()s so
+      // in-image drags don't reach this) and on Escape. Listeners are held
+      // on the instance so _exitReframe / disconnectedCallback can detach
+      // exactly what was attached.
+      this._outside = (e) => {
+        if (e.composedPath && e.composedPath().includes(this)) return;
+        this._exitReframe(true);
+      };
+      this._esc = (e) => { if (e.key === 'Escape') this._exitReframe(true); };
+      document.addEventListener('pointerdown', this._outside, true);
+      document.addEventListener('keydown', this._esc, true);
+    }
+
+    _exitReframe(commit) {
+      if (!this.hasAttribute('data-reframe')) return;
+      if (this._dragUp) this._dragUp();
+      this.removeAttribute('data-reframe');
+      this.removeAttribute('data-panning');
+      if (this._outside) document.removeEventListener('pointerdown', this._outside, true);
+      if (this._esc) document.removeEventListener('keydown', this._esc, true);
+      this._outside = this._esc = null;
+      if (commit) this._commitView();
+    }
+
+    attributeChangedCallback() { if (this.shadowRoot) this._render(); }
+
+    // handleEvent — one listener object for all four drag events keeps the
+    // add/remove symmetric and the depth counter correct.
+    handleEvent(e) {
+      if (e.type === 'dragenter' || e.type === 'dragover') {
+        // Without preventDefault the browser never fires 'drop'.
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+        if (e.type === 'dragenter') this._depth++;
+        this.setAttribute('data-over', '');
+      } else if (e.type === 'dragleave') {
+        // dragenter/leave fire for every descendant crossing — count depth
+        // so hovering the icon inside the empty state doesn't flicker.
+        if (--this._depth <= 0) { this._depth = 0; this.removeAttribute('data-over'); }
+      } else if (e.type === 'drop') {
+        e.preventDefault();
+        e.stopPropagation();
+        this._depth = 0;
+        this.removeAttribute('data-over');
+        const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) this._ingest(f);
+      }
+    }
+
+    async _ingest(file) {
+      this._setError(null);
+      if (!file || ACCEPT.indexOf(file.type) < 0) {
+        this._setError('Drop a PNG, JPEG, WebP, or AVIF image.');
+        return;
+      }
+      // toDataUrl can take hundreds of ms on a large photo. A Clear or a
+      // newer drop during that window would be clobbered when this await
+      // resumes — bump + capture a generation so stale encodes bail.
+      const gen = ++this._gen;
+      try {
+        const w = this.clientWidth || this.offsetWidth || MAX_DIM;
+        const url = await toDataUrl(file, w);
+        if (gen !== this._gen) return;
+        // Only exit reframe once the new image is in hand — a rejected type
+        // or decode failure leaves the in-progress crop untouched.
+        this._exitReframe(false);
+        const val = { u: url, s: 1, x: 0, y: 0 };
+        setSlot(this.id || '', val);
+        // Keep a session-local copy for id-less slots so the drop still
+        // shows, even though it cannot persist.
+        if (!this.id) { this._local = val; this._render(); }
+      } catch (err) {
+        if (gen !== this._gen) return;
+        this._setError('Could not read that image.');
+        console.warn('<image-slot> ingest failed:', err);
+      }
+    }
+
+    _setError(msg) {
+      if (this._err) { this._err.remove(); this._err = null; }
+      if (!msg) return;
+      const d = document.createElement('div');
+      d.className = 'err'; d.textContent = msg;
+      this.shadowRoot.appendChild(d);
+      this._err = d;
+      setTimeout(() => { if (this._err === d) { d.remove(); this._err = null; } }, 3000);
+    }
+
+    // Reframing (pan/resize) is only meaningful for fit=cover — contain/fill
+    // keep the old object-fit path and double-click is a no-op.
+    _reframes() {
+      return this.hasAttribute('data-filled') &&
+        (this.getAttribute('fit') || 'cover') === 'cover';
+    }
+
+    // Cover-baseline geometry, shared by clamp/apply/resize. Null until the
+    // img has loaded (naturalWidth is 0 before that) or when the slot has no
+    // layout box — ResizeObserver fires with a 0×0 rect under display:none,
+    // and clamping against a degenerate 1×1 frame would silently pull the
+    // stored pan toward zero.
+    _geom() {
+      const iw = this._img.naturalWidth, ih = this._img.naturalHeight;
+      const fw = this.clientWidth, fh = this.clientHeight;
+      if (!iw || !ih || !fw || !fh) return null;
+      return { iw, ih, fw, fh, base: Math.max(fw / iw, fh / ih) };
+    }
+
+    _clampView() {
+      // Pan range on each axis is half the overflow past the frame edge.
+      const g = this._geom();
+      if (!g) return;
+      const mx = Math.max(0, (g.iw * g.base * this._view.s / g.fw - 1) * 50);
+      const my = Math.max(0, (g.ih * g.base * this._view.s / g.fh - 1) * 50);
+      this._view.x = Math.max(-mx, Math.min(mx, this._view.x));
+      this._view.y = Math.max(-my, Math.min(my, this._view.y));
+    }
+
+    _applyView() {
+      const g = this._geom();
+      const fit = this.getAttribute('fit') || 'cover';
+      if (fit !== 'cover' || !g) {
+        // Non-cover, or dimensions not known yet (before img load).
+        this._img.style.width = '100%';
+        this._img.style.height = '100%';
+        this._img.style.left = '50%';
+        this._img.style.top = '50%';
+        this._img.style.objectFit = fit;
+        this._img.style.objectPosition = this.getAttribute('position') || '50% 50%';
+        return;
+      }
+      // Cover baseline: img fills the frame on its tighter axis at s=1, so
+      // pan works immediately on the overflowing axis without zooming first.
+      // Width/height and left/top are all frame-% — depends only on the
+      // frame aspect ratio, so a responsive resize keeps the same crop. The
+      // spill layer mirrors the same box so its corners = image corners.
+      const k = g.base * this._view.s;
+      const w = (g.iw * k / g.fw * 100) + '%';
+      const h = (g.ih * k / g.fh * 100) + '%';
+      const l = (50 + this._view.x) + '%';
+      const t = (50 + this._view.y) + '%';
+      this._img.style.width = w; this._img.style.height = h;
+      this._img.style.left = l; this._img.style.top = t;
+      this._img.style.objectFit = '';
+      this._spill.style.width = w; this._spill.style.height = h;
+      this._spill.style.left = l; this._spill.style.top = t;
+    }
+
+    _commitView() {
+      const v = { s: this._view.s, x: this._view.x, y: this._view.y };
+      if (this._userUrl) v.u = this._userUrl;
+      // Framing-only (no u) persists too so an author-src slot remembers its
+      // crop; clearing the sidecar still falls through to src=.
+      if (this.id) setSlot(this.id, v);
+      else { this._local = v; }
+    }
+
+    _render() {
+      // Shape / mask. Presets use border-radius so the dashed ring can
+      // follow the rounded outline; clip-path is only applied for an
+      // explicit `mask` (the ring is hidden there since a rectangle
+      // dashed border chopped by an arbitrary polygon looks broken).
+      const mask = this.getAttribute('mask');
+      const shape = (this.getAttribute('shape') || 'rounded').toLowerCase();
+      let radius = '';
+      if (shape === 'circle') radius = '50%';
+      else if (shape === 'pill') radius = '9999px';
+      else if (shape === 'rounded') {
+        const n = parseFloat(this.getAttribute('radius'));
+        radius = (Number.isFinite(n) ? n : 12) + 'px';
+      }
+      this._frame.style.borderRadius = mask ? '' : radius;
+      this._frame.style.clipPath = mask || '';
+      this._ring.style.borderRadius = mask ? '' : radius;
+      this._ring.style.display = mask ? 'none' : '';
+
+      // Controls and reframe entry gate on this so share links stay read-only.
+      const editable = !!(window.omelette && window.omelette.writeFile);
+      this.toggleAttribute('data-editable', editable);
+      this._sub.style.display = editable ? '' : 'none';
+
+      // Content. The sidecar is also writable by the agent's write_file
+      // tool, so its value isn't guaranteed canvas-originated — only accept
+      // data:image/ URLs from it. The `src` attribute is author-controlled
+      // (Claude wrote it into the HTML) so it passes through unchanged.
+      let stored = this.id ? getSlot(this.id) : this._local;
+      if (stored && stored.u && !/^data:image\//i.test(stored.u)) stored = null;
+      const srcAttr = this.getAttribute('src') || '';
+      this._userUrl = (stored && stored.u) || null;
+      const url = this._userUrl || srcAttr;
+      // Don't clobber an in-flight reframe with a store-triggered re-render.
+      if (!this.hasAttribute('data-reframe')) {
+        this._view = {
+          s: stored && Number.isFinite(stored.s) ? clampS(stored.s) : 1,
+          x: stored && Number.isFinite(stored.x) ? stored.x : 0,
+          y: stored && Number.isFinite(stored.y) ? stored.y : 0,
+        };
+      }
+      this._cap.textContent = this.getAttribute('placeholder') || 'Drop an image';
+      // Toggle via style.display — the [hidden] attribute alone loses to
+      // the display:flex / display:block rules in the stylesheet above.
+      if (url) {
+        if (this._img.getAttribute('src') !== url) {
+          this._img.src = url;
+          this._ghost.src = url;
+        }
+        this._img.style.display = 'block';
+        this._empty.style.display = 'none';
+        this.setAttribute('data-filled', '');
+        this._clampView();
+        this._applyView();
+      } else {
+        this._img.style.display = 'none';
+        this._img.removeAttribute('src');
+        this._ghost.removeAttribute('src');
+        this._empty.style.display = 'flex';
+        this.removeAttribute('data-filled');
+      }
+    }
+  }
+
+  if (!customElements.get('image-slot')) {
+    customElements.define('image-slot', ImageSlot);
+  }
+})();
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+<div id="page-home">
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav" id="nav">
+  <a class="logo" href="#top" aria-label="Émile, accueil">
+    <span class="mark"><img src="uploads/emile-monogram.png" alt="" /></span>
+    <span class="word">Maison Émile<small>web · rouen</small></span>
+  </a>
+  <ul class="menu">
+    <li class="hideable"><a href="#services">Services</a></li>
+    <li class="hideable"><a href="#histoire">L'histoire</a></li>
+    <li class="hideable"><a href="#realisations">Réalisations</a></li>
+    <li class="hideable"><a href="#devis">Devis</a></li>
+    <li><a class="navbtn" href="#devis">Demander un devis</a></li>
+  </ul>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="top" data-screen-label="Héro">
+  <div class="glow"></div>
+  <div class="hero-shapes" data-shapes></div>
+  <div class="container hero-inner">
+    <span class="badge"><span class="dot"></span>Création web &amp; outils sur-mesure · Rouen</span>
+    <h1 class="hand h-xl">Votre site,<br /><em>vraiment</em> à vous.</h1>
+    <p class="lead muted-d">Sites web, prise de rendez-vous en ligne et formulaires de devis pour les professionnels. Conçus sur-mesure, payés une fois — sans abonnement à vie, sans plateforme qui vous loue votre propre vitrine.</p>
+    <div class="cta-row">
+      <a class="btn solid-light" href="#devis">Demander un devis <span class="ar">→</span></a>
+      <a class="btn ghost" href="#realisations"><span>Voir mes réalisations</span></a>
+    </div>
+  </div>
+  <div class="scrollcue"><span class="l"></span><span>Faites défiler</span></div>
+  <div class="vign"></div>
+</header>
+
+<!-- ===================== SERVICES ===================== -->
+<section class="section on-cream" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">01 — Prestations</span>Ce que je conçois pour vous</span>
+      <h2 class="hand h-md" style="margin-top:18px">Trois façons d'avoir<br />une longueur d'avance.</h2>
+    </div>
+    <div class="serv">
+      <div class="servrow reveal">
+        <div class="sv-title"><span class="sv-num">01</span><h3>Sites web sur-mesure</h3></div>
+        <p class="sv-desc muted">Vitrine, page de présentation ou boutique légère : un site rapide, élégant et pensé pour convertir vos visiteurs — et qui vous appartient à 100 %, code compris.</p>
+        <a class="sv-go" href="#devis" aria-label="En savoir plus"><span>→</span></a>
+      </div>
+      <div class="servrow reveal">
+        <div class="sv-title"><span class="sv-num">02</span><h3>Rendez-vous &amp; dashboard</h3></div>
+        <p class="sv-desc muted">Vos clients réservent en ligne 24/7. Vous pilotez tout depuis un tableau de bord clair : créneaux, clients, statistiques. Votre alternative aux plateformes payantes — sans la mensualité.</p>
+        <a class="sv-go" href="#devis" aria-label="En savoir plus"><span>→</span></a>
+      </div>
+      <div class="servrow reveal">
+        <div class="sv-title"><span class="sv-num">03</span><h3>Devis &amp; formulaires</h3></div>
+        <p class="sv-desc muted">Des formulaires sur-mesure où vos clients décrivent précisément leur besoin. Vous recevez des demandes qualifiées, prêtes à traiter, directement dans votre boîte mail.</p>
+        <a class="sv-go" href="#devis" aria-label="En savoir plus"><span>→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HISTOIRE ===================== -->
+<section class="section on-black" id="histoire">
+  <div class="container">
+    <span class="eyebrow reveal"><span class="idx">02 — L'histoire</span>Pourquoi j'ai monté Maison Émile</span>
+    <div class="story-grid" style="margin-top:48px">
+      <div class="reveal">
+        <p class="serif-q">« Lycéen, bientôt en fac de droit, et passionné de web depuis tout petit. J'aide les pros à <em>posséder</em> leur outil — au lieu de le louer. »</p>
+        <p class="lead muted-d" style="margin-top:32px">Je me forme à la création web et à l'informatique depuis des années, par passion. En voyant des professionnels payer chaque mois, à vie, des plateformes comme Planity pour une simple page de réservation, j'ai décidé de sauter le pas.</p>
+        <p class="lead muted-d">Maison Émile, c'est ma façon de mettre cette passion à leur service : un site et des outils qui leur appartiennent vraiment, faits avec sérieux et sans abonnement caché.</p>
+        <p class="signature" style="margin-top:30px">— Maison Émile</p>
+      </div>
+      <div class="reveal">
+        <image-slot id="portrait" style="width:100%;aspect-ratio:4/5;display:block" shape="rect" placeholder="Déposez votre portrait"></image-slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SANS ABONNEMENT ===================== -->
+<section class="section on-cream" id="calcul">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">03 — Le vrai calcul</span>Louer, ou posséder ?</span>
+      <h2 class="hand h-md" style="margin-top:18px">Payez une fois.<br />Pas tous les mois.</h2>
+    </div>
+    <div class="lsplit" id="lsplit" role="img" aria-label="Comparaison : abonnement à vie contre paiement unique, séparés par un éclair électrique">
+      <!-- Côté droit (base) : votre solution -->
+      <div class="lsplit-panel lsplit-right">
+        <div class="lsplit-inner">
+          <span class="kicker">Votre site Maison Émile</span>
+          <div class="price">Payé une fois</div>
+          <ul>
+            <li><span class="b">+</span> Le site et le code vous appartiennent</li>
+            <li><span class="b">+</span> Vous gardez vos clients et vos données</li>
+            <li><span class="b">+</span> Aucune mensualité imposée</li>
+            <li><span class="b">+</span> Évolutif quand vous le voulez</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Côté gauche (découpé par l'éclair) : l'abonnement -->
+      <div class="lsplit-panel lsplit-left" id="lsplitLeft">
+        <div class="lsplit-inner">
+          <span class="kicker muted">Plateforme par abonnement</span>
+          <div class="price">50&nbsp;€+ <span style="font-size:.4em;font-family:var(--font-serif);font-style:italic">/ mois, à vie</span></div>
+          <ul>
+            <li><span class="b">—</span> Vous louez votre propre vitrine</li>
+            <li><span class="b">—</span> Vos clients et vos données chez eux</li>
+            <li><span class="b">—</span> Des hausses de prix régulières</li>
+            <li><span class="b">—</span> Vous partez ? Tout disparaît</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Arc électrique -->
+      <svg class="lsplit-arc" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polyline id="lsArcBloom" fill="none" stroke="rgba(160,210,255,.35)" stroke-width="7" vector-effect="non-scaling-stroke" stroke-linecap="round"></polyline>
+        <polyline id="lsArcOuter" fill="none" stroke="rgba(173,216,230,.75)" stroke-width="3" vector-effect="non-scaling-stroke" stroke-linecap="round"></polyline>
+        <polyline id="lsArcMid" fill="none" stroke="rgba(135,206,250,.6)" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linecap="round"></polyline>
+        <polyline id="lsArcCore" fill="none" stroke="#ffffff" stroke-opacity=".95" stroke-width="1.2" vector-effect="non-scaling-stroke" stroke-linecap="round"></polyline>
+      </svg>
+      <span class="lsplit-hint">Survolez un côté ⚡</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RÉALISATIONS ===================== -->
+<section class="section on-black" id="realisations">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">04 — Réalisations</span>Quelques sites déjà en ligne</span>
+      <h2 class="hand h-md" style="margin-top:18px">Du concret.</h2>
+    </div>
+    <div class="real">
+      <a class="real-item reveal" href="https://l-onglerie.vercel.app/" target="_blank" rel="noopener">
+        <div class="site-thumb"><iframe src="https://l-onglerie.vercel.app/" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu L'Onglerie"></iframe></div>
+        <div class="cap"><h3>L'Onglerie</h3><span class="tagm">Voir →</span></div>
+        <span class="tagm">Site vitrine · beauté &amp; ongles</span>
+      </a>
+      <a class="real-item reveal" href="https://garage-du-houlme-p2pk.vercel.app/index.html#vehicules" target="_blank" rel="noopener">
+        <div class="site-thumb"><iframe src="https://garage-du-houlme-p2pk.vercel.app/index.html" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu Garage du Houlme"></iframe></div>
+        <div class="cap"><h3>Garage du Houlme</h3><span class="tagm">Voir →</span></div>
+        <span class="tagm">Vitrine &amp; véhicules · automobile</span>
+      </a>
+      <a class="real-item reveal" href="https://amelie-esthetique.vercel.app/" target="_blank" rel="noopener">
+        <div class="site-thumb"><iframe src="https://amelie-esthetique.vercel.app/" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu Amélie Esthétique"></iframe></div>
+        <div class="cap"><h3>Amélie Esthétique</h3><span class="tagm">Voir →</span></div>
+        <span class="tagm">Site vitrine &amp; réservation · institut de beauté</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DEVIS ===================== -->
+<section class="section on-cream" id="devis">
+  <div class="container">
+    <div class="form-wrap">
+      <div class="reveal">
+        <span class="eyebrow"><span class="idx">05 — Devis</span>Sans engagement</span>
+        <h2 class="hand h-md" style="margin:18px 0 22px">Parlez-moi de<br />votre projet.</h2>
+        <p class="lead muted">Décrivez librement ce que vous avez en tête — même si tout n'est pas encore clair. Je vous réponds rapidement avec une proposition honnête, adaptée à votre besoin et à votre budget.</p>
+        <p class="muted" style="margin-top:26px;font-size:15px">Vous préférez écrire directement ?<br />
+          <a class="linkline" href="/cdn-cgi/l/email-protection#690c0400050c1d081b081c0d505c5b290e04080005470a0604" style="margin-top:8px"><span class="__cf_email__" data-cfemail="ea8f8783868f9e8b988b9f8ed3dfd8aa8d878b8386c4898587">[email&#160;protected]</span></a>
+        </p>
+      </div>
+      <form class="reveal" id="devisForm" novalidate>
+        <div class="form-2">
+          <div class="field"><label for="f-nom">Nom</label><input id="f-nom" name="nom" type="text" placeholder="Votre nom" required /></div>
+          <div class="field"><label for="f-tel">Téléphone</label><input id="f-tel" name="tel" type="tel" placeholder="06 00 00 00 00" /></div>
+        </div>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" placeholder="vous@email.com" required /></div>
+        <div class="form-2">
+          <div class="field"><label for="f-presta">Prestation</label>
+            <select id="f-presta" name="prestation">
+              <option>Site web sur-mesure</option>
+              <option>Prise de rendez-vous + dashboard</option>
+              <option>Formulaire de devis / contact</option>
+              <option>Plusieurs / je ne sais pas encore</option>
+            </select>
+          </div>
+          <div class="field"><label for="f-budget">Budget indicatif</label><input id="f-budget" name="budget" type="text" placeholder="Optionnel" /></div>
+        </div>
+        <div class="field"><label for="f-msg">Votre projet</label><textarea id="f-msg" name="message" placeholder="Décrivez tout ce que vous souhaitez : activité, objectifs, fonctionnalités, exemples de sites que vous aimez…"></textarea></div>
+        <button class="btn solid-dark" type="submit" style="width:100%;justify-content:center">Envoyer ma demande <span class="ar">→</span></button>
+        <p id="formNote" class="muted" style="font-size:13px;margin-top:14px;display:none"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT / FOOTER ===================== -->
+<footer class="foot" id="contact" data-screen-label="Contact / pied de page">
+  <div class="container">
+    <div class="reveal"><div class="cta-big">On en <em>parle</em>&nbsp;?</div></div>
+    <div class="foot-grid">
+      <div>
+        <div class="lbl">Email</div>
+        <a href="/cdn-cgi/l/email-protection#d5b0b8bcb9b0a1b4a7b4a0b1ece0e795b2b8b4bcb9fbb6bab8"><span class="__cf_email__" data-cfemail="a0c5cdc9ccc5d4c1d2c1d5c4999592e0c7cdc1c9cc8ec3cfcd">[email&#160;protected]</span></a>
+      </div>
+      <div>
+        <div class="lbl">Téléphone</div>
+        <a href="tel:+33781414913">07 81 41 41 13</a>
+      </div>
+      <div>
+        <div class="lbl">Zone</div>
+        <span>Rouen &amp; à distance</span>
+      </div>
+      <div>
+        <div class="lbl">Réseaux</div>
+        <a href="https://www.linkedin.com/in/emile-taraud-88b0363b8" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Maison Émile — Création web · Rouen</span>
+      <span style="display:flex;gap:22px;flex-wrap:wrap">
+        <a href="#" data-nav="legal">Mentions légales</a>
+        <a href="#" data-nav="cgv">CGV</a>
+        <a href="#" data-nav="confid">Confidentialité (RGPD)</a>
+        <a href="#" data-nav="confid">Cookies</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== COOKIE BANNER ===================== -->
+<div class="cookie hide" id="cookie">
+  <p>Ce site utilise un minimum de cookies pour mesurer son audience. <a href="#" data-nav="confid">En savoir plus</a>.</p>
+  <div class="acts">
+    <button class="mini" id="ckRefuse">Refuser</button>
+    <button class="mini ok" id="ckAccept">Accepter</button>
+  </div>
+</div>
+
+</div><!-- /page-home -->
+
+<div id="page-cgv" style="display:none">
+<!-- NAV -->
+<nav class="nav scrolled" style="position:sticky;background:var(--cream);color:var(--ink);border-color:var(--line-light)">
+  <a class="logo" href="#" data-nav="home" aria-label="Émile, accueil">
+    <span class="mark"><span>E</span></span>
+    <span class="word">Émile<small>web · rouen</small></span>
+  </a>
+  <ul class="menu" style="color:var(--ink)">
+    <li><a class="navbtn" href="#" data-nav="home" style="border-color:var(--line-light)">← Retour au site</a></li>
+  </ul>
+</nav>
+
+<main class="legal" data-screen-label="CGV">
+  <div class="container" style="max-width:880px">
+
+    <span class="updated">Dernière mise à jour — Juin 2026</span>
+    <h1 class="hand">Conditions<br />générales de vente</h1>
+    <p class="lead muted lead-block" style="margin-bottom:8px">Les présentes conditions régissent les prestations de création web, d'outils sur-mesure, de maintenance, d'hébergement et de service informatique fournies par Maison Émile. Toute commande implique leur acceptation sans réserve.</p>
+
+    <p class="note">
+      <strong>Note pour Émile :</strong> ces CGV s'adressent à une clientèle de professionnels (B2B). Si un jour tu vends à des particuliers, il faudra rajouter le droit de rétractation et un médiateur de la consommation. Le champ <code>[…]</code> restant (assurance RC pro) est à compléter si tu en souscris une. Fais relire à un pro du droit avant publication — ce document est un modèle solide, pas un avis juridique.
+    </p>
+
+    <!-- SOMMAIRE -->
+    <nav class="toc" aria-label="Sommaire">
+      <a href="#objet"><span class="n">01</span>Objet &amp; champ d'application</a>
+      <a href="#prestataire"><span class="n">02</span>Le prestataire</a>
+      <a href="#definitions"><span class="n">03</span>Définitions</a>
+      <a href="#devis"><span class="n">04</span>Devis &amp; commande</a>
+      <a href="#prix"><span class="n">05</span>Prix &amp; TVA</a>
+      <a href="#paiement"><span class="n">06</span>Modalités de paiement</a>
+      <a href="#delais"><span class="n">07</span>Délais &amp; collaboration</a>
+      <a href="#revisions"><span class="n">08</span>Révisions &amp; recette</a>
+      <a href="#propriete"><span class="n">09</span>Propriété intellectuelle</a>
+      <a href="#hebergement"><span class="n">10</span>Hébergement &amp; nom de domaine</a>
+      <a href="#maintenance"><span class="n">11</span>Maintenance &amp; assistance</a>
+      <a href="#informatique"><span class="n">12</span>Dépannage &amp; formation</a>
+      <a href="#responsabilite"><span class="n">13</span>Garanties &amp; responsabilité</a>
+      <a href="#donnees"><span class="n">14</span>Données personnelles</a>
+      <a href="#resiliation"><span class="n">15</span>Résiliation &amp; force majeure</a>
+      <a href="#droit"><span class="n">16</span>Droit applicable &amp; litiges</a>
+    </nav>
+
+    <!-- 01 -->
+    <article style="margin-top:48px">
+      <h2 id="objet"><span class="anchor-idx">01 ·</span> Objet &amp; champ d'application</h2>
+      <p>Les présentes Conditions Générales de Vente (ci-après « CGV ») définissent les droits et obligations des parties dans le cadre des prestations proposées par Maison Émile (ci-après « le Prestataire ») à toute personne physique ou morale qui passe commande (ci-après « le Client »).</p>
+      <p>Elles s'appliquent à l'ensemble des prestations : création de sites web sur-mesure, systèmes de prise de rendez-vous et tableaux de bord, formulaires de devis et outils sur-mesure, maintenance et mises à jour, hébergement et nom de domaine, dépannage et service informatique, ainsi que formation à l'utilisation des outils livrés.</p>
+      <p>Toute commande emporte adhésion pleine et entière du Client aux présentes CGV, qui prévalent sur tout autre document, sauf condition particulière acceptée par écrit par le Prestataire. Le fait que le Prestataire ne se prévale pas à un moment donné d'une clause des CGV ne vaut pas renonciation à s'en prévaloir ultérieurement.</p>
+    </article>
+
+    <!-- 02 -->
+    <article>
+      <h2 id="prestataire"><span class="anchor-idx">02 ·</span> Le prestataire</h2>
+      <p>Les prestations sont fournies par&nbsp;:</p>
+      <p>
+        <strong>Émile Taraud — Maison Émile</strong><br />
+        Statut&nbsp;: <strong>Micro-entreprise (entrepreneur individuel)</strong><br />
+        Adresse&nbsp;: <strong>3 square Georges Braque, 76770 Malaunay</strong><br />
+        SIRET&nbsp;: <strong>106 143 134 00018 — R.C.S. Rouen</strong><br />
+        Email&nbsp;: <a class="linkline" href="/cdn-cgi/l/email-protection#c3a6aeaaafa6b7a2b1a2b6a7faf7f183a4aea2aaafeda0acae"><span class="__cf_email__" data-cfemail="eb8e8682878e9f8a998a9e8fd2dfd9ab8c868a8287c5888486">[email&#160;protected]</span></a><br />
+        Téléphone&nbsp;: 07&nbsp;81&nbsp;41&nbsp;41&nbsp;13
+      </p>
+      <p class="muted" style="font-size:14px">Assurance responsabilité civile professionnelle&nbsp;: <strong>[compagnie / n° de police — si souscrite]</strong>.</p>
+    </article>
+
+    <!-- 03 -->
+    <article>
+      <h2 id="definitions"><span class="anchor-idx">03 ·</span> Définitions</h2>
+      <ul class="tight">
+        <li><strong>Devis</strong>&nbsp;: document chiffré et descriptif décrivant la prestation, ses livrables, son prix et ses délais.</li>
+        <li><strong>Livrable</strong>&nbsp;: tout élément remis au Client (site, code, maquette, document, accès, outil).</li>
+        <li><strong>Recette</strong>&nbsp;: phase de validation du livrable par le Client à l'issue de sa mise à disposition.</li>
+        <li><strong>Acompte</strong>&nbsp;: somme versée à la commande, conditionnant le démarrage des travaux.</li>
+      </ul>
+    </article>
+
+    <!-- 04 -->
+    <article>
+      <h2 id="devis"><span class="anchor-idx">04 ·</span> Devis &amp; commande</h2>
+      <p>Chaque prestation fait l'objet d'un devis personnalisé et gratuit, établi à partir des besoins exprimés par le Client. Le devis précise la nature des prestations, les livrables, le prix, les délais indicatifs et le nombre de révisions incluses.</p>
+      <p>Le devis est valable <strong>30 jours</strong> à compter de son émission, sauf mention contraire. La commande est ferme et définitive à réception du devis daté, signé et portant la mention « Bon pour accord » (ou validé par voie électronique), accompagné du versement de l'acompte prévu à l'article 06.</p>
+      <p>Toute demande de modification du périmètre après acceptation du devis (ajout de fonctionnalités, pages, outils) fera l'objet d'un avenant ou d'un nouveau devis.</p>
+    </article>
+
+    <!-- 05 -->
+    <article>
+      <h2 id="prix"><span class="anchor-idx">05 ·</span> Prix &amp; TVA</h2>
+      <p>Les prix sont indiqués en euros et figurent au devis. Ils correspondent aux prestations qui y sont décrites, à l'exclusion de toute autre.</p>
+      <p><span class="key">Franchise de TVA</span><br />
+      Le Prestataire relève du régime de la micro-entreprise. À ce titre&nbsp;: <strong>« TVA non applicable, art. 293 B du CGI »</strong>. Les prix sont donc nets, non assujettis à la TVA.</p>
+      <p>Les frais de tiers éventuels (nom de domaine, hébergement, licences, polices ou visuels payants, services externes) sont, sauf mention contraire au devis, à la charge du Client et facturés en sus ou réglés directement par celui-ci auprès du fournisseur concerné.</p>
+    </article>
+
+    <!-- 06 -->
+    <article>
+      <h2 id="paiement"><span class="anchor-idx">06 ·</span> Modalités de paiement</h2>
+      <p><span class="key">Échéancier</span><br />
+      Sauf condition particulière, le règlement s'effectue ainsi&nbsp;:</p>
+      <ul class="tight">
+        <li><strong>30 %</strong> du montant total à la commande, à titre d'acompte — déclenchant le démarrage des travaux&nbsp;;</li>
+        <li><strong>solde (70 %)</strong> à la livraison, avant la mise en ligne définitive et le transfert des accès.</li>
+      </ul>
+      <p style="margin-top:16px">Les paiements s'effectuent par virement bancaire ou tout autre moyen convenu, aux échéances indiquées sur la facture. L'acompte versé reste acquis au Prestataire en cas d'annulation du fait du Client après démarrage des travaux, au titre du travail déjà engagé.</p>
+      <p><span class="key">Retard de paiement</span><br />
+      En cas de retard, des pénalités égales à <strong>trois fois le taux d'intérêt légal</strong> sont applicables de plein droit, sans mise en demeure préalable. Pour un Client professionnel, une <strong>indemnité forfaitaire de 40&nbsp;€</strong> pour frais de recouvrement est en outre due (art. L.441-10 et D.441-5 du Code de commerce). Le Prestataire se réserve le droit de suspendre la prestation et de surseoir à toute mise en ligne jusqu'au complet paiement.</p>
+    </article>
+
+    <!-- 07 -->
+    <article>
+      <h2 id="delais"><span class="anchor-idx">07 ·</span> Délais &amp; collaboration</h2>
+      <p>Les délais de réalisation sont précisés au devis et courent à compter de la réception de l'acompte <em>et</em> de l'ensemble des éléments nécessaires fournis par le Client (textes, visuels, logo, accès, informations). À défaut de délai spécifique au devis, le Prestataire s'efforce de livrer dans un délai raisonnable.</p>
+      <p>Les délais sont donnés à titre indicatif. Un retard raisonnable ne peut donner lieu à annulation de la commande, à retenue, ni au versement de dommages et intérêts.</p>
+      <p><span class="key">Obligations du Client</span><br />
+      Le Client s'engage à fournir, en temps utile, des contenus exacts, complets et dont il détient les droits (textes, images, marques). Il garantit le Prestataire contre tout recours de tiers à ce titre. Tout retard ou manquement du Client dans la transmission des éléments suspend d'autant les délais. Si le projet reste sans réponse du Client pendant plus de <strong>[60] jours</strong>, le Prestataire pourra clôturer le dossier et facturer les travaux réalisés.</p>
+    </article>
+
+    <!-- 08 -->
+    <article>
+      <h2 id="revisions"><span class="anchor-idx">08 ·</span> Révisions &amp; recette</h2>
+      <p>Le nombre de séries de révisions incluses est défini dans chaque devis. Toute demande de modification au-delà de ce qui est prévu, ou tout changement d'orientation après validation d'une étape, fait l'objet d'une facturation complémentaire au temps passé ou sur devis.</p>
+      <p>À la mise à disposition du livrable, le Client dispose d'un délai de <strong>7 jours</strong> pour formuler ses observations par écrit. Passé ce délai sans retour, le livrable est réputé accepté (recette tacite). La mise en ligne, l'exploitation ou l'utilisation du livrable par le Client vaut également acceptation.</p>
+    </article>
+
+    <!-- 09 -->
+    <article>
+      <h2 id="propriete"><span class="anchor-idx">09 ·</span> Propriété intellectuelle</h2>
+      <p><span class="key">Transfert au Client</span><br />
+      Conformément à l'engagement de Maison Émile — « votre site vous appartient vraiment » — la propriété du livrable final (site, code source, outils développés sur-mesure) est <strong>transférée au Client après paiement intégral</strong> du prix. Jusqu'au complet paiement, le Prestataire demeure titulaire de l'ensemble des droits sur les travaux, et le Client ne dispose d'aucun droit d'exploitation.</p>
+      <p>Sont exclus de ce transfert&nbsp;: les composants tiers, bibliothèques open-source, polices et services soumis à leurs propres licences, ainsi que le savoir-faire, les méthodes et les outils internes du Prestataire, qui restent sa propriété et peuvent être réutilisés.</p>
+      <p><span class="key">Référence</span><br />
+      Sauf refus écrit du Client, le Prestataire se réserve le droit de mentionner la réalisation et d'en présenter des visuels à titre de référence (portfolio, rubrique « Réalisations », réseaux). Les sites présentés en référence restent la propriété de leurs clients respectifs.</p>
+    </article>
+
+    <!-- 10 -->
+    <article>
+      <h2 id="hebergement"><span class="anchor-idx">10 ·</span> Hébergement &amp; nom de domaine</h2>
+      <p>L'hébergement et le nom de domaine peuvent être souscrits par le Client directement, ou commandés par l'intermédiaire du Prestataire lorsque le devis le prévoit. Dans ce dernier cas, ces services sont fournis par des prestataires tiers et soumis à leurs propres conditions ; leur coût est refacturé ou réglé directement par le Client.</p>
+      <p>Le Prestataire ne saurait être tenu responsable des interruptions, lenteurs ou défaillances imputables à l'hébergeur, au registraire du nom de domaine ou au réseau Internet. Le renouvellement du nom de domaine et de l'hébergement incombe au Client, qui est seul responsable de leur maintien en service après transfert des accès.</p>
+    </article>
+
+    <!-- 11 -->
+    <article>
+      <h2 id="maintenance"><span class="anchor-idx">11 ·</span> Maintenance &amp; assistance</h2>
+      <p>La création d'un site n'inclut pas de maintenance au-delà de la <strong>garantie de bon fonctionnement de 30 jours</strong> suivant la livraison, couvrant la correction des anomalies imputables au Prestataire (bugs), à l'exclusion de toute évolution ou ajout de fonctionnalité.</p>
+      <p>Une prestation de maintenance et de mises à jour peut être souscrite séparément, selon les modalités et le tarif fixés au devis correspondant (à la demande, au forfait ponctuel, ou par intervention). Elle ne constitue pas un abonnement obligatoire&nbsp;: le Client reste libre de l'activer, de l'interrompre ou de gérer lui-même son site.</p>
+    </article>
+
+    <!-- 12 -->
+    <article>
+      <h2 id="informatique"><span class="anchor-idx">12 ·</span> Dépannage &amp; formation</h2>
+      <p><span class="key">Service informatique &amp; dépannage</span><br />
+      Les prestations de dépannage et d'assistance informatique sont facturées au temps passé ou sur devis. Elles sont soumises à une obligation de moyens&nbsp;: le Prestataire met en œuvre son savoir-faire sans garantir un résultat dépendant de facteurs extérieurs (matériel, logiciels tiers, état du système). Le Client est invité à sauvegarder ses données avant toute intervention&nbsp;; le Prestataire ne saurait être tenu responsable d'une perte de données préexistante ou indépendante de sa prestation.</p>
+      <p><span class="key">Formation</span><br />
+      Une formation à l'utilisation des outils livrés (gestion du site, tableau de bord, prise de rendez-vous) peut être incluse au devis ou facturée séparément. Elle est dispensée à distance ou sur site selon ce qui est convenu.</p>
+    </article>
+
+    <!-- 13 -->
+    <article>
+      <h2 id="responsabilite"><span class="anchor-idx">13 ·</span> Garanties &amp; responsabilité</h2>
+      <p>Le Prestataire est tenu à une obligation de moyens et s'engage à apporter le soin et la diligence nécessaires à la bonne exécution des prestations dans le respect des règles de l'art.</p>
+      <p>Sa responsabilité ne saurait être engagée pour&nbsp;: les contenus fournis par le Client&nbsp;; l'utilisation faite du livrable après livraison&nbsp;; les dysfonctionnements imputables à un tiers, à l'hébergeur, au réseau, ou à une modification du livrable par le Client ou un tiers&nbsp;; les dommages indirects (perte d'exploitation, de chiffre d'affaires, de données, de clientèle).</p>
+      <p>En tout état de cause, et sauf faute lourde, la responsabilité du Prestataire est limitée au montant total effectivement payé par le Client au titre de la prestation concernée.</p>
+    </article>
+
+    <!-- 14 -->
+    <article>
+      <h2 id="donnees"><span class="anchor-idx">14 ·</span> Données personnelles</h2>
+      <p>Le traitement des données personnelles est conforme au RGPD et détaillé dans la <a class="linkline" href="#" data-nav="confid">politique de confidentialité</a>. Le Client dispose d'un droit d'accès, de rectification, d'effacement et d'opposition sur ses données, exerçable à <a class="linkline" href="/cdn-cgi/l/email-protection#07626a6e6b627366756672633e333547606a666e6b2964686a"><span class="__cf_email__" data-cfemail="22474f4b4e475643504357461b161062454f434b4e0c414d4f">[email&#160;protected]</span></a>.</p>
+      <p>Lorsque le livrable collecte des données pour le compte du Client (formulaires, prise de rendez-vous), le Client est responsable de traitement de ces données et s'engage à respecter la réglementation applicable vis-à-vis de ses propres utilisateurs.</p>
+    </article>
+
+    <!-- 15 -->
+    <article>
+      <h2 id="resiliation"><span class="anchor-idx">15 ·</span> Résiliation &amp; force majeure</h2>
+      <p>En cas de manquement grave de l'une des parties à ses obligations, non réparé dans les 15 jours suivant une mise en demeure restée sans effet, l'autre partie peut résilier le contrat de plein droit. Les sommes correspondant aux prestations déjà réalisées restent dues au Prestataire.</p>
+      <p>La responsabilité du Prestataire ne saurait être engagée en cas de force majeure au sens de l'article 1218 du Code civil (notamment&nbsp;: catastrophe, panne généralisée des réseaux, défaillance d'un fournisseur essentiel, maladie). Les délais sont alors suspendus pour la durée de l'événement.</p>
+    </article>
+
+    <!-- 16 -->
+    <article>
+      <h2 id="droit"><span class="anchor-idx">16 ·</span> Droit applicable &amp; litiges</h2>
+      <p>Les présentes CGV sont régies par le droit français. En cas de litige, les parties s'efforceront de trouver une solution amiable avant toute action judiciaire.</p>
+      <p>À défaut d'accord amiable, le litige sera porté devant les tribunaux français compétents. Entre professionnels, compétence est attribuée aux tribunaux du ressort du siège du Prestataire, sauf disposition d'ordre public contraire.</p>
+      <p style="margin:36px 0 0"><a class="btn solid-dark" href="#" data-nav="home">← Retour au site <span class="ar">→</span></a></p>
+    </article>
+
+  </div>
+
+  <footer class="foot" style="margin-top:80px">
+    <div class="container">
+      <div class="foot-bottom" style="margin-top:0;border-top:0">
+        <span>© 2026 Maison Émile — Création web · Rouen</span>
+        <a href="#" data-nav="legal">Mentions légales &amp; confidentialité</a>
+      </div>
+    </div>
+  </footer>
+</main>
+</div><!-- /page-cgv -->
+
+<div id="page-legal" style="display:none">
+<!-- NAV -->
+<nav class="nav scrolled" style="position:sticky;background:var(--cream);color:var(--ink);border-color:var(--line-light)">
+  <a class="logo" href="#" data-nav="home" aria-label="Émile, accueil">
+    <span class="mark"><span>E</span></span>
+    <span class="word">Émile<small>web · rouen</small></span>
+  </a>
+  <ul class="menu" style="color:var(--ink)">
+    <li><a class="navbtn" href="#" data-nav="home" style="border-color:var(--line-light)">← Retour au site</a></li>
+  </ul>
+</nav>
+
+<main class="legal" data-screen-label="Mentions légales">
+  <div class="container" style="max-width:880px">
+
+    <span class="updated">Dernière mise à jour — Juin 2026</span>
+    <h1 class="hand">Mentions légales</h1>
+    <p class="lead muted lead-block" style="max-width:72ch;margin-bottom:8px">Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), voici les informations légales relatives au site Maison Émile.</p>
+
+
+    <!-- SOMMAIRE -->
+    <nav class="toc" aria-label="Sommaire">
+      <a href="#editeur"><span class="n">01</span>Éditeur du site</a>
+      <a href="#hebergement"><span class="n">02</span>Hébergement</a>
+      <a href="#propriete"><span class="n">03</span>Propriété intellectuelle</a>
+      <a href="#donnees"><span class="n">04</span>Données personnelles (RGPD)</a>
+      <a href="#cookies"><span class="n">05</span>Cookies</a>
+      <a href="#responsabilite"><span class="n">06</span>Limitation de responsabilité</a>
+      <a href="#droit"><span class="n">07</span>Droit applicable &amp; litiges</a>
+      <a href="#credits"><span class="n">08</span>Crédits</a>
+      <a href="#contact"><span class="n">09</span>Contact</a>
+    </nav>
+
+    <!-- 01 -->
+    <article style="margin-top:48px">
+      <h2 id="editeur"><span class="anchor-idx">01 ·</span> Éditeur du site</h2>
+      <p>Le site Maison Émile est édité par&nbsp;:</p>
+      <p class="idrow">
+        <strong>Émile Taraud</strong> — Maison Émile<br />
+        Forme juridique&nbsp;: <strong>Micro-entreprise (entrepreneur individuel)</strong><br />
+        Activité&nbsp;: conception et développement de sites internet, prestations de services informatiques<br />
+        SIRET&nbsp;: <strong>106 143 134 00018 — R.C.S. Rouen</strong><br />
+        Code APE/NAF&nbsp;: <strong>6201Z — Programmation informatique</strong><br />
+        N° TVA intracommunautaire&nbsp;: non assujetti — <strong>« TVA non applicable, art. 293 B du CGI »</strong> (franchise en base)<br />
+        Adresse&nbsp;: <strong>3 square Georges Braque, 76770 Malaunay</strong><br />
+        Téléphone&nbsp;: 07&nbsp;81&nbsp;41&nbsp;41&nbsp;13<br />
+        Email&nbsp;: <a class="linkline" href="/cdn-cgi/l/email-protection#e98c8480858c9d889b889c8dd0dddba98e84888085c78a8684"><span class="__cf_email__" data-cfemail="8de8e0e4e1e8f9ecffecf8e9b4b9bfcdeae0ece4e1a3eee2e0">[email&#160;protected]</span></a>
+      </p>
+      <h3>Directeur de la publication</h3>
+      <p>Émile Taraud.</p>
+    </article>
+
+    <!-- 02 -->
+    <article>
+      <h2 id="hebergement"><span class="anchor-idx">02 ·</span> Hébergement</h2>
+      <p>Le site est hébergé par&nbsp;:</p>
+      <p class="idrow"><strong>Vercel Inc.</strong><br />
+        440 N Barranca Ave #4133, Covina, CA 91723, États-Unis<br />
+        Site web&nbsp;: <a class="linkline" href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a></p>
+    </article>
+
+    <!-- 03 -->
+    <article>
+      <h2 id="propriete"><span class="anchor-idx">03 ·</span> Propriété intellectuelle</h2>
+      <h3>Contenu du site</h3>
+      <p>L'ensemble du contenu du site (structure, textes, logos, images, graphismes, icônes, code et identité visuelle) est, sauf mention contraire, la propriété exclusive d'Émile Taraud ou de ses partenaires. Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, par quelque procédé que ce soit, est interdite sans autorisation écrite préalable.</p>
+      <h3>Marques et logos</h3>
+      <p>Les marques, logos et signes distinctifs présents sur le site sont protégés par le Code de la propriété intellectuelle. Toute reproduction non autorisée constitue une contrefaçon susceptible d'engager la responsabilité civile et pénale de son auteur.</p>
+      <h3>Réalisations &amp; liens hypertextes</h3>
+      <p>Les sites présentés dans la rubrique « Réalisations » restent la propriété de leurs clients respectifs et sont affichés à titre d'exemples. Le site peut contenir des liens vers des sites tiers&nbsp;: l'éditeur n'exerce aucun contrôle sur leur contenu et décline toute responsabilité à cet égard. Tout lien pointant vers le site Maison Émile requiert une autorisation préalable.</p>
+    </article>
+
+    <!-- 04 -->
+    <article>
+      <h2 id="donnees"><span class="anchor-idx">04 ·</span> Données personnelles (RGPD)</h2>
+      <p>Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p>
+      <p class="idrow"><strong>Responsable du traitement</strong>&nbsp;: Émile Taraud<br />
+        Email&nbsp;: <a class="linkline" href="/cdn-cgi/l/email-protection#81e4ece8ede4f5e0f3e0f4e5b8b5b3c1e6ece0e8edafe2eeec"><span class="__cf_email__" data-cfemail="c6a3abafaaa3b2a7b4a7b3a2fff2f486a1aba7afaae8a5a9ab">[email&#160;protected]</span></a><br />
+        Délégué à la protection des données (DPO)&nbsp;: non applicable (micro-entreprise)</p>
+      <p>Le détail de la collecte et du traitement de vos données figure dans notre <a class="linkline" href="#" data-nav="confid">politique de confidentialité</a>. Vous pouvez introduire une réclamation auprès de la CNIL (<a class="linkline" href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>
+    </article>
+
+    <!-- 05 -->
+    <article>
+      <h2 id="cookies"><span class="anchor-idx">05 ·</span> Cookies</h2>
+      <p>Ce site limite l'usage des cookies au strict nécessaire à son bon fonctionnement. Une mesure d'audience anonyme peut être déposée avec votre consentement. Le détail et la gestion de votre choix sont décrits dans la <a class="linkline" href="#" data-nav="confid">politique de confidentialité</a>.</p>
+    </article>
+
+    <!-- 06 -->
+    <article>
+      <h2 id="responsabilite"><span class="anchor-idx">06 ·</span> Limitation de responsabilité</h2>
+      <h3>Contenu du site</h3>
+      <p>L'éditeur s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées, qu'il peut corriger à tout moment et sans préavis. Il ne saurait toutefois garantir l'exhaustivité ou l'absence d'erreurs, ni être tenu responsable des dommages résultant de l'accès ou de l'utilisation du site.</p>
+      <h3>Disponibilité</h3>
+      <p>L'éditeur met tout en œuvre pour assurer l'accès au site, sans pour autant y être tenu. Il peut interrompre, suspendre ou modifier l'accès, notamment pour maintenance, sans préavis ni droit à indemnisation.</p>
+      <h3>Liens externes</h3>
+      <p>L'éditeur ne saurait être tenu responsable du contenu des sites tiers accessibles via des liens, ni des dommages liés à leur consultation.</p>
+    </article>
+
+    <!-- 07 -->
+    <article>
+      <h2 id="droit"><span class="anchor-idx">07 ·</span> Droit applicable &amp; litiges</h2>
+      <p>Les présentes mentions légales sont régies par le droit français. En cas de litige, les parties s'efforceront de trouver une solution amiable avant toute action judiciaire. À défaut, le litige sera porté devant les tribunaux compétents de Rouen, sauf disposition d'ordre public contraire.</p>
+    </article>
+
+    <!-- 08 -->
+    <article>
+      <h2 id="credits"><span class="anchor-idx">08 ·</span> Crédits</h2>
+      <p class="idrow"><strong>Conception &amp; développement</strong>&nbsp;: Émile Taraud (Maison Émile)<br />
+        <strong>Charte graphique</strong>&nbsp;: Émile Taraud<br />
+        <strong>Visuels</strong>&nbsp;: fournis par les clients ou réalisés par l'éditeur</p>
+    </article>
+
+    <!-- 09 -->
+    <article>
+      <h2 id="contact"><span class="anchor-idx">09 ·</span> Contact</h2>
+      <p>Pour toute question relative aux présentes mentions légales&nbsp;:</p>
+      <p class="idrow">Email&nbsp;: <a class="linkline" href="/cdn-cgi/l/email-protection#f1949c989d94859083908495c8c5c3b1969c90989ddf929e9c"><span class="__cf_email__" data-cfemail="4f2a2226232a3b2e3d2e3a2b767b7d0f28222e2623612c2022">[email&#160;protected]</span></a><br />
+        Téléphone&nbsp;: 07&nbsp;81&nbsp;41&nbsp;41&nbsp;13<br />
+        Adresse&nbsp;: 3 square Georges Braque, 76770 Malaunay<br />
+        LinkedIn&nbsp;: <a class="linkline" href="https://www.linkedin.com/in/emile-taraud-88b0363b8" target="_blank" rel="noopener">emile-taraud</a></p>
+      <p style="margin:36px 0 0"><a class="btn solid-dark" href="#" data-nav="home">← Retour au site <span class="ar">→</span></a></p>
+    </article>
+
+  </div>
+
+  <footer class="foot" style="margin-top:80px">
+    <div class="container">
+      <div class="foot-bottom" style="margin-top:0;border-top:0">
+        <span>© 2026 Maison Émile — Création web · Rouen</span>
+        <span style="display:flex;gap:22px;flex-wrap:wrap">
+          <a href="#" data-nav="confid">Confidentialité (RGPD)</a>
+          <a href="#" data-nav="cgv">CGV</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+</main>
+</div><!-- /page-legal -->
+
+<div id="page-confid" style="display:none">
+<!-- NAV -->
+<nav class="nav scrolled" style="position:sticky;background:var(--cream);color:var(--ink);border-color:var(--line-light)">
+  <a class="logo" href="#" data-nav="home" aria-label="Émile, accueil">
+    <span class="mark"><span>E</span></span>
+    <span class="word">Émile<small>web · rouen</small></span>
+  </a>
+  <ul class="menu" style="color:var(--ink)">
+    <li><a class="navbtn" href="#" data-nav="home" style="border-color:var(--line-light)">← Retour au site</a></li>
+  </ul>
+</nav>
+
+<main class="legal" data-screen-label="Confidentialité">
+  <div class="container" style="max-width:880px">
+
+    <span class="updated">Dernière mise à jour — Juin 2026</span>
+    <h1 class="hand">Politique de<br />confidentialité</h1>
+    <p class="lead muted lead-block" style="max-width:72ch;margin-bottom:8px">Maison Émile s'engage à ce que la collecte et le traitement de vos données soient conformes au RGPD (Règlement UE 2016/679) et à la loi « Informatique et Libertés ».</p>
+
+    <!-- SOMMAIRE -->
+    <nav class="toc" aria-label="Sommaire">
+      <a href="#responsable"><span class="n">01</span>Responsable du traitement</a>
+      <a href="#donnees"><span class="n">02</span>Données collectées</a>
+      <a href="#finalite"><span class="n">03</span>Finalité &amp; base légale</a>
+      <a href="#duree"><span class="n">04</span>Durée de conservation</a>
+      <a href="#destinataires"><span class="n">05</span>Destinataires</a>
+      <a href="#droits"><span class="n">06</span>Vos droits</a>
+      <a href="#cookies"><span class="n">07</span>Cookies</a>
+      <a href="#securite"><span class="n">08</span>Sécurité</a>
+    </nav>
+
+    <!-- 01 -->
+    <article style="margin-top:48px">
+      <h2 id="responsable"><span class="anchor-idx">01 ·</span> Responsable du traitement</h2>
+      <p class="idrow"><strong>Émile Taraud</strong> — Maison Émile<br />
+        3 square Georges Braque, 76770 Malaunay<br />
+        Email&nbsp;: <a class="linkline" href="/cdn-cgi/l/email-protection#81e4ece8ede4f5e0f3e0f4e5b8b5b3c1e6ece0e8edafe2eeec"><span class="__cf_email__" data-cfemail="bcd9d1d5d0d9c8ddceddc9d885888efcdbd1ddd5d092dfd3d1">[email&#160;protected]</span></a><br />
+        Délégué à la protection des données (DPO)&nbsp;: non applicable (micro-entreprise)</p>
+    </article>
+
+    <!-- 02 -->
+    <article>
+      <h2 id="donnees"><span class="anchor-idx">02 ·</span> Données collectées</h2>
+      <p>Via le formulaire de demande de devis sont collectés&nbsp;: nom, adresse email, numéro de téléphone (facultatif), type de prestation, budget indicatif (facultatif) et le message décrivant votre projet. Aucune donnée sensible n'est demandée. Aucune donnée n'est collectée à votre insu.</p>
+    </article>
+
+    <!-- 03 -->
+    <article>
+      <h2 id="finalite"><span class="anchor-idx">03 ·</span> Finalité &amp; base légale</h2>
+      <p>Ces données servent uniquement à répondre à votre demande, établir un devis et assurer le suivi de la relation commerciale. La base légale est votre consentement et l'exécution de mesures précontractuelles prises à votre demande.</p>
+    </article>
+
+    <!-- 04 -->
+    <article>
+      <h2 id="duree"><span class="anchor-idx">04 ·</span> Durée de conservation</h2>
+      <p>Les données issues des demandes de devis sont conservées le temps de l'échange commercial, puis archivées ou supprimées dans un délai maximum de 3 ans après le dernier contact.</p>
+    </article>
+
+    <!-- 05 -->
+    <article>
+      <h2 id="destinataires"><span class="anchor-idx">05 ·</span> Destinataires</h2>
+      <p>Vos données sont destinées au seul éditeur du site. Elles ne sont ni vendues, ni cédées, ni louées à des tiers. L'acheminement des emails du formulaire peut transiter par le service technique EmailJS, agissant comme sous-traitant.</p>
+    </article>
+
+    <!-- 06 -->
+    <article>
+      <h2 id="droits"><span class="anchor-idx">06 ·</span> Vos droits</h2>
+      <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité de vos données. Pour les exercer, écrivez à <a class="linkline" href="/cdn-cgi/l/email-protection#77121a1e1b120316051602134e434537101a161e1b5914181a"><span class="__cf_email__" data-cfemail="2540484c49405144574450411c1117654248444c490b464a48">[email&#160;protected]</span></a>. Vous pouvez également introduire une réclamation auprès de la CNIL (<a class="linkline" href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>).</p>
+    </article>
+
+    <!-- 07 -->
+    <article>
+      <h2 id="cookies"><span class="anchor-idx">07 ·</span> Cookies</h2>
+      <p>Ce site limite l'usage des cookies au strict nécessaire. Un cookie de mesure d'audience peut être déposé, avec votre consentement, afin de comprendre la fréquentation de façon anonyme. Lors de votre première visite, un bandeau vous permet d'accepter ou de refuser. Vous pouvez à tout moment modifier votre choix en effaçant les cookies de votre navigateur. Les cookies strictement nécessaires au fonctionnement du site ne requièrent pas de consentement.</p>
+    </article>
+
+    <!-- 08 -->
+    <article>
+      <h2 id="securite"><span class="anchor-idx">08 ·</span> Sécurité</h2>
+      <p>L'éditeur met en œuvre des mesures raisonnables pour protéger vos données contre tout accès, altération ou divulgation non autorisés. Aucune transmission sur Internet ne pouvant être garantie sûre à 100 %, l'éditeur ne peut toutefois assurer une sécurité absolue.</p>
+      <p style="margin:36px 0 0"><a class="btn solid-dark" href="#" data-nav="legal">← Mentions légales <span class="ar">→</span></a></p>
+    </article>
+
+  </div>
+
+  <footer class="foot" style="margin-top:80px">
+    <div class="container">
+      <div class="foot-bottom" style="margin-top:0;border-top:0">
+        <span>© 2026 Maison Émile — Création web · Rouen</span>
+        <span style="display:flex;gap:22px;flex-wrap:wrap">
+          <a href="#" data-nav="legal">Mentions légales</a>
+          <a href="#" data-nav="cgv">CGV</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+</main>
+</div><!-- /page-confid -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ---- Mono floating shapes ---- */
+const SHAPES = [
+  { w: 620, h: 150, rot: 12,  css: "left:-8%; top:14%;",  delay: 0.30 },
+  { w: 520, h: 124, rot: -15, css: "right:-6%; top:70%;", delay: 0.50 },
+  { w: 320, h: 86,  rot: -8,  css: "left:7%; bottom:9%;", delay: 0.40 },
+  { w: 220, h: 64,  rot: 20,  css: "right:15%; top:11%;", delay: 0.60 },
+  { w: 160, h: 46,  rot: -25, css: "left:24%; top:7%;",   delay: 0.70 },
+];
+document.querySelectorAll('[data-shapes]').forEach(host => {
+  SHAPES.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'shape';
+    el.style.cssText = s.css;
+    el.style.setProperty('--rot', s.rot + 'deg');
+    el.style.setProperty('--rot-start', (s.rot - 15) + 'deg');
+    el.style.animationDelay = s.delay + 's';
+    const f = document.createElement('div'); f.className = 'floater'; f.style.animationDelay = s.delay + 's';
+    const p = document.createElement('div'); p.className = 'pill';
+    p.style.width = s.w + 'px'; p.style.height = s.h + 'px';
+    f.appendChild(p); el.appendChild(f); host.appendChild(el);
+  });
+});
+
+/* ---- Nav scroll state ---- */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+/* ---- Reveal on scroll ---- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---- Form → EmailJS ----
+   ⚠️  À RENSEIGNER (3 valeurs depuis ton compte EmailJS) :
+   1. PUBLIC_KEY     → EmailJS → Account → General → "Public Key"
+   2. TEMPLATE_OWNER → ID du template qui T'envoie la demande (ex: template_xxxx)
+   3. TEMPLATE_CLIENT→ ID du template de confirmation envoyé AU CLIENT
+   Le Service ID est déjà rempli.                                            */
+const EMAILJS = {
+  PUBLIC_KEY:      'taiezIIi9rYiAXbaZ',
+  SERVICE_ID:      'service_t5pgtc7',
+  TEMPLATE_OWNER:  'template_wqrfhlh',
+  TEMPLATE_CLIENT: 'template_k6uwppp',
+  OWNER_EMAIL:     'emiletaraud952@gmail.com',
+};
+if (window.emailjs) emailjs.init({ publicKey: EMAILJS.PUBLIC_KEY });
+
+const form = document.getElementById('devisForm');
+const note = document.getElementById('formNote');
+const submitBtn = form.querySelector('button[type="submit"]');
+const submitLabel = submitBtn.innerHTML;
+
+function showNote(msg, ok) {
+  note.style.display = 'block';
+  note.textContent = msg;
+  note.style.color = ok ? '' : '#b3261e';
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!form.checkValidity()) { form.reportValidity(); return; }
+
+  const data = new FormData(form);
+  const params = {
+    nom:         data.get('nom') || '',
+    email:       data.get('email') || '',
+    tel:         data.get('tel') || '—',
+    prestation:  data.get('prestation') || '—',
+    budget:      data.get('budget') || '—',
+    message:     data.get('message') || '',
+    date:        new Date().toLocaleString('fr-FR'),
+    owner_email: EMAILJS.OWNER_EMAIL,   // destinataire = toi (template owner)
+    to_email:    data.get('email') || '', // destinataire = client (template confirmation)
+    reply_to:    data.get('email') || '',
+  };
+
+  // Garde-fou si les identifiants ne sont pas encore renseignés
+  if (!window.emailjs || EMAILJS.PUBLIC_KEY.startsWith('TA_') || EMAILJS.TEMPLATE_OWNER.startsWith('TON_')) {
+    showNote('Le formulaire n’est pas encore configuré (clés EmailJS manquantes). Écrivez-moi à ' + EMAILJS.OWNER_EMAIL + '.', false);
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = 'Envoi en cours…';
+  try {
+    // 1) Notification pour Émile (apparaît dans ta boîte + dashboard EmailJS)
+    await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_OWNER, params);
+    // 2) Confirmation pour le client
+    await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_CLIENT, params);
+
+    form.reset();
+    showNote('Merci ' + (params.nom || '') + ' ! Votre demande a bien été envoyée. Un email de confirmation vous a été adressé.', true);
+  } catch (err) {
+    console.error('EmailJS error:', err);
+    showNote('Oups, l’envoi a échoué. Réessayez ou écrivez-moi directement à ' + EMAILJS.OWNER_EMAIL + '.', false);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = submitLabel;
+  }
+});
+
+/* ---- Cookie banner ---- */
+const cookie = document.getElementById('cookie');
+if (!localStorage.getItem('emile_cookie')) { setTimeout(() => cookie.classList.remove('hide'), 1400); }
+const closeCookie = (v) => { localStorage.setItem('emile_cookie', v); cookie.classList.add('hide'); };
+document.getElementById('ckAccept').addEventListener('click', () => closeCookie('accept'));
+document.getElementById('ckRefuse').addEventListener('click', () => closeCookie('refuse'));
+
+/* ---- Lightning split (comparaison abonnement vs paiement unique) ---- */
+(function(){
+  const root = document.getElementById('lsplit');
+  const left = document.getElementById('lsplitLeft');
+  if (!root || !left) return;
+  const arcs = ['lsArcBloom','lsArcOuter','lsArcMid','lsArcCore'].map(id => document.getElementById(id));
+
+  const CFG = {
+    segments: 46,
+    clipOffset: 25,      // décalage diagonal entre haut et bas (%)
+    easeStiffness: 6,
+    amps:   [0.5, -0.9, 0.7],
+    freqs:  [0.7, 2.7, 3.9],
+    speeds: [-1.32, 0.42, 0.95],
+    shimmer: { speed: 4.2, freq: 8.5, amp: 0.3 },
+    timeClamp: 0.05,
+  };
+  const REST = 60;                 // position au repos
+  let target = REST;               // position visée
+  let pos = REST;                  // position lissée
+  let time = 0;
+  const clamp = (v)=>Math.max(0, Math.min(100, v));
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function buildWave(){
+    const topX = clamp(pos);
+    const bottomX = clamp(pos - CFG.clipOffset);
+    let poly = '';
+    let clip = '';
+    for (let i=0;i<=CFG.segments;i++){
+      const tN = i/CFG.segments;
+      const y = tN*100;
+      const base = topX*(1-tN) + bottomX*tN;
+      let off = 0;
+      for (let k=0;k<CFG.amps.length;k++){
+        off += CFG.amps[k]*Math.sin(2*Math.PI*(CFG.freqs[k]*tN + CFG.speeds[k]*time) + k*1.3);
+      }
+      off += CFG.shimmer.amp*Math.sin(2*Math.PI*(CFG.shimmer.freq*tN + CFG.shimmer.speed*time));
+      const x = clamp(base + off);
+      poly += x.toFixed(2)+','+y.toFixed(2)+' ';
+      clip += x.toFixed(2)+'% '+y.toFixed(2)+'%, ';
+    }
+    arcs.forEach(a => a && a.setAttribute('points', poly.trim()));
+    left.style.clipPath = 'polygon(0% 0%, '+clip+'0% 100%)';
+  }
+
+  let last = performance.now();
+  function tick(now){
+    const dt = Math.min(CFG.timeClamp, (now-last)/1000);
+    last = now;
+    time += dt;
+    pos += (target - pos) * (1 - Math.exp(-CFG.easeStiffness*dt));
+    buildWave();
+    raf = requestAnimationFrame(tick);
+  }
+  let raf;
+
+  function onMove(e){
+    const rect = root.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX);
+    const x = ((cx - rect.left)/rect.width)*100;
+    target = x < 50 ? 110 : 20;   // survol gauche → montre l'abonnement ; droite → montre ta solution
+  }
+  function onLeave(){ target = REST; }
+
+  root.addEventListener('mousemove', onMove);
+  root.addEventListener('mouseenter', onMove);
+  root.addEventListener('mouseleave', onLeave);
+  root.addEventListener('touchstart', onMove, {passive:true});
+  root.addEventListener('touchmove', onMove, {passive:true});
+  root.addEventListener('touchend', onLeave);
+
+  if (reduce){ buildWave(); }   // statique si mouvement réduit
+  else { raf = requestAnimationFrame(tick); }
+})();
+
+/* ---- Routeur interne : Accueil / CGV / Mentions / Confidentialité ---- */
+(function(){
+  var pages = {
+    home:   document.getElementById('page-home'),
+    cgv:    document.getElementById('page-cgv'),
+    legal:  document.getElementById('page-legal'),
+    confid: document.getElementById('page-confid')
+  };
+  function show(name){
+    Object.keys(pages).forEach(function(k){
+      if (pages[k]) pages[k].style.display = (k === name) ? '' : 'none';
+    });
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-nav]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      show(a.getAttribute('data-nav') || 'home');
+    });
+  });
+})();
+</script>
+</body>
+</html>
