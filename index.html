@@ -76,15 +76,10 @@ img { display: block; max-width: 100%; }
 .on-black .muted, .muted-d { color: var(--muted-dark); }
 
 /* ---------- sections / themes ---------- */
-.section { padding: clamp(32px, 4vw, 64px) 0; position: relative; }
+.section { padding: clamp(14px, 2vw, 19px) 0; position: relative; }
 .on-black { background: var(--black); color: var(--cream); }
 .on-cream { background: var(--cream); color: var(--ink); }
 .section-head { margin-bottom: clamp(40px, 6vw, 80px); }
-
-/* ---------- fondu noir/blanc entre les sections ---------- */
-.fade { height: clamp(48px, 6vw, 96px); }
-.fade-bc { background: linear-gradient(to bottom, var(--black), var(--cream)); }
-.fade-cb { background: linear-gradient(to bottom, var(--cream), var(--black)); }
 
 /* ---------- buttons ---------- */
 .btn {
@@ -309,7 +304,7 @@ img { display: block; max-width: 100%; }
 
 /* ---------- contact / footer ---------- */
 #devis { background: #E0D6C0; }   /* fond beige (Grège / taupe doux) — options : #EFE7D6 / #E7DEC9 / #E0D6C0 / #ECE2D2 */
-.foot { background: var(--black); color: var(--cream); padding: clamp(40px,6vw,80px) 0 40px; }
+.foot { background: var(--black); color: var(--cream); padding: clamp(14px,2vw,19px) 0 40px; }
 .foot .cta-big { font-family: var(--font-hand); font-weight: 700; font-size: clamp(52px,10vw,150px); line-height: .9; }
 .foot .cta-big em { font-family: var(--font-serif); font-style: italic; font-weight: 500; }
 .foot-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; margin-top: clamp(40px,6vw,80px);
@@ -1051,8 +1046,6 @@ img { display: block; max-width: 100%; }
   <div class="vign"></div>
 </header>
 
-<div class="fade fade-bc" aria-hidden="true"></div>
-
 <!-- ===================== SERVICES ===================== -->
 <section class="section on-cream" id="services">
   <div class="container">
@@ -1080,8 +1073,6 @@ img { display: block; max-width: 100%; }
   </div>
 </section>
 
-<div class="fade fade-cb" aria-hidden="true"></div>
-
 <!-- ===================== HISTOIRE ===================== -->
 <section class="section on-black" id="histoire">
   <div class="container">
@@ -1099,8 +1090,6 @@ img { display: block; max-width: 100%; }
     </div>
   </div>
 </section>
-
-<div class="fade fade-bc" aria-hidden="true"></div>
 
 <!-- ===================== SANS ABONNEMENT ===================== -->
 <section class="section on-cream" id="calcul">
@@ -1148,8 +1137,6 @@ img { display: block; max-width: 100%; }
   </div>
 </section>
 
-<div class="fade fade-cb" aria-hidden="true"></div>
-
 <!-- ===================== RÉALISATIONS ===================== -->
 <section class="section on-black" id="realisations">
   <div class="container">
@@ -1177,8 +1164,6 @@ img { display: block; max-width: 100%; }
     </div>
   </div>
 </section>
-
-<div class="fade fade-bc" aria-hidden="true"></div>
 
 <!-- ===================== DEVIS ===================== -->
 <section class="section on-cream" id="devis">
@@ -1216,8 +1201,6 @@ img { display: block; max-width: 100%; }
     </div>
   </div>
 </section>
-
-<div class="fade fade-cb" aria-hidden="true"></div>
 
 <!-- ===================== CONTACT / FOOTER ===================== -->
 <footer class="foot" id="contact" data-screen-label="Contact / pied de page">
