@@ -5,6 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Maison Émile — Automatisation, gestion de stock & sites sur-mesure · Rouen</title>
 <meta name="description" content="Maison Émile conçoit des outils d'automatisation et d'organisation sur-mesure — gestion de stock, planning d'équipe, alertes, tableaux de bord — pour les entreprises avec une vraie complexité à gérer (entrepôts, logistique, distribution). Sites web sur-mesure également, comme point d'entrée. À Rouen et à distance. Payé une fois, sans abonnement." />
+<link rel="canonical" href="https://maison-emile.vercel.app/" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjMxIiBmaWxsPSIjMGMwYjBhIi8+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmNGYxZWEiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjQ1Ii8+Cjx0ZXh0IHg9IjMzIiB5PSI0MyIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsICdUaW1lcyBOZXcgUm9tYW4nLCBzZXJpZiIgZm9udC1zdHlsZT0iaXRhbGljIiBmb250LXNpemU9IjMyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZjRmMWVhIj5NPC90ZXh0Pgo8L3N2Zz4K" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Maison Émile" />
+<meta property="og:title" content="Maison Émile — Automatisation, gestion de stock & sites sur-mesure · Rouen" />
+<meta property="og:description" content="Outils d'automatisation et d'organisation sur-mesure (stock, planning d'équipe, alertes, tableaux de bord) pour entreprises avec une vraie complexité de gestion. Sites web sur-mesure également, comme point d'entrée. Rouen et à distance." />
+<meta property="og:url" content="https://maison-emile.vercel.app/" />
+<meta property="og:locale" content="fr_FR" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Maison Émile — Automatisation, gestion de stock & sites sur-mesure" />
+<meta name="twitter:description" content="Outils d'automatisation et d'organisation sur-mesure (stock, planning d'équipe, alertes, tableaux de bord) pour entreprises avec une vraie complexité de gestion. À Rouen et à distance." />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Maison Émile",
+  "url": "https://maison-emile.vercel.app/",
+  "email": "mailto:emiletaraud942@gmail.com",
+  "telephone": "+33781414913",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "3 square Georges Braque",
+    "postalCode": "76770",
+    "addressLocality": "Malaunay",
+    "addressCountry": "FR"
+  },
+  "areaServed": "Rouen et alentours, France",
+  "description": "Conception d'outils d'automatisation et d'organisation sur-mesure (gestion de stock, planning d'équipe, alertes, tableaux de bord) et de sites web sur-mesure pour professionnels.",
+  "sameAs": ["https://www.linkedin.com/in/emile-taraud-88b0363b8"]
+}
+</script>
 <style>
 /* ===========================================================
    ÉMILE — Site (hi-fi)
@@ -149,6 +180,40 @@ img { display: block; max-width: 100%; }
 }
 .nav .menu .navbtn:hover { background: var(--cream); color: var(--black); border-color: var(--cream); }
 @media (max-width: 820px){ .nav .menu li.hideable { display: none; } .nav { padding: 16px 22px; } }
+
+/* ---------- mobile burger + panel ---------- */
+.burger-item { display: none; }
+.burger-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(244,241,234,.4);
+  background: transparent; color: currentColor; display: grid; place-items: center; cursor: pointer;
+  position: relative; padding: 0;
+}
+.burger-btn .bars { position: relative; width: 18px; height: 1.5px; background: currentColor; transition: background .2s var(--ease); }
+.burger-btn .bars::before, .burger-btn .bars::after {
+  content: ""; position: absolute; left: 0; width: 18px; height: 1.5px; background: currentColor;
+  transition: transform .25s var(--ease);
+}
+.burger-btn .bars::before { transform: translateY(-6px); }
+.burger-btn .bars::after { transform: translateY(6px); }
+.nav.nav-open .burger-btn .bars { background: transparent; }
+.nav.nav-open .burger-btn .bars::before { transform: rotate(45deg); }
+.nav.nav-open .burger-btn .bars::after { transform: rotate(-45deg); }
+
+.mobile-panel {
+  position: fixed; inset: 0; z-index: 99; background: rgba(12,11,10,0.97); backdrop-filter: blur(14px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px;
+  opacity: 0; pointer-events: none; transform: translateY(-10px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.mobile-panel.open { opacity: 1; pointer-events: auto; transform: none; }
+.mobile-panel a { color: var(--cream); text-decoration: none; }
+.mobile-panel .mp-link { font-family: var(--font-hand); font-size: clamp(30px, 8vw, 44px); font-weight: 700; }
+.mobile-panel .navbtn {
+  font-family: var(--font-sans); font-size: 15px; font-weight: 600; padding: 14px 30px;
+  border: 1px solid rgba(244,241,234,.4); border-radius: 999px; margin-top: 12px;
+}
+@media (min-width: 821px){ .burger-item, .mobile-panel { display: none !important; } }
+@media (max-width: 820px){ .burger-item { display: flex; } .nav .menu li.cta-item { display: none; } }
 
 /* ---------- HERO (black, animated mono shapes) ---------- */
 .hero {
@@ -1025,9 +1090,21 @@ img { display: block; max-width: 100%; }
     <li class="hideable"><a href="#histoire">L'histoire</a></li>
     <li class="hideable"><a href="#realisations">Réalisations</a></li>
     <li class="hideable"><a href="#devis">Devis</a></li>
-    <li><a class="navbtn" href="#devis">Demander un devis</a></li>
+    <li class="cta-item"><a class="navbtn" href="#devis">Demander un devis</a></li>
+    <li class="burger-item">
+      <button class="burger-btn" id="navBurger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobilePanel"><span class="bars"></span></button>
+    </li>
   </ul>
 </nav>
+
+<!-- ===================== MENU MOBILE (plein écran) ===================== -->
+<div class="mobile-panel" id="mobilePanel">
+  <a class="mp-link" href="#services">Services</a>
+  <a class="mp-link" href="#histoire">L'histoire</a>
+  <a class="mp-link" href="#realisations">Réalisations</a>
+  <a class="mp-link" href="#devis">Devis</a>
+  <a class="navbtn" href="#devis">Demander un devis</a>
+</div>
 
 <!-- ===================== HERO ===================== -->
 <header class="hero" id="top" data-screen-label="Héro">
@@ -1252,7 +1329,7 @@ img { display: block; max-width: 100%; }
 
 <!-- ===================== COOKIE BANNER ===================== -->
 <div class="cookie hide" id="cookie">
-  <p>Ce site utilise un minimum de cookies pour mesurer son audience. <a href="#" data-nav="confid">En savoir plus</a>.</p>
+  <p>Ce site utilise uniquement des cookies strictement nécessaires à son fonctionnement, aucun cookie de mesure d'audience n'est déposé. <a href="#" data-nav="confid">En savoir plus</a>.</p>
   <div class="acts">
     <button class="mini" id="ckRefuse">Refuser</button>
     <button class="mini ok" id="ckAccept">Accepter</button>
@@ -1552,7 +1629,7 @@ img { display: block; max-width: 100%; }
     <!-- 05 -->
     <article>
       <h2 id="cookies"><span class="anchor-idx">05 ·</span> Cookies</h2>
-      <p>Ce site limite l'usage des cookies au strict nécessaire à son bon fonctionnement. Une mesure d'audience anonyme peut être déposée avec votre consentement. Le détail et la gestion de votre choix sont décrits dans la <a class="linkline" href="#" data-nav="confid">politique de confidentialité</a>.</p>
+      <p>Ce site utilise uniquement des cookies strictement nécessaires à son bon fonctionnement. Aucun cookie de mesure d'audience ou de suivi publicitaire n'est déposé à ce jour. Le détail est décrit dans la <a class="linkline" href="#" data-nav="confid">politique de confidentialité</a>.</p>
     </article>
 
     <!-- 06 -->
@@ -1682,7 +1759,7 @@ img { display: block; max-width: 100%; }
     <!-- 07 -->
     <article>
       <h2 id="cookies"><span class="anchor-idx">07 ·</span> Cookies</h2>
-      <p>Ce site limite l'usage des cookies au strict nécessaire. Un cookie de mesure d'audience peut être déposé, avec votre consentement, afin de comprendre la fréquentation de façon anonyme. Lors de votre première visite, un bandeau vous permet d'accepter ou de refuser. Vous pouvez à tout moment modifier votre choix en effaçant les cookies de votre navigateur. Les cookies strictement nécessaires au fonctionnement du site ne requièrent pas de consentement.</p>
+      <p>Ce site utilise uniquement des cookies techniques strictement nécessaires à son fonctionnement (mémorisation locale de votre choix concernant le bandeau d'information). <strong>Aucun cookie de mesure d'audience, de publicité ou de suivi n'est déposé à ce jour.</strong> Si cela venait à évoluer, cette politique serait mise à jour et, le cas échéant, votre consentement vous serait demandé au préalable.</p>
     </article>
 
     <!-- 08 -->
@@ -1736,6 +1813,22 @@ document.querySelectorAll('[data-shapes]').forEach(host => {
 const nav = document.getElementById('nav');
 const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
 onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+/* ---- Menu mobile (burger) ---- */
+const navBurger = document.getElementById('navBurger');
+const mobilePanel = document.getElementById('mobilePanel');
+if (navBurger && mobilePanel) {
+  const setPanel = (open) => {
+    nav.classList.toggle('nav-open', open);
+    mobilePanel.classList.toggle('open', open);
+    navBurger.setAttribute('aria-expanded', String(open));
+    navBurger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  navBurger.addEventListener('click', () => setPanel(!mobilePanel.classList.contains('open')));
+  mobilePanel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setPanel(false)));
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setPanel(false); });
+}
 
 /* ---- Reveal on scroll ---- */
 const io = new IntersectionObserver((entries) => {
