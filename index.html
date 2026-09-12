@@ -225,27 +225,8 @@ img { display: block; max-width: 100%; }
   radial-gradient(50% 50% at 85% 80%, rgba(244,241,234,0.05), transparent 70%); }
 .hero .vign { position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(to top, var(--black), transparent 26%, transparent 72%, rgba(12,11,10,.7)); }
-.hero-shapes { position: absolute; inset: 0; overflow: hidden; }
+.hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .hero-inner { position: relative; z-index: 5; width: 100%; }
-
-.shape { position: absolute; opacity: 0; animation: shapeIn 2.2s cubic-bezier(.23,.86,.39,.96) forwards; }
-.shape .floater { animation: floaty 13s ease-in-out infinite; }
-.shape .pill {
-  width: 100%; height: 100%; border-radius: 999px; position: relative;
-  background: linear-gradient(105deg, rgba(244,241,234,0.10), transparent 75%);
-  backdrop-filter: blur(2px);
-  border: 1px solid rgba(244,241,234,0.16);
-  box-shadow: 0 8px 40px rgba(0,0,0,.35), inset 0 0 30px rgba(244,241,234,.04);
-}
-.shape .pill::after { content: ""; position: absolute; inset: 0; border-radius: 999px;
-  background: radial-gradient(circle at 35% 35%, rgba(244,241,234,0.12), transparent 70%); }
-@keyframes shapeIn { from { opacity: 0; transform: translateY(-140px) rotate(var(--rot-start,-15deg)); }
-  to { opacity: 1; transform: translateY(0) rotate(var(--rot,0deg)); } }
-@keyframes floaty { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(16px);} }
-@media (prefers-reduced-motion: reduce){
-  .shape { opacity:1; animation:none; transform: rotate(var(--rot,0deg)); }
-  .shape .floater { animation:none; }
-}
 
 .hero .badge {
   display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px;
@@ -1109,7 +1090,7 @@ img { display: block; max-width: 100%; }
 <!-- ===================== HERO ===================== -->
 <header class="hero" id="top" data-screen-label="Héro">
   <div class="glow"></div>
-  <div class="hero-shapes" data-shapes></div>
+  <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
   <div class="container hero-inner">
     <span class="badge"><span class="dot"></span>Automatisation &amp; outils de gestion sur-mesure · Rouen</span>
     <h1 class="hand h-xl">Vos outils,<br /><em>vraiment</em> à vous.</h1>
@@ -1792,28 +1773,100 @@ img { display: block; max-width: 100%; }
 </div><!-- /page-confid -->
 
 <script>
-/* ---- Mono floating shapes ---- */
-const SHAPES = [
-  { w: 620, h: 150, rot: 12,  css: "left:-8%; top:14%;",  delay: 0.30 },
-  { w: 520, h: 124, rot: -15, css: "right:-6%; top:70%;", delay: 0.50 },
-  { w: 320, h: 86,  rot: -8,  css: "left:7%; bottom:9%;", delay: 0.40 },
-  { w: 220, h: 64,  rot: 20,  css: "right:15%; top:11%;", delay: 0.60 },
-  { w: 160, h: 46,  rot: -25, css: "left:24%; top:7%;",   delay: 0.70 },
-];
-document.querySelectorAll('[data-shapes]').forEach(host => {
-  SHAPES.forEach(s => {
-    const el = document.createElement('div');
-    el.className = 'shape';
-    el.style.cssText = s.css;
-    el.style.setProperty('--rot', s.rot + 'deg');
-    el.style.setProperty('--rot-start', (s.rot - 15) + 'deg');
-    el.style.animationDelay = s.delay + 's';
-    const f = document.createElement('div'); f.className = 'floater'; f.style.animationDelay = s.delay + 's';
-    const p = document.createElement('div'); p.className = 'pill';
-    p.style.width = s.w + 'px'; p.style.height = s.h + 'px';
-    f.appendChild(p); el.appendChild(f); host.appendChild(el);
-  });
-});
+/* ---- Hero black hole (canvas) ---- */
+(function () {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COUNT = 140;
+  let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let particles = [];
+  let running = false, raf = null;
+  let CENTER = { xr: 0.74, yr: 0.48 };
+  let coreScale = 0.16, alphaScale = 1;
+
+  const rand = (min, max) => min + Math.random() * (max - min);
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#0c0b0a';
+    ctx.fillRect(0, 0, w, h);
+
+    const narrow = window.innerWidth < 760;
+    CENTER = narrow ? { xr: 0.94, yr: 0.4 } : { xr: 0.74, yr: 0.48 };
+    coreScale = narrow ? 0.11 : 0.16;
+    alphaScale = narrow ? 0.6 : 1;
+  }
+
+  function makeParticle(far) {
+    return {
+      angle: rand(0, Math.PI * 2),
+      radius: far ? rand(0.35, 0.6) * Math.max(w, h) : rand(40, 0.6 * Math.max(w, h)),
+      speed: rand(0.6, 1.6) * (Math.random() < 0.5 ? 1 : -1),
+      size: rand(0.6, 1.7),
+      alpha: rand(0.18, 0.6),
+    };
+  }
+
+  function initParticles() {
+    particles = Array.from({ length: COUNT }, () => makeParticle(true));
+  }
+
+  function frame() {
+    if (!running) return;
+    const cx = w * CENTER.xr, cy = h * CENTER.yr;
+
+    ctx.fillStyle = 'rgba(12,11,10,0.16)';
+    ctx.fillRect(0, 0, w, h);
+
+    const coreR = Math.min(w, h) * coreScale;
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+    core.addColorStop(0, `rgba(244,241,234,${(0.32 * alphaScale).toFixed(3)})`);
+    core.addColorStop(0.5, `rgba(244,241,234,${(0.08 * alphaScale).toFixed(3)})`);
+    core.addColorStop(1, 'rgba(244,241,234,0)');
+    ctx.fillStyle = core;
+    ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2); ctx.fill();
+
+    particles.forEach((p) => {
+      const pull = 0.4 + (1 - Math.min(p.radius, 500) / 500) * 1.6;
+      p.radius -= pull;
+      p.angle += p.speed / Math.max(p.radius, 24);
+      if (p.radius < 8) Object.assign(p, makeParticle(true));
+
+      const x = cx + Math.cos(p.angle) * p.radius;
+      const y = cy + Math.sin(p.angle) * p.radius * 0.5;
+      const fade = Math.min(1, p.radius / 50);
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(244,241,234,${(p.alpha * fade * alphaScale).toFixed(3)})`;
+      ctx.arc(x, y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
+  function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
+
+  resize();
+  initParticles();
+  window.addEventListener('resize', resize);
+
+  if (reduceMotion) {
+    running = true; frame(); running = false;
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? start() : stop()));
+    }, { threshold: 0.01 });
+    io.observe(canvas);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  }
+})();
 
 /* ---- Nav scroll state ---- */
 const nav = document.getElementById('nav');
