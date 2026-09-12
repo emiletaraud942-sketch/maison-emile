@@ -305,22 +305,63 @@ img { display: block; max-width: 100%; }
 .cmp li { display: flex; gap: 12px; align-items: baseline; font-size: 15px; }
 .cmp li .b { font-family: var(--font-serif); font-style: italic; opacity: .7; }
 
-/* ---------- réalisations ---------- */
-.real { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px,4vw,64px) clamp(28px,4vw,48px); }
-@media (max-width: 760px){ .real { grid-template-columns: 1fr; } }
-.real-item { text-decoration: none; display: block; }
-.real-item image-slot, .real-item .imgph { width: 100%; aspect-ratio: 16/11; display: block; }
-.real-item .site-thumb { width: 100%; aspect-ratio: 16/11; display: block; position: relative; overflow: hidden; background: #fff; border-radius: 16px; }
-.real-item .site-thumb iframe { position: absolute; top: 0; left: 0; width: 250%; height: 250%; border: 0; transform: scale(.4); transform-origin: top left; pointer-events: none; }
-.real-item:hover .site-thumb iframe { filter: brightness(1.03); }
-.real-item .cap { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; gap: 16px;
-  border-bottom: 1px solid var(--line-light); padding-bottom: 14px; transition: border-color .25s; }
-.on-black .real-item .cap { border-color: var(--line-dark); }
-.real-item:hover .cap { border-color: currentColor; }
-.real-item h3 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(24px,2.6vw,34px); margin: 0; }
-.real-item .tagm { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; opacity: .55; }
-.real-item:nth-child(even) { margin-top: clamp(0px, 6vw, 80px); }
-@media (max-width:760px){ .real-item:nth-child(even){ margin-top: 0; } }
+/* ---------- réalisations (carrousel coverflow) ---------- */
+.real-stage-wrap { position: relative; }
+.real-stage {
+  position: relative; width: 100%; height: clamp(280px, 40vw, 420px);
+  display: flex; align-items: center; justify-content: center; perspective: 1500px;
+}
+.real-card {
+  position: absolute; width: min(78vw, 440px); aspect-ratio: 16/11; border-radius: 16px;
+  overflow: hidden; background: #fff; border: 1px solid var(--line-dark);
+  transform-origin: center center;
+  transition: transform .7s cubic-bezier(.25,1,.5,1), opacity .7s cubic-bezier(.25,1,.5,1), filter .7s ease;
+  will-change: transform, opacity, filter;
+}
+.real-card .frame-wrap { position: absolute; inset: 0; overflow: hidden; }
+.real-card iframe {
+  position: absolute; top: 0; left: 0; width: 250%; height: 250%; border: 0;
+  transform: scale(.4); transform-origin: top left; pointer-events: none;
+}
+.real-card:not(.is-center) { cursor: pointer; }
+.real-card .veil { position: absolute; inset: 0; background: rgba(12,11,10,0); transition: background .4s ease; }
+.real-card:not(.is-center) .veil { background: rgba(12,11,10,.18); }
+
+.real-caption {
+  margin-top: 26px; min-height: 96px; display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 8px; opacity: 0; transform: translateY(8px);
+  transition: opacity .4s ease .12s, transform .4s ease .12s;
+}
+.real-caption.is-visible { opacity: 1; transform: none; }
+.real-caption h3 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(22px,2.6vw,30px); margin: 0; }
+.real-caption .tagm { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted-dark); }
+.real-caption .desc { font-size: 14px; line-height: 1.5; color: var(--muted-dark); max-width: 46ch; margin: 2px 0 4px; }
+.real-caption .visit {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--black);
+  background: var(--cream); border: 1px solid var(--cream); border-radius: 999px;
+  padding: 10px 22px; font-size: 13px; font-weight: 600; transition: background .2s, color .2s;
+}
+.real-caption .visit:hover { background: transparent; color: var(--cream); }
+
+.real-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--line-dark); background: rgba(12,11,10,.5); color: var(--cream);
+  display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(6px); z-index: 40;
+  transition: background .2s, border-color .2s, color .2s; font-size: 18px;
+}
+.real-arrow:hover { background: var(--cream); color: var(--black); border-color: var(--cream); }
+.real-arrow.prev { left: clamp(-4px, 1vw, 8px); }
+.real-arrow.next { right: clamp(-4px, 1vw, 8px); }
+@media (max-width: 640px){ .real-arrow { width: 38px; height: 38px; } }
+
+.real-dots { display: flex; justify-content: center; gap: 9px; margin-top: 30px; }
+.real-dots .dot {
+  height: 7px; width: 7px; border-radius: 999px; border: 0; cursor: pointer; padding: 0;
+  background: var(--line-dark); transition: width .3s ease, background .3s ease;
+}
+.real-dots .dot.is-active { width: 26px; background: var(--cream); }
+
+@media (prefers-reduced-motion: reduce){ .real-card, .real-caption { transition: none; } }
 
 /* image placeholder fallback look (intentional, monochrome) */
 .imgph {
@@ -1215,30 +1256,13 @@ img { display: block; max-width: 100%; }
       <span class="eyebrow"><span class="idx">04 — Réalisations</span>Quelques réalisations déjà en ligne</span>
       <h2 class="hand h-md" style="margin-top:18px">Du concret.</h2>
     </div>
-    <div class="real">
-      <a class="real-item reveal" href="https://la-filandiere.vercel.app/" target="_blank" rel="noopener">
-        <div class="site-thumb"><iframe src="https://la-filandiere.vercel.app/" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu Résidence des Cerisiers"></iframe></div>
-        <div class="cap"><h3>Résidence des Cerisiers</h3><span class="tagm">Voir →</span></div>
-        <span class="tagm">Outil d'automatisation · planning d'équipe &amp; stock</span>
-        <span class="tagm-note"><span class="tn-arrow">↳</span><span class="tn-hi">Organisateur sur-mesure</span> — l'équipe gère son planning et suit son stock au quotidien, sans tableur.</span>
-      </a>
-      <a class="real-item reveal" href="https://l-onglerie.vercel.app/" target="_blank" rel="noopener">
-        <div class="site-thumb"><iframe src="https://l-onglerie.vercel.app/" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu L'Onglerie"></iframe></div>
-        <div class="cap"><h3>L'Onglerie</h3><span class="tagm">Voir →</span></div>
-        <span class="tagm">Site vitrine · beauté &amp; ongles</span>
-      </a>
-      <a class="real-item reveal" href="https://garage-du-houlme.vercel.app/" target="_blank" rel="noopener">
-        <div class="site-thumb"><iframe src="https://garage-du-houlme.vercel.app/" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu Garage du Houlme"></iframe></div>
-        <div class="cap"><h3>Moteurs & Style</h3><span class="tagm">Voir →</span></div>
-         <span class="tagm">Vitrine &amp; véhicules · automobile</span>
-         <span class="tagm-note"><span class="tn-arrow">↳</span><span class="tn-hi">Livré avec son propre tableau de bord</span> — le garage ajoute, modifie et supprime ses annonces en deux clics&nbsp;!</span>
-      </a>
-      <a class="real-item reveal" href="https://amelie-esthetique.vercel.app/" target="_blank" rel="noopener">
-        <div class="site-thumb"><iframe src="https://amelie-esthetique.vercel.app/" loading="lazy" scrolling="no" tabindex="-1" title="Aperçu Amélie Esthétique"></iframe></div>
-        <div class="cap"><h3>Amélie Esthétique</h3><span class="tagm">Voir →</span></div>
-        <span class="tagm">Site vitrine &amp; réservation · institut de beauté</span>
-      </a>
+    <div class="real-stage-wrap reveal">
+      <div class="real-stage" id="realStage" aria-roledescription="carrousel"></div>
+      <button class="real-arrow prev" id="realPrev" type="button" aria-label="Réalisation précédente">‹</button>
+      <button class="real-arrow next" id="realNext" type="button" aria-label="Réalisation suivante">›</button>
     </div>
+    <div class="real-caption" id="realCaption"></div>
+    <div class="real-dots" id="realDots"></div>
   </div>
 </section>
 
@@ -1773,6 +1797,144 @@ img { display: block; max-width: 100%; }
 </div><!-- /page-confid -->
 
 <script>
+/* ---- Réalisations (carrousel coverflow) ---- */
+(function () {
+  const stage = document.getElementById('realStage');
+  if (!stage) return;
+  const captionEl = document.getElementById('realCaption');
+  const dotsEl = document.getElementById('realDots');
+  const prevBtn = document.getElementById('realPrev');
+  const nextBtn = document.getElementById('realNext');
+  const stageWrap = stage.closest('.real-stage-wrap');
+
+  const ITEMS = [
+    {
+      title: "Résidence des Cerisiers",
+      tag: "Outil d'automatisation · planning d'équipe & stock",
+      desc: "Organisateur sur-mesure — l'équipe gère son planning et suit son stock au quotidien, sans tableur.",
+      url: "https://la-filandiere.vercel.app/",
+    },
+    {
+      title: "L'Onglerie",
+      tag: "Site vitrine · beauté & ongles",
+      url: "https://l-onglerie.vercel.app/",
+    },
+    {
+      title: "Moteurs & Style",
+      tag: "Vitrine & véhicules · automobile",
+      desc: "Livré avec son propre tableau de bord — le garage ajoute, modifie et supprime ses annonces en deux clics !",
+      url: "https://garage-du-houlme.vercel.app/",
+    },
+    {
+      title: "Amélie Esthétique",
+      tag: "Site vitrine & réservation · institut de beauté",
+      url: "https://amelie-esthetique.vercel.app/",
+    },
+  ];
+
+  const total = ITEMS.length;
+  let current = 0;
+  const cards = [];
+  const loaded = new Set();
+
+  ITEMS.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'real-card';
+    card.innerHTML = '<div class="frame-wrap"></div><div class="veil"></div>';
+    card.addEventListener('click', () => { if (i !== current) goTo(i); });
+    stage.appendChild(card);
+    cards.push(card);
+
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot';
+    dot.setAttribute('aria-label', 'Aller à ' + item.title);
+    dot.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(dot);
+  });
+
+  function ensureFrame(i) {
+    if (loaded.has(i)) return;
+    loaded.add(i);
+    const wrap = cards[i].querySelector('.frame-wrap');
+    const iframe = document.createElement('iframe');
+    iframe.src = ITEMS[i].url;
+    iframe.loading = 'lazy';
+    iframe.scrolling = 'no';
+    iframe.tabIndex = -1;
+    iframe.title = 'Aperçu ' + ITEMS[i].title;
+    wrap.appendChild(iframe);
+  }
+
+  function render() {
+    cards.forEach((card, i) => {
+      const offset = (i - current + total) % total;
+      let t = 'translateX(0) scale(.4) rotateY(0deg)';
+      let opacity = 0, z = 0, filter = 'brightness(.45) blur(2px)', isCenter = false;
+
+      if (offset === 0) {
+        isCenter = true; t = 'translateX(0) scale(1) rotateY(0deg)'; opacity = 1; z = 30; filter = 'brightness(1)';
+      } else if (offset === 1) {
+        t = 'translateX(58%) scale(.8) rotateY(-26deg)'; opacity = .55; z = 20; filter = 'brightness(.7)';
+      } else if (offset === 2) {
+        t = 'translateX(96%) scale(.62) rotateY(-36deg)'; opacity = .28; z = 10; filter = 'brightness(.5) blur(1px)';
+      } else if (offset === total - 1) {
+        t = 'translateX(-58%) scale(.8) rotateY(26deg)'; opacity = .55; z = 20; filter = 'brightness(.7)';
+      } else if (offset === total - 2) {
+        t = 'translateX(-96%) scale(.62) rotateY(36deg)'; opacity = .28; z = 10; filter = 'brightness(.5) blur(1px)';
+      }
+
+      card.style.transform = t;
+      card.style.opacity = opacity;
+      card.style.zIndex = z;
+      card.style.filter = filter;
+      card.classList.toggle('is-center', isCenter);
+      if (opacity > 0) ensureFrame(i);
+    });
+
+    dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('is-active', i === current));
+
+    const item = ITEMS[current];
+    captionEl.classList.remove('is-visible');
+    captionEl.innerHTML =
+      '<h3>' + item.title + '</h3>' +
+      '<span class="tagm">' + item.tag + '</span>' +
+      (item.desc ? '<p class="desc">' + item.desc + '</p>' : '') +
+      '<a class="visit" href="' + item.url + '" target="_blank" rel="noopener">Voir le site →</a>';
+    requestAnimationFrame(() => captionEl.classList.add('is-visible'));
+  }
+
+  function goTo(i) {
+    current = ((i % total) + total) % total;
+    render();
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  stageWrap.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+    if (e.key === 'ArrowRight') goTo(current + 1);
+  });
+
+  let touchX = 0;
+  stage.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(diff) > 45) goTo(diff < 0 ? current + 1 : current - 1);
+  }, { passive: true });
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let autoplayTimer = null;
+  function startAutoplay() { if (reduceMotion || autoplayTimer) return; autoplayTimer = setInterval(() => goTo(current + 1), 5000); }
+  function stopAutoplay() { clearInterval(autoplayTimer); autoplayTimer = null; }
+  stageWrap.addEventListener('mouseenter', stopAutoplay);
+  stageWrap.addEventListener('mouseleave', startAutoplay);
+  document.addEventListener('visibilitychange', () => (document.hidden ? stopAutoplay() : startAutoplay()));
+
+  render();
+  startAutoplay();
+})();
+
 /* ---- Hero black hole (canvas) ---- */
 (function () {
   const canvas = document.getElementById('heroCanvas');
