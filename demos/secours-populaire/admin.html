@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gestion de la boutique — Espace bénévoles (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : un espace bénévoles pour gérer les articles de la Boutique solidaire (ajouter un don, marquer vendu ou réservé, retirer un article) sans passer par un développeur. Document de travail, non officiel." />
+<link rel="icon" href="https://images.secourspopulaire.fr/gravity:sm/rs:auto:32:32/app/uploads/2023/06/cropped-favicon-spf-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#E2182F; --red-dark:#b4111f;
+    --blue:#000F9F; --yellow:#F6E761; --yellow-ink:#5c5110;
+    --ink:#1D1D1B; --bg:#F9F9F9; --white:#fff;
+    --muted:rgba(29,29,27,.68); --muted-light:rgba(29,29,27,.46); --line:rgba(29,29,27,.14);
+    --ok:#1f6e3f; --warn:#8a5a00;
+    --font-head:'Oswald',sans-serif; --font-body:'Inter',system-ui,sans-serif;
+    --radius-lg:34px; --radius-sm:8px; --container:1180px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.55;-webkit-font-smoothing:antialiased;font-size:16px}
+  img{max-width:100%;display:block}
+  a{color:var(--blue)}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:var(--font-head);font-weight:600;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+  h1,h2,h3{font-family:var(--font-head);font-weight:600;margin:0 0 .4em;line-height:1.08;color:var(--ink);text-transform:uppercase;letter-spacing:.01em}
+  h1{font-size:clamp(28px,4vw,42px)}
+  h2{font-size:clamp(20px,2.4vw,26px)}
+  p{color:var(--muted);margin:0 0 .6em}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;font-family:var(--font-body);font-weight:700;font-size:14.5px;padding:12px 24px;border-radius:0;border:2px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s ease}
+  .btn-primary{background:var(--red);color:#fff}
+  .btn-primary:hover{background:var(--red-dark)}
+  .btn-ghost{background:transparent;border-color:var(--ink);color:var(--ink)}
+  .btn-ghost:hover{background:var(--ink);color:#fff}
+  .btn-sm{padding:8px 16px;font-size:13px}
+  .btn-danger{background:transparent;border-color:var(--red);color:var(--red)}
+  .btn-danger:hover{background:var(--red);color:#fff}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .demo-ribbon{position:sticky;top:0;z-index:70;background:var(--ink);color:#fff;font-size:13px}
+  .demo-ribbon .container{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 24px;flex-wrap:wrap;max-width:var(--container);margin:0 auto}
+  .demo-ribbon strong{color:var(--yellow);font-weight:600}
+  .demo-ribbon a{color:#fff;border-bottom:1px solid rgba(255,255,255,.4);white-space:nowrap;text-decoration:none}
+
+  header{background:#fff;border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand img{height:38px;width:auto}
+  .brand .name{font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.15;color:var(--ink);text-transform:uppercase}
+  .brand .name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--red)}
+  .nav-right{display:flex;align-items:center;gap:14px;font-size:13.5px}
+  .nav-right a{text-decoration:none;color:var(--muted);font-weight:600}
+  .nav-right a:hover{color:var(--red)}
+
+  .toolbar{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}
+  .toolbar .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  .stats-row{display:flex;flex-wrap:wrap;gap:18px}
+  .stat-tile{background:var(--bg);border:1px solid var(--line);padding:10px 18px;min-width:140px}
+  .stat-tile b{display:block;font-family:var(--font-head);font-size:22px;color:var(--ink)}
+  .stat-tile span{font-size:12px;color:var(--muted-light)}
+
+  main{padding:36px 0 80px}
+  .panel{background:#fff;border:1px solid var(--line)}
+  .panel-head{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line)}
+  .filters{display:flex;flex-wrap:wrap;gap:10px}
+  .filters select,.filters input{padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13.5px;background:#fff}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{text-align:left;font-family:var(--font-head);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-light);padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:14px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tbody tr:hover{background:var(--bg)}
+  .cell-name{font-weight:700}
+  .cell-name .origin{display:block;font-weight:400;font-size:12px;color:var(--muted-light);margin-top:2px}
+  .cell-price .now{font-family:var(--font-head);color:var(--red);font-weight:700}
+  .cell-price .was{display:block;font-size:12px;text-decoration:line-through;color:var(--muted-light)}
+  .status-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-head);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;padding:5px 10px}
+  .status-ok{background:#e7f3ea;color:var(--ok)}
+  .status-last{background:#fde6e8;color:var(--red)}
+  .status-reserved{background:#fff6d6;color:var(--yellow-ink)}
+  .status-sold{background:#ececec;color:var(--muted-light)}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .row-actions button{font-family:var(--font-body);font-size:12px;font-weight:600;border:1px solid var(--line);background:#fff;padding:6px 10px;cursor:pointer}
+  .row-actions button:hover{border-color:var(--ink)}
+  .row-actions button.danger:hover{border-color:var(--red);color:var(--red)}
+  .empty-state{padding:40px 22px;text-align:center;color:var(--muted-light)}
+
+  .demo-note{background:#fff8e1;border:1px dashed var(--yellow-ink);color:var(--yellow-ink);padding:14px 18px;font-size:13px;margin-bottom:24px}
+  .demo-note b{color:var(--yellow-ink)}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(29,29,27,.6);z-index:75;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-backdrop.open{display:flex}
+  .modal{background:#fff;max-width:520px;width:100%;padding:28px;position:relative;max-height:90vh;overflow:auto;border-top:4px solid var(--red)}
+  .modal h2{text-transform:none;font-family:var(--font-head)}
+  .modal .close-x{position:absolute;top:14px;right:16px;background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted-light)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  .field select,.field input,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;background:#fff}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:520px){.field-row{grid-template-columns:1fr}}
+  .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;justify-content:flex-end}
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px}
+  @media (max-width:760px){
+    table thead{display:none}
+    table, tbody, tr, td{display:block;width:100%}
+    tbody tr{border-bottom:4px solid var(--bg);padding:10px 0}
+    tbody td{border-bottom:0;padding:6px 14px}
+    tbody td::before{content:attr(data-label);display:block;font-family:var(--font-head);font-size:10.5px;text-transform:uppercase;color:var(--muted-light);margin-bottom:2px}
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-ribbon">
+  <div class="container">
+    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, espace bénévoles pour la Boutique solidaire. Non en ligne officiellement.</span>
+    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E'" />
+      <span class="name">Secours populaire<small>Espace bénévoles</small></span>
+    </a>
+    <div class="nav-right">
+      <span>Connecté·e en tant que <strong>Bénévole — Antenne Centre</strong></span>
+      <a href="index.html">↗ Voir la boutique publique</a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <p class="eyebrow">Gestion des articles</p>
+    <div class="row">
+      <h1 style="margin:0">Boutique solidaire</h1>
+      <button class="btn btn-primary" id="addBtn">+ Ajouter un article</button>
+    </div>
+    <div class="stats-row" id="statsRow" style="margin-top:18px"></div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="demo-note">
+      <b>Démo locale :</b> vos ajouts/modifications restent uniquement dans ce navigateur (stockage local), pour montrer le principe.
+      La vraie version serait reliée à une base partagée par toute l'équipe, et les changements apparaîtraient aussitôt sur la page boutique publique.
+      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm" style="margin-top:10px">Réinitialiser la démo</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="filters">
+          <select id="filterCategory">
+            <option value="tous">Toutes les catégories</option>
+            <option value="electromenager">Électroménager</option>
+            <option value="textile">Textile</option>
+            <option value="mobilier">Mobilier</option>
+            <option value="multimedia">Multimédia & livres</option>
+            <option value="hygiene-bazar">Hygiène & bazar</option>
+            <option value="alimentaire">Alimentaire</option>
+          </select>
+          <select id="filterStatus">
+            <option value="tous">Tous les statuts</option>
+            <option value="ok">Disponible</option>
+            <option value="last">Dernière pièce</option>
+            <option value="reserved">Réservé</option>
+            <option value="sold">Vendu</option>
+          </select>
+          <input id="filterSearch" type="search" placeholder="Rechercher un article…" />
+        </div>
+        <span id="resultsCount" style="font-size:13px;color:var(--muted-light)"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Article</th>
+            <th>Catégorie</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none">Aucun article ne correspond à ces filtres.</div>
+    </div>
+
+  </div>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="close-x" id="modalClose" aria-label="Fermer">×</button>
+    <h2 id="modalTitle">Ajouter un article</h2>
+    <form id="itemForm">
+      <input type="hidden" id="itemId" />
+      <div class="field">
+        <label for="fName">Nom de l'article</label>
+        <input id="fName" type="text" required />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="fCategory">Catégorie</label>
+          <select id="fCategory">
+            <option value="electromenager">Électroménager</option>
+            <option value="textile">Textile</option>
+            <option value="mobilier">Mobilier</option>
+            <option value="multimedia">Multimédia & livres</option>
+            <option value="hygiene-bazar">Hygiène & bazar</option>
+            <option value="alimentaire">Alimentaire</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fStatus">Statut</label>
+          <select id="fStatus">
+            <option value="ok">Disponible</option>
+            <option value="last">Dernière pièce</option>
+            <option value="reserved">Réservé</option>
+            <option value="sold">Vendu</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="fPrice">Prix solidaire (€)</label>
+          <input id="fPrice" type="number" min="0" step="1" required />
+        </div>
+        <div class="field">
+          <label for="fWas">Prix neuf estimé (€, facultatif)</label>
+          <input id="fWas" type="number" min="0" step="1" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="fCondition">État</label>
+        <input id="fCondition" type="text" placeholder="Ex. Bon état, Testé & garanti 30 jours…" required />
+      </div>
+      <div class="field">
+        <label for="fOrigin">Origine du don</label>
+        <input id="fOrigin" type="text" placeholder="Ex. Don : grande surface partenaire" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="cancelBtn">Annuler</button>
+        <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "spf-boutique-demo-items";
+
+  var CATEGORY_LABELS = {
+    electromenager: "Électroménager", textile: "Textile", mobilier: "Mobilier",
+    multimedia: "Multimédia & livres", "hygiene-bazar": "Hygiène & bazar", alimentaire: "Alimentaire"
+  };
+
+  var STATUS_LABELS = {
+    ok: { label: "Disponible", cls: "status-ok" },
+    last: { label: "Dernière pièce", cls: "status-last" },
+    reserved: { label: "Réservé", cls: "status-reserved" },
+    sold: { label: "Vendu", cls: "status-sold" }
+  };
+
+  var DEFAULT_ITEMS = [
+    { id:1, name:"Lave-linge hublot 8 kg", category:"electromenager", price:149, was:480, condition:"Testé & garanti 30 jours", origin:"Don : enseigne d'électroménager partenaire", status:"last" },
+    { id:2, name:"Réfrigérateur top 2 portes", category:"electromenager", price:99, was:320, condition:"Bon état", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:3, name:"Four micro-ondes grill", category:"electromenager", price:19, was:89, condition:"Très bon état", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:5, name:"Lot de 10 serviettes de bain", category:"textile", price:8, was:35, condition:"Neuf étiqueté (surstock)", origin:"Don : enseigne textile partenaire", status:"ok" },
+    { id:7, name:"Couette 220×240 chaude", category:"textile", price:12, was:40, condition:"Neuf étiqueté", origin:"Don : enseigne textile partenaire", status:"ok" },
+    { id:8, name:"Table basse en bois", category:"mobilier", price:15, was:70, condition:"Bon état", origin:"Don : enseigne ameublement partenaire", status:"ok" },
+    { id:11, name:"Téléviseur LED 32\"", category:"multimedia", price:35, was:199, condition:"Fonctionne — testé", origin:"Don : enseigne multimédia partenaire", status:"ok" },
+    { id:13, name:"Lot de produits d'hygiène", category:"hygiene-bazar", price:4, was:20, condition:"Neuf étiqueté (surstock)", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:15, name:"Panier épicerie solidaire", category:"alimentaire", price:2, was:null, condition:"À consommer rapidement (DLC proche)", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:16, name:"Lot conserves & féculents", category:"alimentaire", price:3, was:null, condition:"Date de consommation proche", origin:"Don : grande surface partenaire", status:"reserved" }
+  ];
+
+  var items = [];
+  var filters = { category:"tous", status:"tous", query:"" };
+  var editingId = null;
+  var lastFocused = null;
+
+  function loadItems(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+  }
+
+  function saveItems(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch(e){}
+  }
+
+  function euros(n){ return (n || 0).toLocaleString("fr-FR") + " €"; }
+
+  function renderStats(){
+    var total = items.length;
+    var available = items.filter(function(i){ return i.status === "ok" || i.status === "last"; }).length;
+    var reserved = items.filter(function(i){ return i.status === "reserved"; }).length;
+    var value = items.filter(function(i){ return i.status !== "sold"; }).reduce(function(s,i){ return s + (Number(i.price)||0); }, 0);
+
+    var el = document.getElementById("statsRow");
+    el.innerHTML =
+      '<div class="stat-tile"><b>' + total + '</b><span>articles au total</span></div>' +
+      '<div class="stat-tile"><b>' + available + '</b><span>disponibles en boutique</span></div>' +
+      '<div class="stat-tile"><b>' + reserved + '</b><span>réservés</span></div>' +
+      '<div class="stat-tile"><b>' + euros(value) + '</b><span>valeur en rayon</span></div>';
+  }
+
+  function matchesFilters(item){
+    if(filters.category !== "tous" && item.category !== filters.category) return false;
+    if(filters.status !== "tous" && item.status !== filters.status) return false;
+    if(filters.query){
+      var q = filters.query.toLowerCase();
+      if(item.name.toLowerCase().indexOf(q) === -1 && item.origin.toLowerCase().indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+
+  function renderTable(){
+    var tbody = document.getElementById("tableBody");
+    var list = items.filter(matchesFilters);
+    tbody.innerHTML = "";
+
+    document.getElementById("resultsCount").textContent =
+      list.length + (list.length > 1 ? " articles" : " article");
+    document.getElementById("emptyState").style.display = list.length ? "none" : "block";
+
+    list.forEach(function(item){
+      var st = STATUS_LABELS[item.status] || STATUS_LABELS.ok;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td data-label="Article" class="cell-name">' + item.name + '<span class="origin">' + item.origin + ' · ' + item.condition + '</span></td>' +
+        '<td data-label="Catégorie">' + CATEGORY_LABELS[item.category] + '</td>' +
+        '<td data-label="Prix" class="cell-price"><span class="now">' + euros(item.price) + '</span>' + (item.was ? '<span class="was">' + euros(item.was) + ' neuf</span>' : '') + '</td>' +
+        '<td data-label="Statut"><span class="status-pill ' + st.cls + '">' + st.label + '</span></td>' +
+        '<td data-label="Actions"></td>';
+
+      var actionsCell = tr.querySelector('td:last-child');
+      var actions = document.createElement('div');
+      actions.className = 'row-actions';
+
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.textContent = 'Modifier';
+      editBtn.addEventListener('click', function(){ openModal(item); });
+      actions.appendChild(editBtn);
+
+      if(item.status !== 'reserved' && item.status !== 'sold'){
+        var reserveBtn = document.createElement('button');
+        reserveBtn.type = 'button';
+        reserveBtn.textContent = 'Marquer réservé';
+        reserveBtn.addEventListener('click', function(){ setStatus(item.id, 'reserved'); });
+        actions.appendChild(reserveBtn);
+      }
+      if(item.status !== 'sold'){
+        var soldBtn = document.createElement('button');
+        soldBtn.type = 'button';
+        soldBtn.textContent = 'Marquer vendu';
+        soldBtn.addEventListener('click', function(){ setStatus(item.id, 'sold'); });
+        actions.appendChild(soldBtn);
+      }
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'danger';
+      delBtn.textContent = 'Retirer';
+      delBtn.addEventListener('click', function(){ deleteItem(item.id); });
+      actions.appendChild(delBtn);
+
+      actionsCell.appendChild(actions);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderAll(){
+    renderStats();
+    renderTable();
+  }
+
+  function setStatus(id, status){
+    var item = items.find(function(i){ return i.id === id; });
+    if(item){ item.status = status; saveItems(); renderAll(); }
+  }
+
+  function deleteItem(id){
+    if(!window.confirm("Retirer définitivement cet article de la boutique ?")) return;
+    items = items.filter(function(i){ return i.id !== id; });
+    saveItems();
+    renderAll();
+  }
+
+  function openModal(item){
+    lastFocused = document.activeElement;
+    editingId = item ? item.id : null;
+    document.getElementById("modalTitle").textContent = item ? "Modifier l'article" : "Ajouter un article";
+    document.getElementById("itemId").value = item ? item.id : "";
+    document.getElementById("fName").value = item ? item.name : "";
+    document.getElementById("fCategory").value = item ? item.category : "electromenager";
+    document.getElementById("fStatus").value = item ? item.status : "ok";
+    document.getElementById("fPrice").value = item ? item.price : "";
+    document.getElementById("fWas").value = item && item.was ? item.was : "";
+    document.getElementById("fCondition").value = item ? item.condition : "";
+    document.getElementById("fOrigin").value = item ? item.origin : "";
+    document.getElementById("modalBackdrop").classList.add("open");
+    document.getElementById("fName").focus();
+  }
+
+  function closeModal(){
+    document.getElementById("modalBackdrop").classList.remove("open");
+    document.getElementById("itemForm").reset();
+    editingId = null;
+    if(lastFocused) lastFocused.focus();
+  }
+
+  document.getElementById("addBtn").addEventListener("click", function(){ openModal(null); });
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("cancelBtn").addEventListener("click", closeModal);
+  document.getElementById("modalBackdrop").addEventListener("click", function(e){
+    if(e.target === this) closeModal();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeModal();
+  });
+
+  document.getElementById("itemForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var data = {
+      name: document.getElementById("fName").value.trim(),
+      category: document.getElementById("fCategory").value,
+      status: document.getElementById("fStatus").value,
+      price: Number(document.getElementById("fPrice").value) || 0,
+      was: document.getElementById("fWas").value ? Number(document.getElementById("fWas").value) : null,
+      condition: document.getElementById("fCondition").value.trim(),
+      origin: document.getElementById("fOrigin").value.trim()
+    };
+    if(!data.name || !data.condition || !data.origin) return;
+
+    if(editingId){
+      var item = items.find(function(i){ return i.id === editingId; });
+      Object.assign(item, data);
+    } else {
+      var nextId = items.reduce(function(max,i){ return Math.max(max, i.id); }, 0) + 1;
+      items.push(Object.assign({ id: nextId }, data));
+    }
+    saveItems();
+    renderAll();
+    closeModal();
+  });
+
+  document.getElementById("filterCategory").addEventListener("change", function(e){
+    filters.category = e.target.value; renderTable();
+  });
+  document.getElementById("filterStatus").addEventListener("change", function(e){
+    filters.status = e.target.value; renderTable();
+  });
+  document.getElementById("filterSearch").addEventListener("input", function(e){
+    filters.query = e.target.value; renderTable();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!window.confirm("Réinitialiser la démo avec les articles d'exemple ?")) return;
+    items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    saveItems();
+    renderAll();
+  });
+
+  items = loadItems();
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
