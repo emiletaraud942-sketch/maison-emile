@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Boutique Solidarité — Secours populaire · Les invendus qui changent de vie</title>
+<meta name="description" content="La Boutique Solidarité récupère les invendus des enseignes partenaires (bazar, électroménager, textile, alimentaire) et les revend à prix solidaires. Chaque achat finance les actions du Secours populaire et évite le gaspillage." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23c01818'/%3E%3Cpath d='M32 46c-9-6-16-12-16-20 0-5 4-9 9-9 4 0 6 2 7 4 1-2 3-4 7-4 5 0 9 4 9 9 0 8-7 14-16 20z' fill='%23fff6e8'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#c01818; --red-dark:#8f1010; --red-soft:#f6d9d3;
+    --cream:#fdf8f0; --cream-2:#f6ede0; --ink:#241a15; --muted:#6b5c50; --muted-light:#9c8c7f;
+    --ok:#2f6e44; --line:rgba(36,26,21,.12);
+    --font-sans:'Work Sans',system-ui,sans-serif; --font-serif:'Fraunces',Georgia,serif; --font-hand:'Caveat',cursive;
+    --radius:16px; --container:1180px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  .wrap{max-width:var(--container);margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:var(--font-sans);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red-dark)}
+  h1,h2,h3{font-family:var(--font-serif);font-weight:600;margin:0 0 .4em;line-height:1.1}
+  h2{font-size:clamp(28px,4vw,42px)}
+  h3{font-size:clamp(19px,2.2vw,24px)}
+  p{color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;font-family:var(--font-sans);font-weight:600;font-size:15px;padding:13px 26px;border-radius:999px;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+  .btn-primary{background:var(--red);color:#fff;box-shadow:0 6px 18px -6px rgba(192,24,24,.55)}
+  .btn-primary:hover{transform:translateY(-2px)}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--red)}
+  .btn-sm{padding:9px 18px;font-size:13px}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+  /* header */
+  header{position:sticky;top:0;z-index:40;background:rgba(253,248,240,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .brand .mark{width:38px;height:38px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;flex:none}
+  .brand .mark svg{width:22px;height:22px}
+  .brand .name{font-family:var(--font-serif);font-weight:600;font-size:17px;line-height:1.1}
+  .brand .name small{display:block;font-family:var(--font-sans);font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-light)}
+  nav.links{display:flex;gap:28px;font-size:14px;font-weight:500}
+  nav.links a{text-decoration:none;color:var(--muted);transition:color .15s}
+  nav.links a:hover{color:var(--red)}
+  .nav-actions{display:flex;align-items:center;gap:12px}
+  .burger{display:none;background:none;border:0;cursor:pointer;padding:6px}
+  .burger span,.burger::before,.burger::after{content:'';display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;transition:.2s}
+  @media (max-width:860px){
+    nav.links{display:none}
+    .burger{display:block}
+  }
+  .mobile-panel{position:fixed;inset:0;background:var(--cream);z-index:50;display:none;flex-direction:column;padding:24px}
+  .mobile-panel.open{display:flex}
+  .mobile-panel .close-x{align-self:flex-end;background:none;border:0;font-size:28px;cursor:pointer}
+  .mobile-panel a{font-family:var(--font-hand);font-size:34px;font-weight:700;text-decoration:none;color:var(--ink);padding:14px 0;border-bottom:1px solid var(--line)}
+
+  /* hero */
+  .hero{padding:72px 0 56px;position:relative;overflow:hidden}
+  .hero .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+  @media (max-width:900px){.hero .grid{grid-template-columns:1fr}}
+  .hero h1{font-size:clamp(36px,5.6vw,58px);margin:.3em 0 .3em}
+  .hero h1 em{font-style:italic;color:var(--red)}
+  .hero p.lead{font-size:18px;max-width:46ch}
+  .hero .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+  .hero-visual{position:relative;background:var(--red);border-radius:24px;padding:28px;color:#fff;min-height:320px;display:flex;flex-direction:column;justify-content:space-between}
+  .hero-visual .tag{font-family:var(--font-hand);font-size:28px;font-weight:700}
+  .hero-visual .stats{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+  .hero-visual .stat b{display:block;font-family:var(--font-serif);font-size:clamp(28px,3vw,38px)}
+  .hero-visual .stat span{font-size:12px;opacity:.85}
+
+  /* sections */
+  section{padding:64px 0}
+  .section-head{max-width:640px;margin-bottom:40px}
+  .note{font-size:13px;color:var(--muted-light);margin-top:28px}
+
+  /* how it works */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  @media (max-width:900px){.steps{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--cream-2);border-radius:var(--radius);padding:24px;border:1px solid var(--line)}
+  .step .num{font-family:var(--font-serif);font-style:italic;font-size:34px;color:var(--red);opacity:.7}
+  .step h3{margin-top:10px}
+  .step p{font-size:14px;margin:0}
+
+  /* shop */
+  .shop-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:28px}
+  .tabs{display:flex;flex-wrap:wrap;gap:8px}
+  .tab{font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted)}
+  .tab[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+  .search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 16px;background:#fff;min-width:220px}
+  .search input{border:0;outline:0;font-family:var(--font-sans);font-size:14px;width:100%;background:transparent}
+  .results-count{font-size:13px;color:var(--muted-light);margin:-8px 0 20px}
+  .grid-shop{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  @media (max-width:1040px){.grid-shop{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:760px){.grid-shop{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:480px){.grid-shop{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+  .card .thumb{aspect-ratio:4/3;background:var(--cream-2);display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+  .card .badge{position:absolute;top:10px;left:10px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+  .card .badge.last{background:var(--red);color:#fff;border-color:var(--red)}
+  .card .badge.reserved{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .card .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .card h3{font-size:16px;margin:0}
+  .card .origin{font-size:12px;color:var(--muted-light)}
+  .card .condition{font-size:12px;font-weight:600;color:var(--ok)}
+  .card .prices{display:flex;align-items:baseline;gap:8px;margin-top:auto}
+  .card .prices .now{font-family:var(--font-serif);font-weight:600;font-size:22px;color:var(--red-dark)}
+  .card .prices .was{font-size:13px;text-decoration:line-through;color:var(--muted-light)}
+  .card .reserve-btn{margin-top:6px}
+
+  /* enseignes CTA band */
+  .band{background:var(--ink);color:#fff;border-radius:24px;padding:48px;display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center}
+  @media (max-width:800px){.band{grid-template-columns:1fr}}
+  .band .eyebrow{color:#f0a8a0}
+  .band h2{color:#fff}
+  .band p{color:#d9cfc6}
+  .band-benefits{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:14px}
+  .band-benefits li{display:flex;gap:8px}
+  .band-benefits li::before{content:'✓';color:#f0a8a0;font-weight:700}
+
+  /* antennes */
+  .antennes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media (max-width:820px){.antennes-grid{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.antennes-grid{grid-template-columns:1fr}}
+  .antenne{border:1px solid var(--line);border-radius:var(--radius);padding:20px;background:#fff}
+  .antenne h3{margin-bottom:4px}
+  .antenne .addr{font-size:14px;color:var(--muted)}
+  .antenne .hours{font-size:13px;color:var(--muted-light);margin:8px 0 14px}
+  .antenne .links{display:flex;gap:10px;font-size:13px;font-weight:600}
+  .antenne .links a{text-decoration:none;color:var(--red-dark)}
+
+  /* benevoles */
+  .benevoles{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  @media (max-width:820px){.benevoles{grid-template-columns:1fr}}
+  .benevoles-visual{background:var(--red-soft);border-radius:24px;padding:40px;text-align:center}
+  .benevoles-visual .big{font-family:var(--font-hand);font-size:clamp(40px,6vw,64px);color:var(--red-dark);font-weight:700;line-height:1}
+
+  footer{border-top:1px solid var(--line);padding:48px 0 28px;margin-top:40px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+  @media (max-width:760px){.foot-grid{grid-template-columns:1fr}}
+  .foot-grid h4{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-light);margin:0 0 12px}
+  .foot-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .foot-grid a{text-decoration:none}
+  .foot-grid a:hover{color:var(--red)}
+  .foot-bottom{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted-light);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(36,26,21,.55);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-backdrop.open{display:flex}
+  .modal{background:#fff;border-radius:20px;max-width:480px;width:100%;padding:28px;position:relative;max-height:90vh;overflow:auto}
+  .modal .close-x{position:absolute;top:14px;right:16px;background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted-light)}
+  .modal .item-recap{display:flex;gap:14px;align-items:center;background:var(--cream-2);border-radius:12px;padding:12px;margin:16px 0 20px}
+  .modal .item-recap .thumb-sm{width:52px;height:52px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+  .modal .item-recap .price-sm{font-family:var(--font-serif);color:var(--red-dark);font-weight:600}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  .field select,.field input,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:var(--font-sans);font-size:14px;background:var(--cream)}
+  .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  :focus-visible{outline:2px solid var(--red);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#accueil">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 20c-4-2.6-8-6-8-10.4C4 6.5 6.2 4 9 4c1.6 0 2.8 1 3 2 .2-1 1.4-2 3-2 2.8 0 5 2.5 5 5.6 0 4.4-4 7.8-8 10.4z" fill="#fff"/></svg>
+      </span>
+      <span class="name">Secours populaire<small>Boutique Solidarité</small></span>
+    </a>
+    <nav class="links" aria-label="Navigation principale">
+      <a href="#comment-ca-marche">Comment ça marche</a>
+      <a href="#boutique">La boutique</a>
+      <a href="#enseignes">Enseignes partenaires</a>
+      <a href="#antennes">Nous trouver</a>
+      <a href="#benevoles">Bénévoles</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-primary btn-sm" href="#boutique">Voir les articles</a>
+      <button class="burger" id="burgerBtn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobilePanel"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-panel" id="mobilePanel" role="dialog" aria-modal="true" aria-label="Menu">
+  <button class="close-x" id="closeMobilePanel" aria-label="Fermer le menu">×</button>
+  <a href="#comment-ca-marche">Comment ça marche</a>
+  <a href="#boutique">La boutique</a>
+  <a href="#enseignes">Enseignes</a>
+  <a href="#antennes">Nous trouver</a>
+  <a href="#benevoles">Bénévoles</a>
+</div>
+
+<main>
+
+  <section class="hero" id="accueil">
+    <div class="wrap grid">
+      <div>
+        <p class="eyebrow">Anti-gaspillage &amp; solidarité</p>
+        <h1>Des invendus qui <em>changent de vie</em>.</h1>
+        <p class="lead">Les grandes surfaces et enseignes du quartier nous confient ce qu'elles ne peuvent plus vendre : bazar, électroménager, textile, produits d'hygiène, denrées proches de la date. Nos bénévoles trient, contrôlent et remettent ces objets en rayon à prix solidaires — pour que rien ne finisse à la benne.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#boutique">Découvrir les articles disponibles</a>
+          <a class="btn btn-ghost" href="#enseignes">Je représente une enseigne</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div>
+          <p class="tag">— à l'antenne cette semaine</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>1,4&nbsp;t</b><span>d'objets sauvés du gaspillage ce mois-ci</span></div>
+          <div class="stat"><b>86</b><span>familles accueillies en boutique</span></div>
+          <div class="stat"><b>12</b><span>enseignes donatrices partenaires</span></div>
+          <div class="stat"><b>−80%</b><span>par rapport au prix neuf, en moyenne</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="comment-ca-marche">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Le principe</p>
+        <h2>Du rayon de l'enseigne au rayon solidaire</h2>
+        <p>Un circuit court, pensé pour éviter le gaspillage et financer nos actions de terrain.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="num">01</span>
+          <h3>L'enseigne nous confie ses invendus</h3>
+          <p>Surstocks, fins de série, emballages abîmés, produits proches de la date : plutôt que la benne, direction nos locaux.</p>
+        </div>
+        <div class="step">
+          <span class="num">02</span>
+          <h3>Nos bénévoles trient et contrôlent</h3>
+          <p>Chaque objet est vérifié, nettoyé si besoin, et testé pour l'électroménager et le multimédia avant mise en rayon.</p>
+        </div>
+        <div class="step">
+          <span class="num">03</span>
+          <h3>Mise en vente à prix solidaire</h3>
+          <p>Les articles sont proposés en boutique à un prix symbolique, accessible à tous, en priorité aux familles accompagnées.</p>
+        </div>
+        <div class="step">
+          <span class="num">04</span>
+          <h3>Les recettes financent nos actions</h3>
+          <p>Aide alimentaire, vacances pour les enfants, accès aux droits : chaque vente soutient directement nos actions locales.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="boutique">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">En ce moment en boutique</p>
+        <h2>Quelques articles disponibles</h2>
+        <p>Les stocks changent chaque semaine au rythme des dons. Réservez un article pour qu'on vous le mette de côté en boutique.</p>
+      </div>
+
+      <div class="shop-toolbar">
+        <div class="tabs" id="tabs" role="tablist" aria-label="Filtrer par catégorie"></div>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="#9c8c7f" stroke-width="2"/><path d="M21 21l-4-4" stroke="#9c8c7f" stroke-width="2" stroke-linecap="round"/></svg>
+          <label class="visually-hidden" for="searchInput">Rechercher un article</label>
+          <input id="searchInput" type="search" placeholder="Rechercher un article…" />
+        </div>
+      </div>
+
+      <p class="results-count" id="resultsCount" aria-live="polite"></p>
+      <div class="grid-shop" id="shopGrid"></div>
+      <p class="note">Les prix et la disponibilité sont donnés à titre indicatif et confirmés en boutique. Un article réservé est mis de côté 72h.</p>
+    </div>
+  </section>
+
+  <section id="enseignes">
+    <div class="wrap">
+      <div class="band">
+        <div>
+          <p class="eyebrow">Vous êtes une enseigne, un commerce, un hypermarché ?</p>
+          <h2>Donnez une seconde vie à vos invendus</h2>
+          <p>Bazar, textile, petit électroménager, produits d'hygiène ou alimentaires proches de la date : on s'occupe de l'enlèvement, du tri et de la revalorisation. Vous réduisez vos déchets, nous renforçons notre action solidaire.</p>
+          <ul class="band-benefits">
+            <li>Enlèvement organisé selon votre fréquence de dons</li>
+            <li>Reçu de don et valorisation possible en mécénat en nature</li>
+            <li>Communication sur votre engagement anti-gaspillage, si vous le souhaitez</li>
+          </ul>
+        </div>
+        <div>
+          <a class="btn btn-primary" id="partnerMailBtn" href="#">Proposer un partenariat par e-mail</a>
+          <p class="note" style="color:#bba99d">Ouvre votre messagerie avec un message pré-rempli — à compléter avant envoi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="antennes">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Boutiques Solidarité</p>
+        <h2>Nous trouver</h2>
+        <p>Trois antennes à titre d'exemple — à personnaliser avec les adresses réelles de votre fédération locale.</p>
+      </div>
+      <div class="antennes-grid">
+        <div class="antenne">
+          <h3>Antenne Centre</h3>
+          <p class="addr">12 rue des Solidarités<br>Centre-ville</p>
+          <p class="hours">Mar–Ven 9h30–12h30 &amp; 14h–17h30 · Sam 9h30–12h30</p>
+          <div class="links"><a href="tel:+33000000000">Appeler</a><a href="#" class="itin">Itinéraire</a></div>
+        </div>
+        <div class="antenne">
+          <h3>Antenne Nord</h3>
+          <p class="addr">48 avenue Jean-Jaurès<br>Quartier Nord</p>
+          <p class="hours">Lun–Jeu 9h–12h &amp; 14h–17h</p>
+          <div class="links"><a href="tel:+33000000000">Appeler</a><a href="#" class="itin">Itinéraire</a></div>
+        </div>
+        <div class="antenne">
+          <h3>Antenne Sud</h3>
+          <p class="addr">5 place de la République<br>Quartier Sud</p>
+          <p class="hours">Mer &amp; Ven 9h30–12h30 · Sam 10h–13h</p>
+          <div class="links"><a href="tel:+33000000000">Appeler</a><a href="#" class="itin">Itinéraire</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="benevoles">
+    <div class="wrap benevoles">
+      <div>
+        <p class="eyebrow">Rejoignez l'équipe</p>
+        <h2>On a toujours besoin de bras pour trier, accueillir, vendre</h2>
+        <p>Quelques heures par semaine ou de façon ponctuelle : tri des dons, mise en rayon, accueil en boutique, enlèvement chez nos partenaires. Aucune expérience requise, on vous forme sur place.</p>
+        <a class="btn btn-primary" id="volunteerMailBtn" href="#">Devenir bénévole</a>
+      </div>
+      <div class="benevoles-visual">
+        <p class="big">Merci.</p>
+        <p>Chaque bénévole compte.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4>Boutique Solidarité</h4>
+        <p style="max-width:40ch">Une initiative locale du Secours populaire pour valoriser les invendus des enseignes du territoire et les remettre en circulation à prix solidaires.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#comment-ca-marche">Comment ça marche</a></li>
+          <li><a href="#boutique">La boutique</a></li>
+          <li><a href="#enseignes">Enseignes partenaires</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Nous rejoindre</h4>
+        <ul>
+          <li><a href="#antennes">Nos antennes</a></li>
+          <li><a href="#benevoles">Devenir bénévole</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Page locale indépendante présentant une Boutique Solidarité du Secours populaire — adresses et chiffres à personnaliser par votre fédération.</span>
+      <span>Site réalisé par Maison Émile</span>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="close-x" id="modalClose" aria-label="Fermer">×</button>
+    <h3 id="modalTitle">Réserver cet article</h3>
+    <div class="item-recap" id="itemRecap"></div>
+    <div class="field">
+      <label for="antenneSelect">Boutique où retirer l'article</label>
+      <select id="antenneSelect">
+        <option>Antenne Centre — 12 rue des Solidarités</option>
+        <option>Antenne Nord — 48 avenue Jean-Jaurès</option>
+        <option>Antenne Sud — 5 place de la République</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="reserveName">Votre nom</label>
+      <input id="reserveName" type="text" autocomplete="name" />
+    </div>
+    <div class="field">
+      <label for="reservePhone">Téléphone</label>
+      <input id="reservePhone" type="tel" autocomplete="tel" />
+    </div>
+    <p class="note" style="margin-top:0">Ces boutons ouvrent votre messagerie ou votre téléphone avec un message pré-rempli — la demande n'est confirmée qu'une fois reçue par l'antenne.</p>
+    <div class="modal-actions">
+      <a class="btn btn-primary btn-sm" id="modalMailBtn" href="#">Envoyer par e-mail</a>
+      <a class="btn btn-ghost btn-sm" id="modalCallBtn" href="tel:+33000000000">Appeler la boutique</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
+  var ANTENNE_PHONE = "+33000000000";
+
+  var CATEGORIES = [
+    { key: "tous", label: "Tous" },
+    { key: "electromenager", label: "Électroménager" },
+    { key: "textile", label: "Textile" },
+    { key: "mobilier", label: "Mobilier" },
+    { key: "multimedia", label: "Multimédia & livres" },
+    { key: "hygiene-bazar", label: "Hygiène & bazar" },
+    { key: "alimentaire", label: "Alimentaire" }
+  ];
+
+  var ICONS = {
+    electromenager: "🔌", textile: "👕", mobilier: "🪑",
+    multimedia: "📺", "hygiene-bazar": "🧴", alimentaire: "🥫"
+  };
+
+  var ITEMS = [
+    { id:1, name:"Lave-linge hublot 8 kg", category:"electromenager", price:149, was:480, condition:"Testé & garanti 30 jours", origin:"Don : enseigne d'électroménager partenaire", stock:"last" },
+    { id:2, name:"Réfrigérateur top 2 portes", category:"electromenager", price:99, was:320, condition:"Bon état", origin:"Don : grande surface partenaire", stock:"ok" },
+    { id:3, name:"Four micro-ondes grill", category:"electromenager", price:19, was:89, condition:"Très bon état", origin:"Don : grande surface partenaire", stock:"ok" },
+    { id:4, name:"Aspirateur traîneau", category:"electromenager", price:25, was:99, condition:"Fonctionne — testé", origin:"Don : enseigne bazar partenaire", stock:"ok" },
+    { id:5, name:"Lot de 10 serviettes de bain", category:"textile", price:8, was:35, condition:"Neuf étiqueté (surstock)", origin:"Don : enseigne textile partenaire", stock:"ok" },
+    { id:6, name:"Manteau d'hiver homme (T.L)", category:"textile", price:6, was:45, condition:"Très bon état", origin:"Don : enseigne textile partenaire", stock:"ok" },
+    { id:7, name:"Couette 220×240 chaude", category:"textile", price:12, was:40, condition:"Neuf étiqueté", origin:"Don : enseigne textile partenaire", stock:"ok" },
+    { id:8, name:"Table basse en bois", category:"mobilier", price:15, was:70, condition:"Bon état", origin:"Don : enseigne ameublement partenaire", stock:"ok" },
+    { id:9, name:"Étagère 5 niveaux", category:"mobilier", price:10, was:45, condition:"Très bon état", origin:"Don : enseigne ameublement partenaire", stock:"last" },
+    { id:10, name:"Vélo enfant 16 pouces", category:"mobilier", price:18, was:60, condition:"Bon état", origin:"Don : particulier / collecte", stock:"ok" },
+    { id:11, name:"Téléviseur LED 32\"", category:"multimedia", price:35, was:199, condition:"Fonctionne — testé", origin:"Don : enseigne multimédia partenaire", stock:"ok" },
+    { id:12, name:"Lot de 20 livres & BD", category:"multimedia", price:5, was:null, condition:"Bon état", origin:"Don : librairie partenaire", stock:"ok" },
+    { id:13, name:"Lot de produits d'hygiène", category:"hygiene-bazar", price:4, was:20, condition:"Neuf étiqueté (surstock)", origin:"Don : grande surface partenaire", stock:"ok" },
+    { id:14, name:"Vaisselle — lot de 12 pièces", category:"hygiene-bazar", price:6, was:30, condition:"Très bon état", origin:"Don : enseigne bazar partenaire", stock:"ok" },
+    { id:15, name:"Panier épicerie solidaire", category:"alimentaire", price:2, was:null, condition:"À consommer rapidement (DLC proche)", origin:"Don : grande surface partenaire", stock:"ok" },
+    { id:16, name:"Lot conserves & féculents", category:"alimentaire", price:3, was:null, condition:"Date de consommation proche", origin:"Don : grande surface partenaire", stock:"reserved" }
+  ];
+
+  var state = { category:"tous", query:"" };
+  var lastFocused = null;
+
+  function euros(n){ return n.toLocaleString("fr-FR") + " €"; }
+
+  function renderTabs(){
+    var tabsEl = document.getElementById("tabs");
+    tabsEl.innerHTML = "";
+    CATEGORIES.forEach(function(cat){
+      var b = document.createElement("button");
+      b.className = "tab";
+      b.type = "button";
+      b.role = "tab";
+      b.textContent = cat.label;
+      b.setAttribute("aria-pressed", String(cat.key === state.category));
+      b.addEventListener("click", function(){
+        state.category = cat.key;
+        renderTabs();
+        renderGrid();
+      });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function matchesQuery(item, q){
+    if(!q) return true;
+    q = q.toLowerCase();
+    return item.name.toLowerCase().indexOf(q) !== -1 || item.condition.toLowerCase().indexOf(q) !== -1;
+  }
+
+  function renderGrid(){
+    var grid = document.getElementById("shopGrid");
+    var list = ITEMS.filter(function(item){
+      var catOk = state.category === "tous" || item.category === state.category;
+      return catOk && matchesQuery(item, state.query);
+    });
+
+    document.getElementById("resultsCount").textContent =
+      list.length + (list.length > 1 ? " articles trouvés" : " article trouvé");
+
+    grid.innerHTML = "";
+    if(list.length === 0){
+      var empty = document.createElement("p");
+      empty.textContent = "Aucun article ne correspond à votre recherche pour le moment.";
+      empty.style.color = "var(--muted)";
+      grid.appendChild(empty);
+      return;
+    }
+
+    list.forEach(function(item){
+      var card = document.createElement("article");
+      card.className = "card";
+
+      var badge = "";
+      if(item.stock === "last") badge = '<span class="badge last">Dernière pièce</span>';
+      if(item.stock === "reserved") badge = '<span class="badge reserved">Réservé</span>';
+
+      card.innerHTML =
+        '<div class="thumb">' + badge + ICONS[item.category] + '</div>' +
+        '<div class="body">' +
+          '<h3>' + item.name + '</h3>' +
+          '<p class="origin">' + item.origin + '</p>' +
+          '<p class="condition">' + item.condition + '</p>' +
+          '<div class="prices"><span class="now">' + euros(item.price) + '</span>' +
+            (item.was ? '<span class="was">' + euros(item.was) + ' neuf</span>' : '') +
+          '</div>' +
+        '</div>';
+
+      var body = card.querySelector(".body");
+      var btn = document.createElement("button");
+      btn.className = "btn btn-primary btn-sm reserve-btn";
+      btn.type = "button";
+      if(item.stock === "reserved"){
+        btn.textContent = "Déjà réservé";
+        btn.disabled = true;
+      } else {
+        btn.textContent = "Réserver cet article";
+        btn.addEventListener("click", function(){ openModal(item); });
+      }
+      body.appendChild(btn);
+
+      grid.appendChild(card);
+    });
+  }
+
+  function openModal(item){
+    lastFocused = document.activeElement;
+    var backdrop = document.getElementById("modalBackdrop");
+    document.getElementById("itemRecap").innerHTML =
+      '<div class="thumb-sm" aria-hidden="true">' + ICONS[item.category] + '</div>' +
+      '<div><strong>' + item.name + '</strong><br><span class="price-sm">' + euros(item.price) + '</span></div>';
+
+    document.getElementById("modalTitle").textContent = "Réserver : " + item.name;
+    backdrop.classList.add("open");
+    document.getElementById("modalClose").focus();
+
+    function updateLinks(){
+      var antenne = document.getElementById("antenneSelect").value;
+      var name = document.getElementById("reserveName").value || "[votre nom]";
+      var phone = document.getElementById("reservePhone").value || "[votre téléphone]";
+      var subject = encodeURIComponent("Réservation boutique solidarité : " + item.name);
+      var body = encodeURIComponent(
+        "Bonjour,\n\nJe souhaite réserver l'article suivant : " + item.name + " (" + euros(item.price) + ").\n" +
+        "Boutique choisie : " + antenne + "\n" +
+        "Nom : " + name + "\nTéléphone : " + phone + "\n\nMerci de me confirmer la disponibilité.\n"
+      );
+      document.getElementById("modalMailBtn").href = "mailto:" + ANTENNE_EMAIL + "?subject=" + subject + "&body=" + body;
+    }
+    updateLinks();
+    document.getElementById("antenneSelect").oninput = updateLinks;
+    document.getElementById("reserveName").oninput = updateLinks;
+    document.getElementById("reservePhone").oninput = updateLinks;
+  }
+
+  function closeModal(){
+    document.getElementById("modalBackdrop").classList.remove("open");
+    if(lastFocused) lastFocused.focus();
+  }
+
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("modalBackdrop").addEventListener("click", function(e){
+    if(e.target === this) closeModal();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeModal();
+  });
+
+  document.getElementById("searchInput").addEventListener("input", function(e){
+    state.query = e.target.value;
+    renderGrid();
+  });
+
+  // mobile menu
+  var mobilePanel = document.getElementById("mobilePanel");
+  var burgerBtn = document.getElementById("burgerBtn");
+  burgerBtn.addEventListener("click", function(){
+    mobilePanel.classList.add("open");
+    burgerBtn.setAttribute("aria-expanded", "true");
+  });
+  document.getElementById("closeMobilePanel").addEventListener("click", function(){
+    mobilePanel.classList.remove("open");
+    burgerBtn.setAttribute("aria-expanded", "false");
+  });
+  mobilePanel.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      mobilePanel.classList.remove("open");
+      burgerBtn.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  // partner / volunteer mailto links
+  document.getElementById("partnerMailBtn").href = "mailto:" + ANTENNE_EMAIL +
+    "?subject=" + encodeURIComponent("Proposition de partenariat - dons d'invendus") +
+    "&body=" + encodeURIComponent("Bonjour,\n\nNotre enseigne [nom] souhaite proposer ses invendus (type de produits, fréquence estimée) à votre Boutique Solidarité.\n\nCordialement,\n[nom, enseigne, coordonnées]");
+
+  document.getElementById("volunteerMailBtn").href = "mailto:" + ANTENNE_EMAIL +
+    "?subject=" + encodeURIComponent("Je souhaite devenir bénévole") +
+    "&body=" + encodeURIComponent("Bonjour,\n\nJe souhaite devenir bénévole à la Boutique Solidarité (tri, accueil, mise en rayon...).\nDisponibilités : [jours / créneaux]\n\nMerci de me recontacter.\n[nom, téléphone]");
+
+  renderTabs();
+  renderGrid();
+})();
+</script>
+
+</body>
+</html>
