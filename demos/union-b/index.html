@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Union-B — Concept de refonte (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : à quoi pourrait ressembler le site d'Union-B, brasserie artisanale de Malaunay. Document de travail, non officiel." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgcng9IjEwIiBmaWxsPSIjMTUxMDBkIi8+CjxwYXRoIGQ9Ik04IDQwIEMxOCAyNiwgMzAgMTgsIDQyIDE5IEM0MCAxMiwgNDggOCwgNTYgMTIgQzUyIDE2LCA1MCAyMCwgNTIgMjMgQzU3IDI0LCA1OSAzMCwgNTkgMzMgQzUwIDMyLCAzOCAzNCwgMzAgNDAgQzIyIDQ2LCAxMiA0NCwgOCA0MCBaIiBmaWxsPSIjZTJhNDNjIi8+Cjwvc3ZnPg==" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink-0:#120d08;
+  --ink-1:#1b140d;
+  --ink-2:#241a10;
+  --paper:#f4ecdc;
+  --paper-dim:rgba(244,236,220,.68);
+  --paper-faint:rgba(244,236,220,.4);
+  --amber:#e2a43c;
+  --amber-2:#c97b2e;
+  --copper:#a8511f;
+  --teal:#3c7d78;
+  --line:rgba(244,236,220,.14);
+  --line-strong:rgba(244,236,220,.26);
+  --maxw:1180px;
+  --radius:18px;
+  --ease:cubic-bezier(.4,0,.1,1);
+  --font-head:'Oswald',sans-serif;
+  --font-body:'Work Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink-0);color:var(--paper);
+  font-family:var(--font-body);font-size:17px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -5%, rgba(226,164,60,.14), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 20%, rgba(60,125,120,.10), transparent 60%);
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+@media (max-width:680px){.container{padding:0 20px}}
+section{position:relative}
+h1,h2,h3,h4{font-family:var(--font-head);font-weight:600;margin:0;letter-spacing:.01em}
+.kicker{
+  font-family:var(--font-body);font-weight:600;font-size:12.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--amber);display:inline-flex;align-items:center;gap:10px;
+}
+.kicker::before{content:'';width:22px;height:1.5px;background:var(--amber);display:inline-block}
+.lead{font-size:clamp(16px,1.6vw,19px);color:var(--paper-dim);max-width:52ch}
+.sec-head{max-width:640px;margin-bottom:clamp(32px,5vw,56px)}
+.sec-head h2{font-size:clamp(32px,4.6vw,50px);margin:10px 0 14px;line-height:1.05}
+.on-paper{background:var(--paper);color:var(--ink-1)}
+.on-paper .kicker{color:var(--copper)}
+.on-paper .lead{color:rgba(27,20,13,.68)}
+
+/* ---------- demo ribbon ---------- */
+.demo-ribbon{
+  position:sticky;top:0;z-index:60;background:var(--ink-1);border-bottom:1px solid var(--line);
+  font-size:13px;color:var(--paper-dim);
+}
+.demo-ribbon .container{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 28px;flex-wrap:wrap}
+.demo-ribbon strong{color:var(--amber);font-weight:600}
+.demo-ribbon a{color:var(--paper);border-bottom:1px solid var(--line-strong);white-space:nowrap}
+
+/* ---------- header ---------- */
+header{position:sticky;top:33px;z-index:55;background:rgba(18,13,8,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-size:22px;font-weight:700;letter-spacing:.02em}
+.logo svg{width:34px;height:22px;flex:none}
+.logo b{color:var(--amber)}
+nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:14.5px;font-weight:500}
+nav ul a{opacity:.82;transition:opacity .2s var(--ease)}
+nav ul a:hover{opacity:1;color:var(--amber)}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.nav-tel{font-size:14px;color:var(--paper-dim);display:none}
+@media (min-width:860px){.nav-tel{display:inline}}
+.hideable{display:none!important}
+@media (min-width:860px){.hideable{display:block!important}}
+@media (min-width:860px){a.hideable.btn{display:inline-flex!important}}
+.burger{display:none;background:none;border:1px solid var(--line-strong);border-radius:10px;color:var(--paper);width:40px;height:40px;cursor:pointer}
+@media (max-width:859px){.burger{display:block}.nav>ul{display:none}}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:14.5px;
+  padding:13px 24px;border-radius:999px;cursor:pointer;border:1px solid transparent;
+  transition:transform .2s var(--ease), background .2s var(--ease), color .2s var(--ease);
+}
+.btn-amber{background:var(--amber);color:#1b1206}
+.btn-amber:hover{background:#efb558;transform:translateY(-2px)}
+.btn-line{border-color:var(--line-strong);color:var(--paper)}
+.btn-line:hover{border-color:var(--amber);color:var(--amber);transform:translateY(-2px)}
+.btn-line.on-paper-btn{border-color:rgba(27,20,13,.3);color:var(--ink-1)}
+.btn-line.on-paper-btn:hover{border-color:var(--copper);color:var(--copper)}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(60px,10vw,120px) 0 clamp(70px,9vw,110px);overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(44px,7vw,84px);line-height:.98;margin:16px 0 20px}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero-ctas{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.tag{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border:1px solid var(--line-strong);border-radius:999px;color:var(--paper-dim)}
+.hero-visual{position:relative;aspect-ratio:1/1;border-radius:28px;background:
+  radial-gradient(circle at 30% 25%, rgba(226,164,60,.5), transparent 55%),
+  linear-gradient(160deg,var(--ink-2),var(--ink-0));
+  border:1px solid var(--line);overflow:hidden}
+.hero-visual canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-visual .shark-big{position:absolute;right:-8%;bottom:-6%;width:72%;opacity:.95;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+.hero-visual .medal{position:absolute;top:22px;left:22px;background:rgba(18,13,8,.75);border:1px solid var(--line-strong);border-radius:14px;padding:12px 16px;font-size:12.5px;line-height:1.3;backdrop-filter:blur(6px)}
+.hero-visual .medal b{display:block;color:var(--amber);font-family:var(--font-head);font-size:15px}
+
+/* ---------- histoire ---------- */
+.histoire{padding:clamp(70px,8vw,110px) 0}
+.histoire-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start}
+@media (max-width:860px){.histoire-grid{grid-template-columns:1fr}}
+.vincent-card{background:var(--ink-1);border:1px solid var(--line);border-radius:var(--radius);padding:30px}
+.vincent-avatar{width:84px;height:84px;border-radius:50%;background:linear-gradient(145deg,var(--amber),var(--copper));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:30px;color:#1b1206;margin-bottom:18px}
+.vincent-card h3{font-size:20px;margin-bottom:2px}
+.vincent-card .role{color:var(--paper-dim);font-size:14px;margin-bottom:16px}
+.vincent-quote{font-size:16px;font-style:italic;color:var(--paper-dim);border-left:2px solid var(--amber);padding-left:16px;margin:16px 0 0}
+.histoire-text p{color:var(--paper-dim);margin:0 0 18px}
+.histoire-text strong{color:var(--paper)}
+.stat-row{display:flex;gap:28px;margin-top:28px;flex-wrap:wrap}
+.stat b{display:block;font-family:var(--font-head);font-size:30px;color:var(--amber)}
+.stat span{font-size:13px;color:var(--paper-dim)}
+
+/* ---------- bières ---------- */
+.bieres{padding:clamp(70px,8vw,110px) 0}
+.biere-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+@media (max-width:980px){.biere-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:540px){.biere-grid{grid-template-columns:1fr}}
+.biere-card{background:var(--ink-1);border:1px solid var(--line);border-radius:16px;padding:22px 20px;transition:transform .25s var(--ease), border-color .25s var(--ease)}
+.biere-card:hover{transform:translateY(-6px);border-color:var(--amber)}
+.biere-swatch{width:46px;height:46px;border-radius:50%;margin-bottom:16px;border:1px solid var(--line-strong)}
+.biere-card h4{font-size:18px;margin-bottom:6px}
+.biere-card p{font-size:14px;color:var(--paper-dim);margin:0}
+.ephemere-banner{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:linear-gradient(120deg,rgba(226,164,60,.14),rgba(60,125,120,.1));border:1px solid var(--line);border-radius:16px;padding:22px 26px}
+.ephemere-banner h4{font-size:17px;margin-bottom:4px}
+.ephemere-banner p{margin:0;color:var(--paper-dim);font-size:14.5px;max-width:48ch}
+
+/* ---------- lieu ---------- */
+.lieu{padding:clamp(70px,8vw,110px) 0}
+.lieu-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:820px){.lieu-grid{grid-template-columns:1fr}}
+.lieu-card{border-radius:20px;padding:30px;position:relative;overflow:hidden;border:1px solid var(--line)}
+.lieu-card.winter{background:linear-gradient(160deg,#241a10,#120d08)}
+.lieu-card.summer{background:linear-gradient(160deg,#17302e,#120d08)}
+.lieu-card .pin{position:absolute;top:24px;right:26px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-faint)}
+.lieu-card h3{font-size:24px;margin:10px 0 10px}
+.lieu-card p{color:var(--paper-dim);font-size:15px;margin:0 0 18px}
+.sched{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.sched li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.sched li b{font-weight:500;color:var(--paper)}
+.sched li span{color:var(--paper-dim)}
+.sched-note{font-size:12.5px;color:var(--paper-faint);font-style:italic;margin-top:12px}
+.agenda-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.agenda-row .tag{border-color:var(--amber);color:var(--amber)}
+
+/* ---------- événements ---------- */
+.evenements{padding:clamp(70px,8vw,110px) 0}
+.evt-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+@media (max-width:900px){.evt-grid{grid-template-columns:1fr}}
+.evt-list{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:14px}
+.evt-list li{display:flex;gap:14px;align-items:flex-start;font-size:15px;color:rgba(27,20,13,.72)}
+.evt-list li .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:7px;flex:none}
+.evt-panel{background:var(--ink-1);border:1px solid var(--line);border-radius:var(--radius);padding:30px}
+.evt-panel h4{font-size:17px;margin-bottom:14px}
+.evt-panel form{display:grid;gap:12px}
+.evt-panel input,.evt-panel textarea{
+  width:100%;background:var(--ink-0);border:1px solid var(--line-strong);border-radius:10px;
+  padding:12px 14px;color:var(--paper);font-family:var(--font-body);font-size:14.5px;
+}
+.evt-panel input::placeholder,.evt-panel textarea::placeholder{color:var(--paper-faint)}
+.evt-panel .btn{justify-content:center;width:100%;margin-top:4px}
+
+/* ---------- boutique ---------- */
+.boutique{padding:clamp(70px,8vw,110px) 0}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:820px){.shop-grid{grid-template-columns:1fr}}
+.shop-card{background:var(--paper);color:var(--ink-1);border-radius:18px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.shop-thumb{height:150px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#fff8ea,#efe0bc)}
+.shop-thumb svg{width:64px;height:64px;opacity:.85}
+.shop-body{padding:20px 22px 24px}
+.shop-body h4{font-size:17px;margin-bottom:4px}
+.shop-body p{font-size:14px;color:rgba(27,20,13,.62);margin:0 0 14px}
+.shop-price{font-family:var(--font-head);font-size:20px;color:var(--copper)}
+
+/* ---------- village ---------- */
+.village{padding:clamp(70px,8vw,110px) 0}
+.village-intro{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:start;margin-bottom:46px}
+@media (max-width:860px){.village-intro{grid-template-columns:1fr}}
+.village-fact{background:var(--ink-1);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+.village-fact b{display:block;font-family:var(--font-head);font-size:26px;color:var(--amber);margin-bottom:4px}
+.village-fact span{font-size:13.5px;color:var(--paper-dim)}
+.artisan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:900px){.artisan-grid{grid-template-columns:1fr}}
+.artisan-card{background:var(--ink-1);border:1px solid var(--line);border-radius:18px;padding:26px;transition:border-color .25s var(--ease)}
+.artisan-card:hover{border-color:var(--teal)}
+.artisan-card .mark{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-family:var(--font-head);font-weight:700;font-size:16px;color:#0e1816;background:var(--teal)}
+.artisan-card h4{font-size:18px;margin-bottom:4px}
+.artisan-card .role{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-faint);margin-bottom:12px}
+.artisan-card p{font-size:14.5px;color:var(--paper-dim);margin:0 0 14px}
+.artisan-card a{font-size:13.5px;color:var(--amber);border-bottom:1px solid currentColor}
+.village-more{margin-top:18px;font-size:14px;color:var(--paper-faint);font-style:italic}
+
+/* ---------- note d'intention ---------- */
+.note{padding:clamp(70px,8vw,110px) 0}
+.note-box{background:linear-gradient(135deg,rgba(226,164,60,.08),rgba(60,125,120,.06));border:1px solid var(--line);border-radius:24px;padding:clamp(28px,4vw,48px)}
+.note-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+@media (max-width:820px){.note-grid{grid-template-columns:1fr}}
+.fix-list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px}
+.fix-list li{display:grid;grid-template-columns:20px 1fr;gap:12px;font-size:14.5px;color:rgba(27,20,13,.72)}
+.fix-list li .x{color:#d9704f}
+.fix-list li .ok{color:#6fae7f}
+.add-list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px}
+.add-list li{display:grid;grid-template-columns:20px 1fr;gap:12px;font-size:14.5px;color:rgba(27,20,13,.72)}
+.add-list li .plus{color:var(--amber);font-weight:700}
+
+/* ---------- contact ---------- */
+.contact{padding:clamp(70px,8vw,110px) 0}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+@media (max-width:860px){.contact-grid{grid-template-columns:1fr}}
+.infos-list{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:16px}
+.infos-list li{display:grid;grid-template-columns:22px 1fr;gap:12px;font-size:15px}
+.infos-list li span.label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(27,20,13,.5);margin-bottom:2px}
+.map-frame{border-radius:18px;overflow:hidden;border:1px solid rgba(27,20,13,.15);height:260px}
+.map-frame iframe{width:100%;height:100%;border:0;filter:sepia(.15) saturate(1.1)}
+
+/* ---------- footer ---------- */
+footer{padding:40px 0 50px;border-top:1px solid var(--line)}
+.foot-row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13.5px;color:var(--paper-faint)}
+.foot-row a{color:var(--paper-dim)}
+.foot-row a:hover{color:var(--amber)}
+
+/* ---------- floating pitch cta ---------- */
+.pitch-fab{
+  position:fixed;bottom:22px;right:22px;z-index:70;background:var(--ink-1);border:1px solid var(--line-strong);
+  border-radius:16px;padding:14px 18px;max-width:240px;font-size:12.5px;color:var(--paper-dim);
+  box-shadow:0 14px 34px rgba(0,0,0,.45);
+}
+.pitch-fab b{display:block;color:var(--paper);font-family:var(--font-head);font-size:14px;margin-bottom:6px}
+.pitch-fab a{color:var(--amber);border-bottom:1px solid currentColor;font-weight:600}
+@media (max-width:620px){.pitch-fab{left:16px;right:16px;max-width:none;bottom:14px}}
+
+/* ---------- mobile nav ---------- */
+.mobile-panel{position:fixed;inset:0;z-index:80;background:var(--ink-0);display:none;flex-direction:column;padding:24px}
+.mobile-panel.open{display:flex}
+.mobile-panel .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.mobile-panel ul{list-style:none;margin:0;padding:0;display:grid;gap:22px;font-family:var(--font-head);font-size:28px}
+</style>
+</head>
+<body>
+
+<div class="demo-ribbon">
+  <div class="container">
+    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong> pour Union-B, non en ligne officiellement.</span>
+    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
+  </div>
+</div>
+
+<header>
+  <div class="nav container">
+    <a href="#top" class="logo">
+      <svg viewBox="0 0 100 60" fill="none"><path d="M5 44 C18 24, 36 14, 52 15 C48 8, 58 3, 70 7 C65 11, 62 16, 65 19 C86 20, 96 34, 96 38 C80 36, 60 39, 49 46 C34 54, 14 51, 5 44 Z" fill="#e2a43c"/><circle cx="24" cy="38" r="2.4" fill="#120d08"/></svg>
+      UNION<b>-B</b>
+    </a>
+    <ul class="hideable">
+      <li><a href="#bieres">Nos bières</a></li>
+      <li><a href="#lieu">Le lieu</a></li>
+      <li><a href="#evenements">Événements</a></li>
+      <li><a href="#village">Village d'artisans</a></li>
+      <li><a href="#boutique">Boutique</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <span class="nav-tel">06 31 76 11 36</span>
+      <a href="#evenements" class="btn btn-amber hideable">Réserver un événement</a>
+      <button class="burger" id="burgerBtn" aria-label="Ouvrir le menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-panel" id="mobilePanel">
+  <div class="top">
+    <span class="logo">UNION<b>-B</b></span>
+    <button class="burger" id="closeBtn" aria-label="Fermer le menu">✕</button>
+  </div>
+  <ul>
+    <li><a href="#bieres">Nos bières</a></li>
+    <li><a href="#lieu">Le lieu</a></li>
+    <li><a href="#evenements">Événements</a></li>
+    <li><a href="#village">Village d'artisans</a></li>
+    <li><a href="#boutique">Boutique</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</div>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="kicker">Brasserie artisanale · Malaunay</span>
+        <h1>La bière<br>a <em>du mordant.</em></h1>
+        <p class="lead">Depuis 2018, Union-B brasse à Malaunay des bières artisanales à l'image de son emblème&nbsp;: un requin. Plus il est agressif sur l'étiquette, plus la bière a du caractère. Gamme permanente, créations éphémères, taproom et biergarten au bord du Cailly.</p>
+        <div class="hero-ctas">
+          <a href="#bieres" class="btn btn-amber">Découvrir nos bières</a>
+          <a href="#lieu" class="btn btn-line">Voir le lieu &amp; les horaires</a>
+        </div>
+        <div class="hero-tags">
+          <span class="tag">Brassée à Malaunay</span>
+          <span class="tag">Bronze — France Bière Challenge 2021</span>
+          <span class="tag">Taproom + biergarten</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <canvas id="bubbleCanvas"></canvas>
+        <div class="medal"><b>Bronze</b>France Bière Challenge, 2021</div>
+        <svg class="shark-big" viewBox="0 0 200 120" fill="none">
+          <path d="M8 86 C40 46, 76 28, 108 30 C98 14, 118 4, 142 12 C132 20, 126 30, 132 36 C174 38, 192 66, 192 74 C160 70, 120 76, 98 90 C68 106, 28 100, 8 86 Z" fill="#c97b2e" opacity=".9"/>
+          <circle cx="46" cy="76" r="4" fill="#120d08"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="histoire" id="histoire">
+    <div class="container histoire-grid">
+      <div class="vincent-card">
+        <div class="vincent-avatar">VD</div>
+        <h3>Vincent Delafosse</h3>
+        <div class="role">Fondateur &amp; brasseur</div>
+        <p style="color:var(--paper-dim);font-size:14.5px;margin:0">Formé à l'Institut Français des Boissons, de la Brasserie et de la Malterie (IFBM) de Nancy. Préside Union-B depuis sa création en décembre 2017.</p>
+        <p class="vincent-quote">« Plus le requin est agressif sur l'étiquette, plus la bière a du caractère. »</p>
+      </div>
+      <div class="histoire-text">
+        <span class="kicker">Notre histoire</span>
+        <h2 style="font-size:clamp(28px,3.6vw,38px);margin:12px 0 18px">Une brasserie qui s'est installée dans une ancienne usine textile</h2>
+        <p>Union-B est une <strong>SAS</strong> créée en décembre 2017 et en activité depuis juin 2018. La brasserie s'installe dans l'ancien site industriel <strong>TAN</strong> (Teintures et Apprêts de Normandie) à Malaunay, aux côtés d'autres artisans — un vrai village de métiers manuels au bord du Cailly.</p>
+        <p>Sa gamme permanente — blanche, blonde, ambrée, brune, IPA — est complétée par des créations éphémères, et sa Blonde a décroché le <strong>bronze au France Bière Challenge 2021</strong>.</p>
+        <div class="stat-row">
+          <div class="stat"><b>2018</b><span>Première cuve</span></div>
+          <div class="stat"><b>5</b><span>Bières permanentes</span></div>
+          <div class="stat"><b>1</b><span>Médaille nationale</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bieres on-paper" id="bieres">
+    <div class="container">
+      <div class="sec-head">
+        <span class="kicker">La gamme</span>
+        <h2>Cinq bières permanentes, et ce qui ne dure qu'un temps</h2>
+        <p class="lead">Chaque brassin porte le requin — notre façon de dire qu'une bière sans caractère ne mérite pas l'étiquette.</p>
+      </div>
+      <div class="biere-grid">
+        <div class="biere-card"><div class="biere-swatch" style="background:#f3ead0"></div><h4>Blanche</h4><p>Légère et rafraîchissante, notes d'agrumes.</p></div>
+        <div class="biere-card"><div class="biere-swatch" style="background:#e8b84a"></div><h4>Blonde</h4><p>L'équilibre maison — bronze au France Bière Challenge 2021.</p></div>
+        <div class="biere-card"><div class="biere-swatch" style="background:#c9772f"></div><h4>Ambrée</h4><p>Ronde et caramélisée, de garde.</p></div>
+        <div class="biere-card"><div class="biere-swatch" style="background:#4a2c18"></div><h4>Brune</h4><p>Torréfiée, notes de café et de cacao.</p></div>
+        <div class="biere-card"><div class="biere-swatch" style="background:#9a7a1f"></div><h4>IPA</h4><p>Houblonnée et mordante, comme son nom l'indique.</p></div>
+      </div>
+      <div class="ephemere-banner">
+        <div>
+          <h4>Gamme éphémère</h4>
+          <p>Des brassins de saison, en série limitée — à retrouver à la boutique et au taproom, tant qu'il y en a.</p>
+        </div>
+        <a href="#boutique" class="btn btn-line on-paper-btn">Voir la boutique</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="lieu" id="lieu">
+    <div class="container">
+      <div class="sec-head">
+        <span class="kicker">Le lieu</span>
+        <h2>Un taproom l'hiver, un biergarten l'été</h2>
+        <p class="lead">Même adresse, deux ambiances — avec des horaires enfin les mêmes partout.</p>
+      </div>
+      <div class="lieu-grid">
+        <div class="lieu-card winter">
+          <span class="pin">Octobre → Mars</span>
+          <h3>Taproom d'hiver</h3>
+          <p>Dans l'entrepôt, au chaud — soirées concerts, blind-tests et karaoké.</p>
+          <ul class="sched">
+            <li><b>Jeudi</b><span>17h – 22h</span></li>
+            <li><b>Vendredi</b><span>17h – 00h</span></li>
+            <li><b>Samedi</b><span>15h – 00h</span></li>
+          </ul>
+          <div class="agenda-row"><span class="tag">Concerts le vendredi</span><span class="tag">Blind-test / karaoké</span></div>
+          <p class="sched-note">Horaires indicatifs, à confirmer et à publier partout de la même façon — plus de vendredi « 18h » ici et « 16h » là.</p>
+        </div>
+        <div class="lieu-card summer">
+          <span class="pin">Avril → Septembre</span>
+          <h3>Biergarten d'été</h3>
+          <p>En plein air, au bord du Cailly, dans des conteneurs aménagés.</p>
+          <ul class="sched">
+            <li><b>Mercredi – Jeudi</b><span>17h – 22h</span></li>
+            <li><b>Vendredi</b><span>17h – 00h</span></li>
+            <li><b>Samedi – Dimanche</b><span>14h – 00h</span></li>
+          </ul>
+          <div class="agenda-row"><span class="tag">Bord de l'eau</span><span class="tag">Concerts le vendredi</span></div>
+          <p class="sched-note">Même logique : un seul calendrier, affiché une seule fois, qui ne change pas selon la page.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="evenements on-paper" id="evenements">
+    <div class="container evt-grid">
+      <div>
+        <span class="kicker">Entreprises &amp; tournages</span>
+        <h2>Un lieu brut, à privatiser</h2>
+        <p class="lead">L'entrepôt et le biergarten se prêtent aussi bien à une soirée d'entreprise qu'à un tournage — une activité réelle d'Union-B, mais noyée aujourd'hui dans le reste du site.</p>
+        <ul class="evt-list">
+          <li><span class="dot"></span>Privatisation du taproom ou du biergarten pour vos événements d'entreprise</li>
+          <li><span class="dot"></span>Décor industriel et naturel, déjà utilisé pour des tournages</li>
+          <li><span class="dot"></span>Bar à bières maison, animation sur mesure (concert, DJ, blind-test)</li>
+          <li><span class="dot"></span>Devis sous 48h, visite du lieu possible avant réservation</li>
+        </ul>
+      </div>
+      <div class="evt-panel">
+        <h4>Demander un devis</h4>
+        <form onsubmit="return false">
+          <input type="text" placeholder="Nom de l'entreprise / production">
+          <input type="email" placeholder="Email">
+          <input type="text" placeholder="Date envisagée">
+          <textarea rows="3" placeholder="Votre projet (événement, tournage, nombre de personnes…)"></textarea>
+          <button type="submit" class="btn btn-amber">Envoyer la demande</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="boutique" id="boutique">
+    <div class="container">
+      <div class="sec-head">
+        <span class="kicker">La boutique</span>
+        <h2>À emporter, ou à faire livrer</h2>
+        <p class="lead">Une boutique claire, sans page nommée « E-SHOP_ex » — juste la boutique.</p>
+      </div>
+      <div class="shop-grid">
+        <div class="shop-card">
+          <div class="shop-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#c97b2e" stroke-width="1.4"><path d="M5 8h14l-1.2 11H6.2L5 8Z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg></div>
+          <div class="shop-body">
+            <h4>Pack découverte</h4>
+            <p>Les 5 bières permanentes, à partager ou à comparer.</p>
+            <div class="shop-price">20 €</div>
+          </div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#c97b2e" stroke-width="1.4"><path d="M4 12c3-5 7-7 9-7-1 1-2 3-2 4 4 0 7 3 7 5-3-1-6 0-7 1-2 2-5 2-7-3Z"/></svg></div>
+          <div class="shop-body">
+            <h4>Décapsuleur requin</h4>
+            <p>L'objet culte d'Union-B, en métal brut.</p>
+            <div class="shop-price" style="font-size:14px">Au comptoir &amp; en ligne</div>
+          </div>
+        </div>
+        <div class="shop-card">
+          <div class="shop-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="#c97b2e" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 3"/></svg></div>
+          <div class="shop-body">
+            <h4>Gamme éphémère</h4>
+            <p>Les séries limitées du moment, en quantité réduite.</p>
+            <div class="shop-price">Variable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="village" id="village">
+    <div class="container">
+      <div class="village-intro">
+        <div>
+          <span class="kicker">Le village d'artisans</span>
+          <h2 style="font-size:clamp(30px,3.8vw,42px);margin:12px 0 16px">Union-B n'est pas seule sur le site</h2>
+          <p class="lead">L'ancienne usine TAN réunit, sur 3 hectares et 6&nbsp;000 m², une brasserie, un atelier d'ébénisterie, un sculpteur-ferronnier et une galerie d'art — un vrai pôle d'artisanat à Malaunay, encore trop peu visible comme tel.</p>
+        </div>
+        <div class="village-fact">
+          <b>3 ha</b><span>de site industriel partagé, au bord du Cailly</span>
+        </div>
+      </div>
+      <div class="artisan-grid">
+        <div class="artisan-card">
+          <div class="mark" style="background:var(--amber);color:#1b1206">U-B</div>
+          <h4>Union-B</h4>
+          <div class="role">Brasserie artisanale</div>
+          <p>Taproom, biergarten, concerts et location d'espace — la locomotive du village.</p>
+        </div>
+        <div class="artisan-card">
+          <div class="mark">GL</div>
+          <h4>Gllu</h4>
+          <div class="role">Ébénisterie</div>
+          <p>Atelier de 700 m², mobilier en chêne et châtaignier normands, prix « Made in Normandie » 2023. Environ 100 revendeurs en France et 20 en Europe.</p>
+          <a href="https://gllu.fr" target="_blank" rel="noopener">gllu.fr ↗</a>
+        </div>
+        <div class="artisan-card">
+          <div class="mark">LO</div>
+          <h4>Lo* Sculptures</h4>
+          <div class="role">Sculpteur-ferronnier</div>
+          <p>Laurent Le Pennu, installé depuis 2024, univers punk et steampunk, pièces uniques sur commande.</p>
+          <a href="mailto:loetoile@gmail.com">loetoile@gmail.com ↗</a>
+        </div>
+      </div>
+      <p class="village-more">Le site accueille aussi une galerie d'art contemporain et d'autres artisans — de quoi faire, avec le temps, une vraie page « village d'artisans » commune.</p>
+    </div>
+  </section>
+
+  <section class="note on-paper" id="note">
+    <div class="container">
+      <div class="note-box">
+        <span class="kicker">À l'attention de Vincent</span>
+        <h2 style="font-size:clamp(26px,3.2vw,34px);margin:12px 0 22px">Ce que cette maquette corrige, et ce qu'elle ajoute</h2>
+        <div class="note-grid">
+          <div>
+            <h4 style="font-size:16px;margin-bottom:4px">Ce qu'on a corrigé</h4>
+            <ul class="fix-list">
+              <li><span class="x">✕</span><span>Texte « Lorem ipsum » encore visible sur la page « Nos bars »</span></li>
+              <li><span class="x">✕</span><span>Adresse email de contact « info@monsite.fr », restée au template</span></li>
+              <li><span class="x">✕</span><span>Page boutique nommée « E-SHOP_ex »</span></li>
+              <li><span class="x">✕</span><span>Horaires du vendredi différents selon la page (18h / 16h)</span></li>
+              <li><span class="x">✕</span><span>« Cressionnière » au lieu de « Cressonnière »</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="font-size:16px;margin-bottom:4px">Ce qu'on propose d'ajouter</h4>
+            <ul class="add-list">
+              <li><span class="plus">+</span><span>Une page « Événements &amp; tournages » claire, avec formulaire de devis</span></li>
+              <li><span class="plus">+</span><span>Une vraie boutique en ligne, lisible sur mobile</span></li>
+              <li><span class="plus">+</span><span>Un agenda unique (concerts, blind-tests) partagé entre toutes les pages</span></li>
+              <li><span class="plus">+</span><span>Une page « Village d'artisans » commune avec Gllu, Lo* Sculptures et les autres — bonne pour eux, bonne pour vous</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact on-paper" id="contact">
+    <div class="container contact-grid">
+      <div>
+        <span class="kicker">Infos pratiques</span>
+        <h2 style="font-size:clamp(28px,3.4vw,36px);margin:12px 0 18px">Nous trouver</h2>
+        <ul class="infos-list">
+          <li><span>📍</span><div><span class="label">Adresse</span>Impasse de la Cressonnière, 76770 Malaunay</div></li>
+          <li><span>✉️</span><div><span class="label">Email</span><a href="mailto:brasserie@union-b.fr">brasserie@union-b.fr</a></div></li>
+          <li><span>📞</span><div><span class="label">Téléphone</span>06 31 76 11 36 — 06 74 22 80 31</div></li>
+        </ul>
+      </div>
+      <div class="map-frame">
+        <iframe loading="lazy" title="Localisation Union-B, Malaunay" src="https://www.openstreetmap.org/export/embed.html?bbox=1.1100%2C49.4700%2C1.1400%2C49.4900&layer=mapnik"></iframe>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="on-paper">
+  <div class="container foot-row">
+    <span>© Union-B — Malaunay. Maquette non officielle, réalisée à titre d'exemple.</span>
+    <span>Concept &amp; proposition : <a href="mailto:emiletaraud942@gmail.com">Maison Émile</a></span>
+  </div>
+</footer>
+
+<div class="pitch-fab">
+  <b>Et votre vrai site ?</b>
+  On peut construire exactement ça pour Union-B, sans les détails qui traînent.
+  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
+</div>
+
+<script>
+(function(){
+  var burger = document.getElementById('burgerBtn');
+  var closeBtn = document.getElementById('closeBtn');
+  var panel = document.getElementById('mobilePanel');
+  if(burger) burger.addEventListener('click', function(){ panel.classList.add('open'); });
+  if(closeBtn) closeBtn.addEventListener('click', function(){ panel.classList.remove('open'); });
+  panel.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ panel.classList.remove('open'); });
+  });
+
+  var canvas = document.getElementById('bubbleCanvas');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var w, h, bubbles = [];
+  function resize(){
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * devicePixelRatio; canvas.height = h * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  function spawn(){
+    bubbles.push({
+      x: Math.random()*w, y: h + 20, r: 2 + Math.random()*6,
+      speed: 0.3 + Math.random()*0.9, drift: (Math.random()-0.5)*0.4,
+      alpha: 0.12 + Math.random()*0.28
+    });
+  }
+  function tick(){
+    ctx.clearRect(0,0,w,h);
+    if(bubbles.length < 46 && Math.random() < 0.55) spawn();
+    for(var i=bubbles.length-1;i>=0;i--){
+      var b = bubbles[i];
+      b.y -= b.speed; b.x += b.drift;
+      if(b.y < -20){ bubbles.splice(i,1); continue; }
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(226,164,60,' + b.alpha + ')';
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(244,236,220,' + (b.alpha*0.6) + ')';
+      ctx.stroke();
+    }
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>
