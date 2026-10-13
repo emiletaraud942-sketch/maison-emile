@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Boutique Solidarité — Secours populaire · Les invendus qui changent de vie</title>
-<meta name="description" content="La Boutique Solidarité récupère les invendus des enseignes partenaires (bazar, électroménager, textile, alimentaire) et les revend à prix solidaires. Chaque achat finance les actions du Secours populaire et évite le gaspillage." />
+<title>Boutique Solidarité — Secours populaire (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : à quoi pourrait ressembler une Boutique Solidarité en ligne pour une antenne du Secours populaire, pour revendre à prix solidaires les invendus donnés par les enseignes. Document de travail, non officiel." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23c01818'/%3E%3Cpath d='M32 46c-9-6-16-12-16-20 0-5 4-9 9-9 4 0 6 2 7 4 1-2 3-4 7-4 5 0 9 4 9 9 0 8-7 14-16 20z' fill='%23fff6e8'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,8 +37,20 @@
   .btn-sm{padding:9px 18px;font-size:13px}
   .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
+  /* demo ribbon */
+  .demo-ribbon{position:sticky;top:0;z-index:70;background:var(--ink);color:var(--cream);font-size:13px;border-bottom:1px solid rgba(253,248,240,.15)}
+  .demo-ribbon .container{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 24px;flex-wrap:wrap;max-width:var(--container);margin:0 auto}
+  .demo-ribbon strong{color:#f0a8a0;font-weight:600}
+  .demo-ribbon a{color:var(--cream);border-bottom:1px solid rgba(253,248,240,.4);white-space:nowrap;text-decoration:none}
+
+  /* pitch fab */
+  .pitch-fab{position:fixed;bottom:22px;right:22px;z-index:65;background:var(--ink);color:var(--cream-2);border:1px solid rgba(253,248,240,.15);border-radius:16px;padding:14px 18px;max-width:240px;font-size:12.5px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
+  .pitch-fab b{display:block;color:#fff;font-family:var(--font-serif);font-size:15px;margin-bottom:6px}
+  .pitch-fab a{color:#f0a8a0;border-bottom:1px solid currentColor;font-weight:600;text-decoration:none}
+  @media (max-width:620px){.pitch-fab{left:16px;right:16px;max-width:none;bottom:14px}}
+
   /* header */
-  header{position:sticky;top:0;z-index:40;background:rgba(253,248,240,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  header{position:sticky;top:34px;z-index:40;background:rgba(253,248,240,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
   .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
   .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
   .brand .mark{width:38px;height:38px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;flex:none}
@@ -54,7 +67,7 @@
     nav.links{display:none}
     .burger{display:block}
   }
-  .mobile-panel{position:fixed;inset:0;background:var(--cream);z-index:50;display:none;flex-direction:column;padding:24px}
+  .mobile-panel{position:fixed;inset:0;background:var(--cream);z-index:80;display:none;flex-direction:column;padding:24px}
   .mobile-panel.open{display:flex}
   .mobile-panel .close-x{align-self:flex-end;background:none;border:0;font-size:28px;cursor:pointer}
   .mobile-panel a{font-family:var(--font-hand);font-size:34px;font-weight:700;text-decoration:none;color:var(--ink);padding:14px 0;border-bottom:1px solid var(--line)}
@@ -150,7 +163,7 @@
   .foot-bottom{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted-light);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
   /* modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(36,26,21,.55);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(36,26,21,.55);z-index:75;display:none;align-items:center;justify-content:center;padding:20px}
   .modal-backdrop.open{display:flex}
   .modal{background:#fff;border-radius:20px;max-width:480px;width:100%;padding:28px;position:relative;max-height:90vh;overflow:auto}
   .modal .close-x{position:absolute;top:14px;right:16px;background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted-light)}
@@ -166,6 +179,13 @@
 </style>
 </head>
 <body>
+
+<div class="demo-ribbon">
+  <div class="container">
+    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong> pour le Secours populaire, non en ligne officiellement.</span>
+    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
+  </div>
+</div>
 
 <header>
   <div class="wrap nav">
@@ -372,11 +392,17 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>Page locale indépendante présentant une Boutique Solidarité du Secours populaire — adresses et chiffres à personnaliser par votre fédération.</span>
-      <span>Site réalisé par Maison Émile</span>
+      <span>Maquette non officielle, réalisée à titre d'exemple pour une antenne du Secours populaire.</span>
+      <span>Concept &amp; proposition : <a href="mailto:emiletaraud942@gmail.com">Maison Émile</a></span>
     </div>
   </div>
 </footer>
+
+<div class="pitch-fab">
+  <b>Et votre vraie boutique en ligne ?</b>
+  On peut construire exactement ça pour votre antenne, avec vos vrais articles et vos vraies adresses.
+  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
+</div>
 
 <div class="modal-backdrop" id="modalBackdrop">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
