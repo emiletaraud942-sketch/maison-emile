@@ -8,6 +8,7 @@
     "data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E";
 
   const ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
+  const CAHIER_URL = `https://maison-emile.vercel.app/?projet=${encodeURIComponent("Boutique Solidarité — Secours populaire")}#cahier`;
 
   const PAGES = [
     { key: "index", href: "index.html", label: "Boutique solidaire" },
@@ -40,6 +41,18 @@
     </div>`;
   }
 
+  function cahierCtaHtml() {
+    return `<section class="cahier-cta">
+      <div class="wrap" style="margin:0 auto">
+        <p class="chip">Et après ?</p>
+        <h2>On continue d'en discuter ?</h2>
+        <p>Cette maquette donne une direction — mais chaque antenne a ses propres contraintes (budget, équipe, données).
+           Le cahier des charges guidé prend 5 minutes et m'aide à vous faire une proposition qui colle vraiment à votre réalité.</p>
+        <a class="btn btn-primary" href="${CAHIER_URL}" target="_blank" rel="noopener">Remplir le cahier des charges guidé →</a>
+      </div>
+    </section>`;
+  }
+
   window.SPFDemo = {
     ANTENNE_EMAIL,
 
@@ -50,6 +63,10 @@
     // Floating pitch bubble: called once, right before </body>.
     fab(config) {
       document.write(fabHtml(config));
+    },
+    // Banner mise en avant à la fin de la visite : called once, right after </main>.
+    cahierCta() {
+      document.write(cahierCtaHtml());
     },
     // Used as the onerror handler on the header logo <img>.
     logoFallback(img) {
