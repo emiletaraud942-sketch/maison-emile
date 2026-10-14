@@ -265,19 +265,21 @@ nav ul a.nav-highlight{opacity:1;color:#1b1206;background:var(--amber);font-weig
 .cahier-box .kicker{color:var(--copper)}
 .cahier-box h2{font-size:clamp(30px,4.4vw,46px);margin:12px 0 14px;max-width:20ch;line-height:1.06;color:var(--ink-1)}
 .cahier-box .lead{color:rgba(27,20,13,.68);max-width:60ch;margin-bottom:30px}
-.cahier-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:20px;margin-bottom:20px}
-@media (max-width:760px){.cahier-grid{grid-template-columns:1fr 1fr}}
-@media (max-width:540px){.cahier-grid{grid-template-columns:1fr}}
+.cahier-section{margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid rgba(27,20,13,.12)}
+.cahier-section:last-of-type{border-bottom:none}
+.cahier-section-label{display:block;font-family:var(--font-head);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--copper);margin-bottom:16px}
+.cahier-grid{display:grid;gap:20px}
+.cahier-grid-2{grid-template-columns:1fr 1fr}
+.cahier-grid-3{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:700px){.cahier-grid-2,.cahier-grid-3{grid-template-columns:1fr}}
 .cahier-field label{display:block;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(27,20,13,.55);margin-bottom:8px}
 .cahier-field input,.cahier-field select,.cahier-field textarea{
   width:100%;background:#fff;border:1px solid rgba(27,20,13,.18);border-radius:10px;
   padding:12px 14px;color:var(--ink-1);font-family:var(--font-body);font-size:14.5px;
 }
+.cahier-field select{cursor:pointer}
 .cahier-field input::placeholder,.cahier-field textarea::placeholder{color:rgba(27,20,13,.35)}
 .cahier-field-wide{grid-column:1/-1;margin-bottom:22px}
-.check-grid{display:grid;gap:10px}
-.check{display:flex;align-items:center;gap:10px;font-size:14.5px;color:rgba(27,20,13,.72);cursor:pointer}
-.check input{width:16px;height:16px;flex:none;accent-color:var(--copper)}
 .cahier-submit{width:100%;justify-content:center;font-size:17px;padding:18px;box-shadow:0 14px 30px rgba(226,164,60,.5)}
 .cahier-note{margin:12px 0 0;font-size:12.5px;color:rgba(27,20,13,.5);text-align:center;font-style:italic}
 
@@ -624,41 +626,99 @@ footer{padding:40px 0 50px;border-top:1px solid var(--line)}
         <h2>Vous avez vu ce que ça peut donner. Dites-nous-en plus sur votre projet.</h2>
         <p class="lead">Deux minutes pour nous dire ce qui compte pour vous — on vous prépare une proposition sur mesure plutôt qu'un devis générique.</p>
         <form id="cahierForm" class="cahier-form" onsubmit="return envoyerCahier(event)">
-          <div class="cahier-grid">
-            <div class="cahier-field">
-              <label>Vos priorités</label>
-              <div class="check-grid">
-                <label class="check"><input type="checkbox" name="priorite" value="Boutique en ligne"> Boutique en ligne</label>
-                <label class="check"><input type="checkbox" name="priorite" value="Page Événements &amp; tournages"> Page Événements &amp; tournages</label>
-                <label class="check"><input type="checkbox" name="priorite" value="Agenda unique (concerts, soirées)"> Agenda unique (concerts, soirées)</label>
-                <label class="check"><input type="checkbox" name="priorite" value="Page Village d'artisans"> Page « Village d'artisans »</label>
-                <label class="check"><input type="checkbox" name="priorite" value="Autre chose"> Autre chose</label>
+
+          <div class="cahier-section">
+            <span class="cahier-section-label">1 — Votre projet</span>
+            <div class="cahier-grid cahier-grid-2">
+              <div class="cahier-field">
+                <label for="cahierObjectif">Objectif principal du site</label>
+                <select id="cahierObjectif" name="objectif">
+                  <option value="Donner envie de venir (vitrine)">Donner envie de venir (vitrine)</option>
+                  <option value="Vendre en ligne (boutique)">Vendre en ligne (boutique)</option>
+                  <option value="Gérer réservations &amp; événements d'entreprise">Gérer réservations &amp; événements d'entreprise</option>
+                  <option value="Les trois à la fois">Les trois à la fois</option>
+                </select>
+              </div>
+              <div class="cahier-field">
+                <label for="cahierExistant">Par rapport au site actuel</label>
+                <select id="cahierExistant" name="existant">
+                  <option value="Tout refaire">Tout refaire</option>
+                  <option value="Garder la structure, revoir le contenu">Garder la structure, revoir le contenu</option>
+                  <option value="Juste corriger les erreurs (email, horaires, fautes)">Juste corriger les erreurs (email, horaires, fautes)</option>
+                  <option value="Je ne sais pas encore">Je ne sais pas encore</option>
+                </select>
+              </div>
+              <div class="cahier-field">
+                <label for="cahierBoutique">Boutique en ligne</label>
+                <select id="cahierBoutique" name="boutique">
+                  <option value="Oui, avec paiement en ligne">Oui, avec paiement en ligne</option>
+                  <option value="Oui, juste un catalogue (sans paiement)">Oui, juste un catalogue (sans paiement)</option>
+                  <option value="Non, pas besoin">Non, pas besoin</option>
+                  <option value="À voir ensemble">À voir ensemble</option>
+                </select>
+              </div>
+              <div class="cahier-field">
+                <label for="cahierEvenements">Événements &amp; réservations</label>
+                <select id="cahierEvenements" name="evenements">
+                  <option value="Un formulaire de demande de devis suffit">Un formulaire de demande de devis suffit</option>
+                  <option value="Un calendrier avec les disponibilités en temps réel">Un calendrier avec les disponibilités en temps réel</option>
+                  <option value="Pas concerné">Pas concerné</option>
+                </select>
+              </div>
+              <div class="cahier-field">
+                <label for="cahierMaj">Qui mettra le site à jour après</label>
+                <select id="cahierMaj" name="mise_a_jour">
+                  <option value="Moi-même, avec un outil simple">Moi-même, avec un outil simple</option>
+                  <option value="Maison Émile, je ne veux pas m'en occuper">Maison Émile, je ne veux pas m'en occuper</option>
+                  <option value="On en discute selon le prix">On en discute selon le prix</option>
+                </select>
+              </div>
+              <div class="cahier-field">
+                <label for="cahierVillage">Page « Village d'artisans »</label>
+                <select id="cahierVillage" name="village">
+                  <option value="Oui, avec Gllu et Lo* Sculptures">Oui, avec Gllu et Lo* Sculptures</option>
+                  <option value="Pas prioritaire pour l'instant">Pas prioritaire pour l'instant</option>
+                  <option value="À leur proposer d'abord">À leur proposer d'abord</option>
+                </select>
               </div>
             </div>
-            <div class="cahier-field">
-              <label for="cahierBudget">Budget envisagé</label>
-              <select id="cahierBudget" name="budget">
-                <option value="Pas encore d'idée">Pas encore d'idée</option>
-                <option value="Moins de 1000 €">Moins de 1 000 €</option>
-                <option value="1000 à 3000 €">1 000 à 3 000 €</option>
-                <option value="Plus de 3000 €">Plus de 3 000 €</option>
-              </select>
-            </div>
-            <div class="cahier-field">
-              <label for="cahierDelai">Délai souhaité</label>
-              <select id="cahierDelai" name="delai">
-                <option value="Dès que possible">Dès que possible</option>
-                <option value="Dans les 3 mois">Dans les 3 mois</option>
-                <option value="Pas pressé">Pas pressé</option>
-              </select>
-            </div>
-            <div class="cahier-field"><label for="cahierNom">Votre nom</label><input id="cahierNom" name="nom" type="text" placeholder="Vincent Delafosse" required></div>
-            <div class="cahier-field"><label for="cahierTel">Téléphone</label><input id="cahierTel" name="telephone" type="tel" placeholder="06 31 76 11 36"></div>
-            <div class="cahier-field"><label for="cahierEmail">Email</label><input id="cahierEmail" name="email" type="email" placeholder="brasserie@union-b.fr"></div>
           </div>
+
+          <div class="cahier-section">
+            <span class="cahier-section-label">2 — Budget &amp; délai</span>
+            <div class="cahier-grid cahier-grid-2">
+              <div class="cahier-field">
+                <label for="cahierBudget">Budget envisagé</label>
+                <select id="cahierBudget" name="budget">
+                  <option value="Pas encore d'idée">Pas encore d'idée</option>
+                  <option value="Moins de 1000 €">Moins de 1 000 €</option>
+                  <option value="1000 à 3000 €">1 000 à 3 000 €</option>
+                  <option value="Plus de 3000 €">Plus de 3 000 €</option>
+                </select>
+              </div>
+              <div class="cahier-field">
+                <label for="cahierDelai">Délai souhaité</label>
+                <select id="cahierDelai" name="delai">
+                  <option value="Dès que possible">Dès que possible</option>
+                  <option value="Dans les 3 mois">Dans les 3 mois</option>
+                  <option value="Pas pressé">Pas pressé</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="cahier-section">
+            <span class="cahier-section-label">3 — Vos coordonnées</span>
+            <div class="cahier-grid cahier-grid-3">
+              <div class="cahier-field"><label for="cahierNom">Votre nom</label><input id="cahierNom" name="nom" type="text" placeholder="Vincent Delafosse" required></div>
+              <div class="cahier-field"><label for="cahierTel">Téléphone</label><input id="cahierTel" name="telephone" type="tel" placeholder="06 31 76 11 36"></div>
+              <div class="cahier-field"><label for="cahierEmail">Email</label><input id="cahierEmail" name="email" type="email" placeholder="brasserie@union-b.fr"></div>
+            </div>
+          </div>
+
           <div class="cahier-field cahier-field-wide">
-            <label for="cahierMessage">Dites-nous en plus</label>
-            <textarea id="cahierMessage" name="message" rows="4" placeholder="Vos vrais horaires, ce qui vous plaît ou pas dans la maquette, votre boutique en ligne actuelle, les autres artisans du site…"></textarea>
+            <label for="cahierMessage">Autre chose à préciser (facultatif)</label>
+            <textarea id="cahierMessage" name="message" rows="3" placeholder="Vos vrais horaires, ce qui vous plaît ou pas dans la maquette, votre boutique en ligne actuelle…"></textarea>
           </div>
           <button type="submit" class="btn btn-amber cahier-submit">Envoyer à Maison Émile</button>
           <p class="cahier-note">Ça ouvrira votre messagerie avec tout pré-rempli — il ne restera qu'à cliquer sur envoyer.</p>
@@ -686,17 +746,22 @@ footer{padding:40px 0 50px;border-top:1px solid var(--line)}
 function envoyerCahier(e){
   e.preventDefault();
   var f = document.getElementById('cahierForm');
-  var priorites = Array.prototype.map.call(f.querySelectorAll('input[name="priorite"]:checked'), function(c){ return c.value; });
   var lignes = [
+    'Objectif principal : ' + f.objectif.value,
+    'Par rapport au site actuel : ' + f.existant.value,
+    'Boutique en ligne : ' + f.boutique.value,
+    'Événements & réservations : ' + f.evenements.value,
+    'Mise à jour après livraison : ' + f.mise_a_jour.value,
+    'Page Village d\'artisans : ' + f.village.value,
+    '',
+    'Budget envisagé : ' + f.budget.value,
+    'Délai souhaité : ' + f.delai.value,
+    '',
     'Nom : ' + (f.nom.value || '—'),
     'Téléphone : ' + (f.telephone.value || '—'),
     'Email : ' + (f.email.value || '—'),
     '',
-    'Priorités : ' + (priorites.length ? priorites.join(', ') : '—'),
-    'Budget envisagé : ' + f.budget.value,
-    'Délai souhaité : ' + f.delai.value,
-    '',
-    'Message :',
+    'Autre chose à préciser :',
     f.message.value || '—'
   ];
   var sujet = encodeURIComponent('Cahier des charges — site Union-B');
