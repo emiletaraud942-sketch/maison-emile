@@ -210,11 +210,11 @@
 
     list.forEach((f) => {
       const last = f.notes.length ? f.notes.at(-1).date : "—";
-      const tags = f.aides.map((a) => `<span class="tag">${a}</span>`).join("");
+      const tags = f.aides.map((a) => `<span class="tag">${SPFDemo.escapeHtml(a)}</span>`).join("");
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td data-label="Famille" class="cell-code">${f.code}<span>${f.notes.length} note(s) de suivi</span></td>
-        <td data-label="Composition">${f.composition}</td>
+        <td data-label="Famille" class="cell-code">${SPFDemo.escapeHtml(f.code)}<span>${f.notes.length} note(s) de suivi</span></td>
+        <td data-label="Composition">${SPFDemo.escapeHtml(f.composition)}</td>
         <td data-label="Aides"><div class="tag-list">${tags}</div></td>
         <td data-label="Dernière visite">${last}</td>
         <td data-label="Actions"></td>
@@ -237,7 +237,7 @@
     const f = families.find((x) => x.id === familyId);
     document.getElementById("detailTitle").textContent = f.code;
     document.getElementById("detailComposition").textContent = f.composition;
-    document.getElementById("detailAides").innerHTML = f.aides.map((a) => `<span class="tag">${a}</span>`).join("");
+    document.getElementById("detailAides").innerHTML = f.aides.map((a) => `<span class="tag">${SPFDemo.escapeHtml(a)}</span>`).join("");
     renderTimeline(f);
     document.getElementById("noteContent").value = "";
     document.getElementById("detailModalBackdrop").classList.add("open");
@@ -252,7 +252,7 @@
     el.innerHTML = f.notes
       .slice()
       .reverse()
-      .map((n) => `<div class="timeline-item"><div class="meta">${n.date} · ${n.auteur}</div><p>${n.contenu}</p></div>`)
+      .map((n) => `<div class="timeline-item"><div class="meta">${n.date} · ${SPFDemo.escapeHtml(n.auteur)}</div><p>${SPFDemo.escapeHtml(n.contenu)}</p></div>`)
       .join("");
   }
   function closeDetail(){

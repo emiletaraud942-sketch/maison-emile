@@ -210,9 +210,9 @@
           ? '<span class="status-pill status-ok">Diffusé</span>'
           : '<span class="status-pill status-warn">Proposé</span>';
         return `<tr>
-          <td data-label="Don">${d.description} (${d.quantite})</td>
+          <td data-label="Don">${SPFDemo.escapeHtml(d.description)} (${SPFDemo.escapeHtml(d.quantite)})</td>
           <td data-label="Catégorie">${CATEGORY_LABELS[d.categorie]}</td>
-          <td data-label="Origine">${d.origine}</td>
+          <td data-label="Origine">${SPFDemo.escapeHtml(d.origine)}</td>
           <td data-label="Statut">${pill}</td>
         </tr>`;
       })

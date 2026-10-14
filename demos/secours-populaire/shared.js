@@ -53,8 +53,15 @@
     </section>`;
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
   window.SPFDemo = {
     ANTENNE_EMAIL,
+    // Escapes text typed by a visitor (article name, note, donor's name…) before it is
+    // interpolated into an innerHTML template literal, so it renders as text, never as markup.
+    escapeHtml,
 
     // Ribbon + suite-nav: called once, right at the top of <body>.
     chrome(config) {
