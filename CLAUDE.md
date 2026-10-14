@@ -16,7 +16,7 @@ L'offre principale est l'**automatisation/gestion** (stock, planning d'équipe, 
 
 - **`code`** — implémente les changements sur `index.html`.
 - **`qa`** — à utiliser après tout changement visuel/interactif, avant de considérer que c'est fini : sert le site en local et vérifie réellement le rendu (pas une relecture de diff).
-- **`security-reviewer`** — à utiliser avant de merger un changement touchant le formulaire de devis, des liens/iframes externes, une insertion DOM via `innerHTML`, ou les pages légales (CGV/mentions légales/confidentialité) — vérifie XSS, secrets, cohérence juridique.
+- **`security-reviewer`** — à utiliser avant de merger un changement touchant le formulaire de devis, des liens/iframes externes, une insertion DOM via `innerHTML`, les pages légales (CGV/mentions légales/confidentialité), ou la config de déploiement — vérifie XSS, secrets, cohérence juridique, et audite aussi périodiquement la posture sécurité globale (en-têtes HTTP via `vercel.json`, actuellement absent, exposition de données, ressources externes non épinglées).
 
 Flux recommandé pour un changement non trivial : `code` implémente → `qa` vérifie le rendu → `security-reviewer` relit si le changement touche formulaire/liens/pages légales → l'utilisateur valide avant merge.
 
