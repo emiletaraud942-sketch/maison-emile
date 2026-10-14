@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cahier des charges — Maison Émile</title>
+<meta name="description" content="Deux minutes pour nous dire ce qui compte dans votre organisation, et recevoir une proposition sur mesure de Maison Émile." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjMxIiBmaWxsPSIjMGMwYjBhIi8+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmNGYxZWEiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjQ1Ii8+Cjx0ZXh0IHg9IjMzIiB5PSI0MyIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsICdUaW1lcyBOZXcgUm9tYW4nLCBzZXJpZiIgZm9udC1zdHlsZT0iaXRhbGljIiBmb250LXNpemU9IjMyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZjRmMWVhIj5NPC90ZXh0Pgo8L3N2Zz4K" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,400;1,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wizard.css">
+<style>
+:root{
+  --black:#0c0b0a; --cream:#f4f1ea; --ink:#14110d;
+  --muted-light: rgba(20,17,13,.58);
+  --font-hand:'Caveat',cursive; --font-serif:'Cormorant Garamond',Georgia,serif; --font-sans:'Hanken Grotesk',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+header{padding:28px 0}
+.logo{font-family:var(--font-hand);font-weight:700;font-size:28px;color:var(--ink);text-decoration:none}
+main{padding:20px 0 90px}
+.eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:500;font-size:20px;color:var(--muted-light)}
+h1{font-family:var(--font-hand);font-weight:700;font-size:clamp(40px,7vw,64px);line-height:.95;margin:10px 0 18px}
+.lead{font-size:17px;color:var(--muted-light);max-width:56ch;margin:0 0 42px}
+.card{background:#fff;border:1px solid rgba(20,17,13,.1);border-radius:24px;padding:clamp(24px,4vw,44px);box-shadow:0 30px 60px rgba(20,17,13,.06)}
+footer{padding:30px 0;border-top:1px solid rgba(20,17,13,.12);font-size:13px;color:var(--muted-light);text-align:center}
+footer a{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header class="container">
+  <a href="https://maison-emile.vercel.app/" class="logo">Maison Émile</a>
+</header>
+
+<main class="container">
+  <span class="eyebrow">Cahier des charges</span>
+  <h1>Parlez-moi<br>de votre organisation.</h1>
+  <p class="lead">Une quinzaine de questions fermées, deux minutes montre en main — pour que la proposition que je vous prépare corresponde à ce que vous vivez vraiment au quotidien, pas à un modèle générique.</p>
+  <div class="card">
+    <div class="cdc-wizard" id="cdcWizard" style="--cdc-bg:#fff;--cdc-text:#14110d;--cdc-muted:rgba(20,17,13,.55);--cdc-border:rgba(20,17,13,.14);--cdc-accent:#14110d;--cdc-accent-text:#f4f1ea;--cdc-option-bg:rgba(20,17,13,.035);--cdc-option-hover:rgba(20,17,13,.08);--cdc-font:'Hanken Grotesk',system-ui,sans-serif;"></div>
+  </div>
+</main>
+
+<footer>
+  Maison Émile — Rouen et alentours. <a href="https://maison-emile.vercel.app/">Retour au site</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.3.3/dist/email.min.js"></script>
+<script>
+  window.CAHIER_CONFIG = {
+    // À compléter avec vos identifiants EmailJS (dashboard EmailJS → Account → API Keys / Email Services / Templates)
+    serviceId: 'YOUR_SERVICE_ID',
+    templateId: 'YOUR_TEMPLATE_ID',
+    publicKey: 'YOUR_PUBLIC_KEY',
+    destinataireEmail: 'emiletaraud942@gmail.com',
+    projetDefaut: '' // pré-rempli automatiquement si l'URL contient ?projet=NomDuClient
+  };
+</script>
+<script src="wizard.js"></script>
+</body>
+</html>
