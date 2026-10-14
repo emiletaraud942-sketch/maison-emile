@@ -76,6 +76,7 @@ header{position:sticky;top:33px;z-index:55;background:rgba(18,13,8,.82);backdrop
 nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:14.5px;font-weight:500}
 nav ul a{opacity:.82;transition:opacity .2s var(--ease)}
 nav ul a:hover{opacity:1;color:var(--amber)}
+nav ul a.nav-highlight,.mobile-panel a.nav-highlight{opacity:1;color:var(--amber);font-weight:600}
 .nav-cta{display:flex;align-items:center;gap:14px}
 .nav-tel{font-size:14px;color:var(--paper-dim);display:none}
 @media (min-width:860px){.nav-tel{display:inline}}
@@ -239,6 +240,33 @@ nav ul a:hover{opacity:1;color:var(--amber)}
 .map-frame{border-radius:18px;overflow:hidden;border:1px solid rgba(27,20,13,.15);height:260px}
 .map-frame iframe{width:100%;height:100%;border:0;filter:sepia(.15) saturate(1.1)}
 
+/* ---------- cahier des charges ---------- */
+.cahier{padding:clamp(60px,8vw,100px) 0 clamp(90px,10vw,130px)}
+.cahier-box{
+  position:relative;border-radius:28px;padding:clamp(28px,4.5vw,52px);
+  background:linear-gradient(150deg, rgba(226,164,60,.16), rgba(18,13,8,.98) 55%);
+  border:1px solid var(--amber);
+  box-shadow:0 0 0 1px rgba(226,164,60,.08), 0 30px 70px rgba(226,164,60,.08);
+}
+.cahier-box .kicker{color:var(--amber)}
+.cahier-box h2{font-size:clamp(28px,4vw,42px);margin:12px 0 14px;max-width:18ch;line-height:1.08}
+.cahier-box .lead{color:var(--paper-dim);max-width:60ch;margin-bottom:30px}
+.cahier-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:20px;margin-bottom:20px}
+@media (max-width:760px){.cahier-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:540px){.cahier-grid{grid-template-columns:1fr}}
+.cahier-field label{display:block;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-faint);margin-bottom:8px}
+.cahier-field input,.cahier-field select,.cahier-field textarea{
+  width:100%;background:rgba(18,13,8,.6);border:1px solid var(--line-strong);border-radius:10px;
+  padding:12px 14px;color:var(--paper);font-family:var(--font-body);font-size:14.5px;
+}
+.cahier-field input::placeholder,.cahier-field textarea::placeholder{color:var(--paper-faint)}
+.cahier-field-wide{grid-column:1/-1;margin-bottom:22px}
+.check-grid{display:grid;gap:10px}
+.check{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--paper-dim);cursor:pointer}
+.check input{width:16px;height:16px;flex:none;accent-color:var(--amber)}
+.cahier-submit{width:100%;justify-content:center;font-size:16px;padding:16px}
+.cahier-note{margin:12px 0 0;font-size:12.5px;color:var(--paper-faint);text-align:center;font-style:italic}
+
 /* ---------- footer ---------- */
 footer{padding:40px 0 50px;border-top:1px solid var(--line)}
 .foot-row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13.5px;color:var(--paper-faint)}
@@ -284,6 +312,7 @@ footer{padding:40px 0 50px;border-top:1px solid var(--line)}
       <li><a href="#village">Village d'artisans</a></li>
       <li><a href="#boutique">Boutique</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="#cahier-des-charges" class="nav-highlight">Votre projet</a></li>
     </ul>
     <div class="nav-cta">
       <span class="nav-tel">06 31 76 11 36</span>
@@ -305,6 +334,7 @@ footer{padding:40px 0 50px;border-top:1px solid var(--line)}
     <li><a href="#village">Village d'artisans</a></li>
     <li><a href="#boutique">Boutique</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="#cahier-des-charges" class="nav-highlight">Votre projet</a></li>
   </ul>
 </div>
 
@@ -572,6 +602,56 @@ footer{padding:40px 0 50px;border-top:1px solid var(--line)}
     </div>
   </section>
 
+  <section class="cahier" id="cahier-des-charges">
+    <div class="container">
+      <div class="cahier-box">
+        <span class="kicker">Dernière étape</span>
+        <h2>Vous avez vu ce que ça peut donner. Dites-nous-en plus sur votre projet.</h2>
+        <p class="lead">Deux minutes pour nous dire ce qui compte pour vous — on vous prépare une proposition sur mesure plutôt qu'un devis générique.</p>
+        <form id="cahierForm" class="cahier-form" onsubmit="return envoyerCahier(event)">
+          <div class="cahier-grid">
+            <div class="cahier-field">
+              <label>Vos priorités</label>
+              <div class="check-grid">
+                <label class="check"><input type="checkbox" name="priorite" value="Boutique en ligne"> Boutique en ligne</label>
+                <label class="check"><input type="checkbox" name="priorite" value="Page Événements &amp; tournages"> Page Événements &amp; tournages</label>
+                <label class="check"><input type="checkbox" name="priorite" value="Agenda unique (concerts, soirées)"> Agenda unique (concerts, soirées)</label>
+                <label class="check"><input type="checkbox" name="priorite" value="Page Village d'artisans"> Page « Village d'artisans »</label>
+                <label class="check"><input type="checkbox" name="priorite" value="Autre chose"> Autre chose</label>
+              </div>
+            </div>
+            <div class="cahier-field">
+              <label for="cahierBudget">Budget envisagé</label>
+              <select id="cahierBudget" name="budget">
+                <option value="Pas encore d'idée">Pas encore d'idée</option>
+                <option value="Moins de 1000 €">Moins de 1 000 €</option>
+                <option value="1000 à 3000 €">1 000 à 3 000 €</option>
+                <option value="Plus de 3000 €">Plus de 3 000 €</option>
+              </select>
+            </div>
+            <div class="cahier-field">
+              <label for="cahierDelai">Délai souhaité</label>
+              <select id="cahierDelai" name="delai">
+                <option value="Dès que possible">Dès que possible</option>
+                <option value="Dans les 3 mois">Dans les 3 mois</option>
+                <option value="Pas pressé">Pas pressé</option>
+              </select>
+            </div>
+            <div class="cahier-field"><label for="cahierNom">Votre nom</label><input id="cahierNom" name="nom" type="text" placeholder="Vincent Delafosse" required></div>
+            <div class="cahier-field"><label for="cahierTel">Téléphone</label><input id="cahierTel" name="telephone" type="tel" placeholder="06 31 76 11 36"></div>
+            <div class="cahier-field"><label for="cahierEmail">Email</label><input id="cahierEmail" name="email" type="email" placeholder="brasserie@union-b.fr"></div>
+          </div>
+          <div class="cahier-field cahier-field-wide">
+            <label for="cahierMessage">Dites-nous en plus</label>
+            <textarea id="cahierMessage" name="message" rows="4" placeholder="Vos vrais horaires, ce qui vous plaît ou pas dans la maquette, votre boutique en ligne actuelle, les autres artisans du site…"></textarea>
+          </div>
+          <button type="submit" class="btn btn-amber cahier-submit">Envoyer à Maison Émile</button>
+          <p class="cahier-note">Ça ouvrira votre messagerie avec tout pré-rempli — il ne restera qu'à cliquer sur envoyer.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="on-paper">
@@ -584,10 +664,31 @@ footer{padding:40px 0 50px;border-top:1px solid var(--line)}
 <div class="pitch-fab">
   <b>Et votre vrai site ?</b>
   On peut construire exactement ça pour Union-B, sans les détails qui traînent.
-  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
+  <br><a href="#cahier-des-charges">Dites-nous-en plus →</a>
 </div>
 
 <script>
+function envoyerCahier(e){
+  e.preventDefault();
+  var f = document.getElementById('cahierForm');
+  var priorites = Array.prototype.map.call(f.querySelectorAll('input[name="priorite"]:checked'), function(c){ return c.value; });
+  var lignes = [
+    'Nom : ' + (f.nom.value || '—'),
+    'Téléphone : ' + (f.telephone.value || '—'),
+    'Email : ' + (f.email.value || '—'),
+    '',
+    'Priorités : ' + (priorites.length ? priorites.join(', ') : '—'),
+    'Budget envisagé : ' + f.budget.value,
+    'Délai souhaité : ' + f.delai.value,
+    '',
+    'Message :',
+    f.message.value || '—'
+  ];
+  var sujet = encodeURIComponent('Cahier des charges — site Union-B');
+  var corps = encodeURIComponent(lignes.join('\n'));
+  window.location.href = 'mailto:emiletaraud942@gmail.com?subject=' + sujet + '&body=' + corps;
+  return false;
+}
 (function(){
   var burger = document.getElementById('burgerBtn');
   var closeBtn = document.getElementById('closeBtn');
