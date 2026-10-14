@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Maison Émile — Automatisation, gestion de stock & sites sur-mesure · Rouen</title>
+<title>Maison Émile — Logiciels de gestion sur-mesure · Rouen</title>
 <meta name="description" content="Maison Émile conçoit des outils d'automatisation et d'organisation sur-mesure — gestion de stock, planning d'équipe, alertes, tableaux de bord — pour les entreprises avec une vraie complexité à gérer (entrepôts, logistique, distribution). Sites web sur-mesure également, comme point d'entrée. À Rouen et à distance. Coût d'installation, puis un accompagnement mensuel dans la durée." />
 <link rel="canonical" href="https://maison-emile.vercel.app/" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjMxIiBmaWxsPSIjMGMwYjBhIi8+CjxjaXJjbGUgY3g9IjMyIiBjeT0iMzIiIHI9IjI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmNGYxZWEiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjQ1Ii8+Cjx0ZXh0IHg9IjMzIiB5PSI0MyIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsICdUaW1lcyBOZXcgUm9tYW4nLCBzZXJpZiIgZm9udC1zdHlsZT0iaXRhbGljIiBmb250LXNpemU9IjMyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZjRmMWVhIj5NPC90ZXh0Pgo8L3N2Zz4K" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Maison Émile" />
-<meta property="og:title" content="Maison Émile — Automatisation, gestion de stock & sites sur-mesure · Rouen" />
-<meta property="og:description" content="Outils d'automatisation et d'organisation sur-mesure (stock, planning d'équipe, alertes, tableaux de bord) pour entreprises avec une vraie complexité de gestion. Sites web sur-mesure également, comme point d'entrée. Rouen et à distance." />
+<meta property="og:title" content="Maison Émile — Logiciels de gestion sur-mesure · Rouen" />
+<meta property="og:description" content="Planning d'équipe et rôles, suivi financier, communication client, pilotage en temps réel : des logiciels de gestion complets et sur-mesure pour les structures avec une complexité réelle à gérer. Sites web sur-mesure également, comme point d'entrée. Rouen et à distance." />
 <meta property="og:url" content="https://maison-emile.vercel.app/" />
 <meta property="og:locale" content="fr_FR" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Maison Émile — Automatisation, gestion de stock & sites sur-mesure" />
-<meta name="twitter:description" content="Outils d'automatisation et d'organisation sur-mesure (stock, planning d'équipe, alertes, tableaux de bord) pour entreprises avec une vraie complexité de gestion. À Rouen et à distance." />
+<meta name="twitter:title" content="Maison Émile — Logiciels de gestion sur-mesure" />
+<meta name="twitter:description" content="Planning d'équipe et rôles, suivi financier, communication client, pilotage en temps réel : des logiciels de gestion complets et sur-mesure, pas de simples automatismes. À Rouen et à distance." />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -32,7 +32,7 @@
     "addressCountry": "FR"
   },
   "areaServed": "Rouen et alentours, France",
-  "description": "Conception d'outils d'automatisation et d'organisation sur-mesure (gestion de stock, planning d'équipe, alertes, tableaux de bord) et de sites web sur-mesure pour professionnels.",
+  "description": "Conception de logiciels de gestion complets et sur-mesure (planning d'équipe, suivi financier, communication, pilotage) et de sites web sur-mesure pour professionnels.",
   "sameAs": ["https://www.linkedin.com/in/emile-taraud-88b0363b8"]
 }
 </script>
@@ -308,7 +308,7 @@ img { display: block; max-width: 100%; }
 /* ---------- réalisations (carrousel coverflow) ---------- */
 .real-stage-wrap { position: relative; }
 .real-stage {
-  position: relative; width: 100%; height: clamp(280px, 40vw, 420px);
+  position: relative; width: 100%; height: clamp(280px, 40vw, 420px); overflow: hidden;
   display: flex; align-items: center; justify-content: center; perspective: 1500px;
 }
 .real-card {
@@ -409,6 +409,7 @@ img { display: block; max-width: 100%; }
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce){ .reveal { opacity:1; transform:none; } }
+@media print{ .reveal { opacity:1 !important; transform:none !important; } }
 
 /* ---------- cookie banner ---------- */
 .cookie {
@@ -1185,7 +1186,7 @@ img { display: block; max-width: 100%; }
       <div class="reveal">
         <p class="serif-q">« Lycéen, bientôt en fac de droit, et passionné d'informatique depuis tout petit. J'ai commencé par des sites vitrines — j'y ai découvert le vrai besoin des pros : moins un joli site, plus des <em>outils</em> qui leur font gagner du temps. »</p>
         <p class="lead muted-d" style="margin-top:32px">Je me forme à la création web et à l'informatique depuis des années, par passion. En voyant des professionnels payer chaque mois, à vie, des plateformes comme Planity pour une simple page de réservation, j'ai décidé de sauter le pas — leur construire des outils pensés pour eux, avec un vrai accompagnement humain derrière.</p>
-        <p class="lead muted-d">Ce chemin m'a mené vers un prototype de gestion d'entrepôt conçu pour Neveu Logistique : stock par client, mouvements et traçabilité, alertes, planning d'équipe. J'y ai trouvé mon vrai terrain : l'automatisation et l'organisation pour des structures avec une complexité de gestion réelle. Les sites vitrines restent une porte d'entrée ; c'est aujourd'hui le cœur de Maison Émile.</p>
+        <p class="lead muted-d">Ce chemin m'a mené vers un logiciel de pilotage complet pour un établissement médicalisé : plan des chambres, équipes, résidents, visites, stock, émargement, frais. J'y ai trouvé mon vrai terrain : l'automatisation et l'organisation pour des structures avec une complexité de gestion réelle. Les sites vitrines restent une porte d'entrée ; c'est aujourd'hui le cœur de Maison Émile.</p>
         <p class="signature" style="margin-top:30px">— Maison Émile</p>
       </div>
       <div class="reveal">
@@ -1296,6 +1297,7 @@ img { display: block; max-width: 100%; }
               <option>Site web sur-mesure</option>
               <option>Prise de rendez-vous + dashboard</option>
               <option>Formulaire de devis / contact</option>
+              <option>Accompagnement IA sur-mesure</option>
               <option>Plusieurs / je ne sais pas encore</option>
             </select>
           </div>
