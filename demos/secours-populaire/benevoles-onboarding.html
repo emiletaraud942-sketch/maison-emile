@@ -43,28 +43,13 @@
 </head>
 <body>
 
-<div class="demo-ribbon">
-  <div class="container">
-    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, onboarding numérique des bénévoles. Non en ligne officiellement.</span>
-    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
-  </div>
-</div>
-
-<div class="suite-nav">
-  <div class="wrap">
-    <a href="index.html">Boutique solidaire</a>
-    <a href="admin.html">Gestion du stock</a>
-    <a href="planning.html">Planning &amp; RDV</a>
-    <a href="familles.html">Suivi des familles</a>
-    <a href="dons-matching.html">Dons ↔ Besoins</a>
-    <a href="benevoles-onboarding.html" class="current">Nouveaux bénévoles</a>
-  </div>
-</div>
+<script src="shared.js"></script>
+<script>SPFDemo.chrome({ current: "benevoles-onboarding", ribbonContext: "onboarding numérique des bénévoles" });</script>
 
 <header>
   <div class="wrap nav">
     <a class="brand" href="index.html">
-      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E'" />
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="SPFDemo.logoFallback(this)" />
       <span class="name">Secours populaire<small>Nouveaux bénévoles</small></span>
     </a>
     <div class="nav-right"><a href="index.html">↗ Voir la boutique publique</a></div>
@@ -140,11 +125,10 @@
   </section>
 </main>
 
-<div class="pitch-fab">
-  <b>Et la vraie version ?</b>
-  On peut y ajouter vos vraies vidéos d'accueil, votre charte, et prévenir automatiquement le responsable d'équipe à chaque étape franchie.
-  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
-</div>
+<script>SPFDemo.fab({
+  title: "Et la vraie version ?",
+  body: "On peut y ajouter vos vraies vidéos d'accueil, votre charte, et prévenir automatiquement le responsable d'équipe à chaque étape franchie."
+});</script>
 
 <script>
 (function(){

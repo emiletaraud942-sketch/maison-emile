@@ -155,23 +155,8 @@
 </head>
 <body>
 
-<div class="demo-ribbon">
-  <div class="container">
-    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, dans la charte du site officiel du Secours populaire. Non en ligne officiellement.</span>
-    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
-  </div>
-</div>
-
-<div class="suite-nav">
-  <div class="wrap">
-    <a href="index.html" class="current">Boutique solidaire</a>
-    <a href="admin.html">Gestion du stock</a>
-    <a href="planning.html">Planning &amp; RDV</a>
-    <a href="familles.html">Suivi des familles</a>
-    <a href="dons-matching.html">Dons ↔ Besoins</a>
-    <a href="benevoles-onboarding.html">Nouveaux bénévoles</a>
-  </div>
-</div>
+<script src="shared.js"></script>
+<script>SPFDemo.chrome({ current: "index", ribbonContext: "dans la charte du site officiel du Secours populaire" });</script>
 
 <div class="utility-bar">
   <div class="wrap">
@@ -186,7 +171,7 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="https://www.secourspopulaire.fr/" target="_blank" rel="noopener">
-      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E'" />
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="SPFDemo.logoFallback(this)" />
       <span class="name">Secours populaire<small>Boutique solidaire</small></span>
     </a>
     <nav class="links" aria-label="Navigation principale">
@@ -419,11 +404,10 @@
   </div>
 </footer>
 
-<div class="pitch-fab">
-  <b>Et votre vraie boutique en ligne ?</b>
-  On peut intégrer exactement ça à votre site, avec vos vrais articles et vos vraies adresses.
-  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
-</div>
+<script>SPFDemo.fab({
+  title: "Et votre vraie boutique en ligne ?",
+  body: "On peut intégrer exactement ça à votre site, avec vos vrais articles et vos vraies adresses."
+});</script>
 
 <div class="modal-backdrop" id="modalBackdrop">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -459,7 +443,6 @@
   "use strict";
 
   var ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
-  var ANTENNE_PHONE = "+33000000000";
 
   var CATEGORIES = [
     { key: "tous", label: "Tous" },
