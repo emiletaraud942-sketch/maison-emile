@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nouveaux bénévoles — Secours populaire (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : un formulaire d'inscription et un parcours d'accueil en ligne pour les nouveaux bénévoles, afin que le premier rendez-vous en personne serve à former vraiment plutôt qu'à remplir des cases. Document de travail, non officiel." />
+<link rel="icon" href="https://images.secourspopulaire.fr/gravity:sm/rs:auto:32:32/app/uploads/2023/06/cropped-favicon-spf-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .hero{padding:48px 0 36px}
+  .hero .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
+  @media (max-width:900px){.hero .grid{grid-template-columns:1fr}}
+  .hero h1{font-size:clamp(30px,4.6vw,46px)}
+  .signup-form{padding:20px 22px}
+  .signup-note{margin-top:14px}
+  .section-tight-top{padding-top:0}
+
+  .progress-wrap{background:var(--bg);border:1px solid var(--line);padding:18px 20px;margin-bottom:20px}
+  .progress-head{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+  .progress-bar{height:10px;background:var(--line);margin-top:10px;overflow:hidden}
+  .progress-bar > div{height:100%;background:var(--red);transition:width .25s ease}
+  .steps-list{display:flex;flex-direction:column;gap:12px}
+  .step-item{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--line);padding:16px 18px}
+  .step-item.done{border-left:4px solid var(--ok)}
+  .step-item input[type="checkbox"]{width:20px;height:20px;margin-top:2px;flex:none}
+  .step-item h3{margin:0 0 4px;text-transform:none}
+  .step-item p{margin:0;font-size:14px}
+  .step-item.done h3{color:var(--ok)}
+
+  .checklist-cta{margin-top:20px}
+</style>
+</head>
+<body>
+
+<script src="shared.js"></script>
+<script>SPFDemo.chrome({ current: "benevoles-onboarding", ribbonContext: "onboarding numérique des bénévoles" });</script>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="SPFDemo.logoFallback(this)" />
+      <span class="name">Secours populaire<small>Nouveaux bénévoles</small></span>
+    </a>
+    <div class="nav-right"><a href="index.html">↗ Voir la boutique publique</a></div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap grid">
+      <div>
+        <p class="chip">Bienvenue</p>
+        <h1>Devenir bénévole, étape par étape</h1>
+        <p class="lead">Avant votre premier rendez-vous en personne, découvrez l'essentiel ici — pour que ce rendez-vous serve à vous rencontrer vraiment, pas à remplir des papiers.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Je m'inscris</h2>
+        </div>
+        <form id="signupForm" class="signup-form">
+          <div class="field">
+            <label for="sName">Nom complet</label>
+            <input id="sName" type="text" required />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="sEmail">E-mail</label>
+              <input id="sEmail" type="email" required />
+            </div>
+            <div class="field">
+              <label for="sPhone">Téléphone</label>
+              <input id="sPhone" type="tel" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="sDispo">Disponibilités (jours / créneaux)</label>
+            <input id="sDispo" type="text" placeholder="Ex. Mardi et jeudi après-midi" required />
+          </div>
+          <div class="field">
+            <label for="sMotivation">Pourquoi souhaitez-vous rejoindre le Secours populaire ?</label>
+            <textarea id="sMotivation" rows="3" required></textarea>
+          </div>
+          <div class="modal-actions form-actions-left">
+            <a class="btn btn-primary btn-sm" id="signupMailBtn" href="#">Envoyer mon inscription</a>
+          </div>
+          <p class="note signup-note">Ouvre votre messagerie avec un message pré-rempli — un bénévole vous recontacte pour fixer votre premier rendez-vous.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight-top">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Parcours d'accueil</p>
+        <h2>À faire avant votre premier jour</h2>
+        <p>Cinq étapes courtes, à votre rythme. Cochez au fur et à mesure.</p>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-head">
+          <span id="progressLabel">0 / 5 étapes terminées</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar"><div id="progressFill" style="width:0%"></div></div>
+      </div>
+
+      <div class="steps-list" id="stepsList"></div>
+
+      <div class="checklist-cta">
+        <button type="button" class="btn btn-ghost btn-sm" id="resetBtn">Réinitialiser la démo</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>SPFDemo.cahierCta();</script>
+
+<script>SPFDemo.fab({
+  title: "Et la vraie version ?",
+  body: "On peut y ajouter vos vraies vidéos d'accueil, votre charte, et prévenir automatiquement le responsable d'équipe à chaque étape franchie."
+});</script>
+
+<script>
+(() => {
+  "use strict";
+
+  const { ANTENNE_EMAIL } = SPFDemo;
+  const STORAGE_KEY = "spf-onboarding-demo-steps";
+
+  const STEPS = [
+    { id:"valeurs", title:"Découvrir nos valeurs", desc:"Une page de 5 minutes sur l'histoire et les principes du Secours populaire." },
+    { id:"charte", title:"Charte de confidentialité et de discrétion", desc:"Ce que vous pouvez partager, et ce qui reste strictement entre vous et l'antenne." },
+    { id:"gestes", title:"Premiers gestes utiles", desc:"Accueil d'une personne en difficulté, sécurité, et qui contacter en cas de doute." },
+    { id:"rencontre", title:"Rencontre avec votre responsable d'équipe", desc:"Un échange court pour répondre à vos questions avant le terrain." },
+    { id:"creneau", title:"Choisir votre premier créneau", desc:"Vous rejoignez une permanence déjà en place, accompagné·e par un bénévole expérimenté." }
+  ];
+
+  let done = {};
+
+  function load(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* stockage indisponible */ }
+    return {};
+  }
+  function save(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(done)); } catch (e) { /* stockage indisponible */ } }
+
+  function renderSteps(){
+    const el = document.getElementById("stepsList");
+    el.innerHTML = "";
+    STEPS.forEach((step) => {
+      const isDone = Boolean(done[step.id]);
+      const item = document.createElement("label");
+      item.className = `step-item${isDone ? " done" : ""}`;
+      item.innerHTML = `
+        <input type="checkbox" ${isDone ? "checked" : ""} />
+        <span><h3>${step.title}</h3><p>${step.desc}</p></span>
+      `;
+      item.querySelector("input").addEventListener("change", (e) => {
+        done[step.id] = e.target.checked;
+        save();
+        renderSteps();
+        renderProgress();
+      });
+      el.appendChild(item);
+    });
+  }
+
+  function renderProgress(){
+    const count = STEPS.filter((s) => done[s.id]).length;
+    const pct = Math.round((count / STEPS.length) * 100);
+    document.getElementById("progressLabel").textContent = `${count} / ${STEPS.length} étapes terminées`;
+    document.getElementById("progressPct").textContent = `${pct}%`;
+    document.getElementById("progressFill").style.width = `${pct}%`;
+  }
+
+  function updateSignupLink(){
+    const name = document.getElementById("sName").value || "[votre nom]";
+    const email = document.getElementById("sEmail").value || "[votre e-mail]";
+    const phone = document.getElementById("sPhone").value || "[votre téléphone]";
+    const dispo = document.getElementById("sDispo").value || "[vos disponibilités]";
+    const motivation = document.getElementById("sMotivation").value || "[votre motivation]";
+    const subject = encodeURIComponent(`Inscription bénévole : ${name}`);
+    const body = encodeURIComponent(
+      `Bonjour,\n\nJe souhaite devenir bénévole au Secours populaire.\n\n` +
+      `Nom : ${name}\nE-mail : ${email}\nTéléphone : ${phone}\n` +
+      `Disponibilités : ${dispo}\n\nMotivation :\n${motivation}\n`
+    );
+    document.getElementById("signupMailBtn").href = `mailto:${ANTENNE_EMAIL}?subject=${subject}&body=${body}`;
+  }
+  for (const id of ["sName", "sEmail", "sPhone", "sDispo", "sMotivation"]) {
+    document.getElementById(id).addEventListener("input", updateSignupLink);
+  }
+  document.getElementById("signupForm").addEventListener("submit", (e) => e.preventDefault());
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!window.confirm("Réinitialiser votre progression de démo ?")) return;
+    done = {};
+    save();
+    renderSteps();
+    renderProgress();
+  });
+
+  done = load();
+  renderSteps();
+  renderProgress();
+  updateSignupLink();
+})();
+</script>
+
+</body>
+</html>

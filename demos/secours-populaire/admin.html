@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gestion de la boutique — Espace bénévoles (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : un espace bénévoles pour gérer les articles de la Boutique solidaire (ajouter un don, marquer vendu ou réservé, retirer un article) sans passer par un développeur. Document de travail, non officiel." />
+<link rel="icon" href="https://images.secourspopulaire.fr/gravity:sm/rs:auto:32:32/app/uploads/2023/06/cropped-favicon-spf-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  main{padding:36px 0 80px}
+  .cell-name{font-weight:700}
+  .cell-name .origin{display:block;font-weight:400;font-size:12px;color:var(--muted-light);margin-top:2px}
+  .cell-price .now{font-family:var(--font-head);color:var(--red);font-weight:700}
+  .cell-price .was{display:block;font-size:12px;text-decoration:line-through;color:var(--muted-light)}
+</style>
+</head>
+<body>
+
+<script src="shared.js"></script>
+<script>SPFDemo.chrome({ current: "admin", ribbonContext: "espace bénévoles pour la Boutique solidaire" });</script>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="SPFDemo.logoFallback(this)" />
+      <span class="name">Secours populaire<small>Espace bénévoles</small></span>
+    </a>
+    <div class="nav-right">
+      <span>Connecté·e en tant que <strong>Bénévole — Antenne Centre</strong></span>
+      <a href="index.html">↗ Voir la boutique publique</a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <p class="eyebrow">Gestion des articles</p>
+    <div class="row">
+      <h1>Boutique solidaire</h1>
+      <button class="btn btn-primary" id="addBtn">+ Ajouter un article</button>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="demo-note">
+      <b>Démo locale :</b> vos ajouts/modifications restent uniquement dans ce navigateur (stockage local), pour montrer le principe.
+      La vraie version serait reliée à une base partagée par toute l'équipe, et les changements apparaîtraient aussitôt sur la page boutique publique.
+      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm">Réinitialiser la démo</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="filters">
+          <select id="filterCategory">
+            <option value="tous">Toutes les catégories</option>
+            <option value="electromenager">Électroménager</option>
+            <option value="textile">Textile</option>
+            <option value="mobilier">Mobilier</option>
+            <option value="multimedia">Multimédia & livres</option>
+            <option value="hygiene-bazar">Hygiène & bazar</option>
+            <option value="alimentaire">Alimentaire</option>
+          </select>
+          <select id="filterStatus">
+            <option value="tous">Tous les statuts</option>
+            <option value="ok">Disponible</option>
+            <option value="last">Dernière pièce</option>
+            <option value="reserved">Réservé</option>
+            <option value="sold">Vendu</option>
+          </select>
+          <input id="filterSearch" type="search" placeholder="Rechercher un article…" />
+        </div>
+        <span id="resultsCount" class="muted-sm"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Article</th>
+            <th>Catégorie</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state hidden" id="emptyState">Aucun article ne correspond à ces filtres.</div>
+    </div>
+
+  </div>
+</main>
+
+<script>SPFDemo.cahierCta();</script>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="close-x" id="modalClose" aria-label="Fermer">×</button>
+    <h2 id="modalTitle">Ajouter un article</h2>
+    <form id="itemForm">
+      <input type="hidden" id="itemId" />
+      <div class="field">
+        <label for="fName">Nom de l'article</label>
+        <input id="fName" type="text" required />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="fCategory">Catégorie</label>
+          <select id="fCategory">
+            <option value="electromenager">Électroménager</option>
+            <option value="textile">Textile</option>
+            <option value="mobilier">Mobilier</option>
+            <option value="multimedia">Multimédia & livres</option>
+            <option value="hygiene-bazar">Hygiène & bazar</option>
+            <option value="alimentaire">Alimentaire</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fStatus">Statut</label>
+          <select id="fStatus">
+            <option value="ok">Disponible</option>
+            <option value="last">Dernière pièce</option>
+            <option value="reserved">Réservé</option>
+            <option value="sold">Vendu</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="fPrice">Prix solidaire (€)</label>
+          <input id="fPrice" type="number" min="0" step="1" required />
+        </div>
+        <div class="field">
+          <label for="fWas">Prix neuf estimé (€, facultatif)</label>
+          <input id="fWas" type="number" min="0" step="1" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="fCondition">État</label>
+        <input id="fCondition" type="text" placeholder="Ex. Bon état, Testé & garanti 30 jours…" required />
+      </div>
+      <div class="field">
+        <label for="fOrigin">Origine du don</label>
+        <input id="fOrigin" type="text" placeholder="Ex. Don : grande surface partenaire" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="cancelBtn">Annuler</button>
+        <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "spf-boutique-demo-items";
+
+  const CATEGORY_LABELS = {
+    electromenager: "Électroménager", textile: "Textile", mobilier: "Mobilier",
+    multimedia: "Multimédia & livres", "hygiene-bazar": "Hygiène & bazar", alimentaire: "Alimentaire"
+  };
+
+  const STATUS_LABELS = {
+    ok: { label: "Disponible", cls: "status-ok" },
+    last: { label: "Dernière pièce", cls: "status-last" },
+    reserved: { label: "Réservé", cls: "status-reserved" },
+    sold: { label: "Vendu", cls: "status-sold" }
+  };
+
+  const DEFAULT_ITEMS = [
+    { id:1, name:"Lave-linge hublot 8 kg", category:"electromenager", price:149, was:480, condition:"Testé & garanti 30 jours", origin:"Don : enseigne d'électroménager partenaire", status:"last" },
+    { id:2, name:"Réfrigérateur top 2 portes", category:"electromenager", price:99, was:320, condition:"Bon état", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:3, name:"Four micro-ondes grill", category:"electromenager", price:19, was:89, condition:"Très bon état", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:5, name:"Lot de 10 serviettes de bain", category:"textile", price:8, was:35, condition:"Neuf étiqueté (surstock)", origin:"Don : enseigne textile partenaire", status:"ok" },
+    { id:7, name:"Couette 220×240 chaude", category:"textile", price:12, was:40, condition:"Neuf étiqueté", origin:"Don : enseigne textile partenaire", status:"ok" },
+    { id:8, name:"Table basse en bois", category:"mobilier", price:15, was:70, condition:"Bon état", origin:"Don : enseigne ameublement partenaire", status:"ok" },
+    { id:11, name:"Téléviseur LED 32\"", category:"multimedia", price:35, was:199, condition:"Fonctionne — testé", origin:"Don : enseigne multimédia partenaire", status:"ok" },
+    { id:13, name:"Lot de produits d'hygiène", category:"hygiene-bazar", price:4, was:20, condition:"Neuf étiqueté (surstock)", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:15, name:"Panier épicerie solidaire", category:"alimentaire", price:2, was:null, condition:"À consommer rapidement (DLC proche)", origin:"Don : grande surface partenaire", status:"ok" },
+    { id:16, name:"Lot conserves & féculents", category:"alimentaire", price:3, was:null, condition:"Date de consommation proche", origin:"Don : grande surface partenaire", status:"reserved" }
+  ];
+
+  let items = [];
+  const filters = { category: "tous", status: "tous", query: "" };
+  let editingId = null;
+  let lastFocused = null;
+
+  function loadItems(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* stockage indisponible : on retombe sur les données d'exemple */ }
+    return structuredClone(DEFAULT_ITEMS);
+  }
+
+  function saveItems(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch (e) { /* stockage indisponible */ }
+  }
+
+  const euros = (n) => `${(n || 0).toLocaleString("fr-FR")} €`;
+
+  function renderStats(){
+    const total = items.length;
+    const available = items.filter((i) => i.status === "ok" || i.status === "last").length;
+    const reserved = items.filter((i) => i.status === "reserved").length;
+    const value = items
+      .filter((i) => i.status !== "sold")
+      .reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+
+    document.getElementById("statsRow").innerHTML = `
+      <div class="stat-tile"><b>${total}</b><span>articles au total</span></div>
+      <div class="stat-tile"><b>${available}</b><span>disponibles en boutique</span></div>
+      <div class="stat-tile"><b>${reserved}</b><span>réservés</span></div>
+      <div class="stat-tile"><b>${euros(value)}</b><span>valeur en rayon</span></div>
+    `;
+  }
+
+  function matchesFilters(item){
+    if (filters.category !== "tous" && item.category !== filters.category) return false;
+    if (filters.status !== "tous" && item.status !== filters.status) return false;
+    if (filters.query) {
+      const q = filters.query.toLowerCase();
+      if (!item.name.toLowerCase().includes(q) && !item.origin.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  }
+
+  function renderTable(){
+    const tbody = document.getElementById("tableBody");
+    const list = items.filter(matchesFilters);
+    tbody.innerHTML = "";
+
+    document.getElementById("resultsCount").textContent =
+      `${list.length} ${list.length > 1 ? "articles" : "article"}`;
+    document.getElementById("emptyState").classList.toggle("hidden", list.length > 0);
+
+    list.forEach((item) => {
+      const status = STATUS_LABELS[item.status] || STATUS_LABELS.ok;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td data-label="Article" class="cell-name">${item.name}<span class="origin">${item.origin} · ${item.condition}</span></td>
+        <td data-label="Catégorie">${CATEGORY_LABELS[item.category]}</td>
+        <td data-label="Prix" class="cell-price"><span class="now">${euros(item.price)}</span>${item.was ? `<span class="was">${euros(item.was)} neuf</span>` : ""}</td>
+        <td data-label="Statut"><span class="status-pill ${status.cls}">${status.label}</span></td>
+        <td data-label="Actions"></td>
+      `;
+
+      const actions = document.createElement("div");
+      actions.className = "row-actions";
+
+      const editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.textContent = "Modifier";
+      editBtn.addEventListener("click", () => openModal(item));
+      actions.appendChild(editBtn);
+
+      if (item.status !== "reserved" && item.status !== "sold") {
+        const reserveBtn = document.createElement("button");
+        reserveBtn.type = "button";
+        reserveBtn.textContent = "Marquer réservé";
+        reserveBtn.addEventListener("click", () => setStatus(item.id, "reserved"));
+        actions.appendChild(reserveBtn);
+      }
+      if (item.status !== "sold") {
+        const soldBtn = document.createElement("button");
+        soldBtn.type = "button";
+        soldBtn.textContent = "Marquer vendu";
+        soldBtn.addEventListener("click", () => setStatus(item.id, "sold"));
+        actions.appendChild(soldBtn);
+      }
+
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "danger";
+      delBtn.textContent = "Retirer";
+      delBtn.addEventListener("click", () => deleteItem(item.id));
+      actions.appendChild(delBtn);
+
+      tr.querySelector("td:last-child").appendChild(actions);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderAll(){
+    renderStats();
+    renderTable();
+  }
+
+  function setStatus(id, status){
+    const item = items.find((i) => i.id === id);
+    if (item) { item.status = status; saveItems(); renderAll(); }
+  }
+
+  function deleteItem(id){
+    if (!window.confirm("Retirer définitivement cet article de la boutique ?")) return;
+    items = items.filter((i) => i.id !== id);
+    saveItems();
+    renderAll();
+  }
+
+  function openModal(item){
+    lastFocused = document.activeElement;
+    editingId = item ? item.id : null;
+    document.getElementById("modalTitle").textContent = item ? "Modifier l'article" : "Ajouter un article";
+    document.getElementById("itemId").value = item ? item.id : "";
+    document.getElementById("fName").value = item ? item.name : "";
+    document.getElementById("fCategory").value = item ? item.category : "electromenager";
+    document.getElementById("fStatus").value = item ? item.status : "ok";
+    document.getElementById("fPrice").value = item ? item.price : "";
+    document.getElementById("fWas").value = item?.was ? item.was : "";
+    document.getElementById("fCondition").value = item ? item.condition : "";
+    document.getElementById("fOrigin").value = item ? item.origin : "";
+    document.getElementById("modalBackdrop").classList.add("open");
+    document.getElementById("fName").focus();
+  }
+
+  function closeModal(){
+    document.getElementById("modalBackdrop").classList.remove("open");
+    document.getElementById("itemForm").reset();
+    editingId = null;
+    lastFocused?.focus();
+  }
+
+  document.getElementById("addBtn").addEventListener("click", () => openModal(null));
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("cancelBtn").addEventListener("click", closeModal);
+  document.getElementById("modalBackdrop").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+
+  document.getElementById("itemForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById("fName").value.trim(),
+      category: document.getElementById("fCategory").value,
+      status: document.getElementById("fStatus").value,
+      price: Number(document.getElementById("fPrice").value) || 0,
+      was: document.getElementById("fWas").value ? Number(document.getElementById("fWas").value) : null,
+      condition: document.getElementById("fCondition").value.trim(),
+      origin: document.getElementById("fOrigin").value.trim()
+    };
+    if (!data.name || !data.condition || !data.origin) return;
+
+    if (editingId) {
+      Object.assign(items.find((i) => i.id === editingId), data);
+    } else {
+      const nextId = items.reduce((max, i) => Math.max(max, i.id), 0) + 1;
+      items.push({ id: nextId, ...data });
+    }
+    saveItems();
+    renderAll();
+    closeModal();
+  });
+
+  document.getElementById("filterCategory").addEventListener("change", (e) => {
+    filters.category = e.target.value; renderTable();
+  });
+  document.getElementById("filterStatus").addEventListener("change", (e) => {
+    filters.status = e.target.value; renderTable();
+  });
+  document.getElementById("filterSearch").addEventListener("input", (e) => {
+    filters.query = e.target.value; renderTable();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!window.confirm("Réinitialiser la démo avec les articles d'exemple ?")) return;
+    items = structuredClone(DEFAULT_ITEMS);
+    saveItems();
+    renderAll();
+  });
+
+  items = loadItems();
+  renderAll();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Suivi des familles accompagnées — Secours populaire (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile, avec des données entièrement fictives : une fiche de suivi partagée entre bénévoles pour ne pas reconstituer l'historique d'une famille à chaque passage. Document de travail, non officiel — nécessite un cadrage RGPD avant toute mise en œuvre réelle." />
+<link rel="icon" href="https://images.secourspopulaire.fr/gravity:sm/rs:auto:32:32/app/uploads/2023/06/cropped-favicon-spf-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  main{padding:36px 0 80px}
+  .cell-code{font-weight:700}
+  .cell-code span{display:block;font-weight:400;font-size:12px;color:var(--muted-light);margin-top:2px}
+  .tag-list{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:11px;font-weight:600;background:var(--bg);border:1px solid var(--line);padding:3px 8px}
+
+  .timeline{display:flex;flex-direction:column;gap:14px;margin:18px 0}
+  .timeline-item{border-left:3px solid var(--red);padding:4px 0 4px 14px}
+  .timeline-item .meta{font-size:12px;color:var(--muted-light);font-weight:600;font-family:var(--font-head);text-transform:uppercase}
+  .timeline-item p{margin:4px 0 0;color:var(--ink)}
+  .timeline-empty{color:var(--muted-light)}
+  .family-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+  .family-head h2{margin-bottom:4px}
+  .family-head p{margin:0}
+  .modal-wide{max-width:600px}
+</style>
+</head>
+<body>
+
+<script src="shared.js"></script>
+<script>SPFDemo.chrome({ current: "familles", ribbonContext: "données entièrement fictives" });</script>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="SPFDemo.logoFallback(this)" />
+      <span class="name">Secours populaire<small>Suivi des familles</small></span>
+    </a>
+    <div class="nav-right">
+      <span>Connecté·e en tant que <strong>Bénévole — Antenne Centre</strong></span>
+      <a href="index.html">↗ Voir la boutique publique</a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <p class="eyebrow">Accompagnement</p>
+    <div class="row">
+      <h1>Familles accompagnées</h1>
+      <button class="btn btn-primary" id="addFamilyBtn">+ Ajouter une famille</button>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="demo-note rgpd">
+      <b>⚠ Données fictives — cadrage RGPD requis avant toute mise en œuvre réelle.</b>
+      Ces fiches ne contiennent aucune personne réelle. La situation sociale est une donnée sensible : une vraie version demanderait
+      une base légale claire, le consentement de la famille, un accès restreint par rôle, une durée de conservation définie,
+      un hébergement sécurisé, et l'avis de votre délégué à la protection des données avant tout déploiement.
+      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm">Réinitialiser la démo</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="filters">
+          <input id="filterSearch" type="search" placeholder="Rechercher un code famille…" />
+        </div>
+        <span id="resultsCount" class="muted-sm"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Famille</th>
+            <th>Composition</th>
+            <th>Aides suivies</th>
+            <th>Dernière visite</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<script>SPFDemo.cahierCta();</script>
+
+<div class="modal-backdrop" id="addModalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+    <button class="close-x" id="addClose" aria-label="Fermer">×</button>
+    <h2 id="addTitle">Ajouter une famille (fictive)</h2>
+    <form id="familyForm">
+      <div class="field">
+        <label for="fCode">Code famille (jamais le vrai nom dans cette démo)</label>
+        <input id="fCode" type="text" placeholder="Ex. Famille E" required />
+      </div>
+      <div class="field">
+        <label for="fComposition">Composition du foyer</label>
+        <input id="fComposition" type="text" placeholder="Ex. 1 adulte · 2 enfants" required />
+      </div>
+      <div class="field">
+        <label for="fAides">Aides suivies (séparées par une virgule)</label>
+        <input id="fAides" type="text" placeholder="Ex. Aide alimentaire, Accès aux droits" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="addCancel">Annuler</button>
+        <button type="submit" class="btn btn-primary btn-sm">Ajouter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="detailModalBackdrop">
+  <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <button class="close-x" id="detailClose" aria-label="Fermer">×</button>
+    <div class="family-head">
+      <div>
+        <h2 id="detailTitle">Famille</h2>
+        <p id="detailComposition"></p>
+      </div>
+      <div class="tag-list" id="detailAides"></div>
+    </div>
+    <h3>Historique de suivi</h3>
+    <div class="timeline" id="detailTimeline"></div>
+    <form id="noteForm">
+      <div class="field">
+        <label for="noteContent">Ajouter une note de suivi</label>
+        <textarea id="noteContent" rows="3" placeholder="Ex. Passage pour l'aide alimentaire, orientation vers l'accès aux droits pour une démarche CAF." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary btn-sm">Ajouter la note</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>SPFDemo.fab({
+  title: "Et la vraie version ?",
+  body: "On la construit ensemble avec votre DPO, pour qu'elle soit utile sans jamais exposer de données sensibles."
+});</script>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "spf-familles-demo-v1";
+
+  const DEFAULT_FAMILIES = [
+    { id:1, code:"Famille A (fictive)", composition:"2 adultes · 3 enfants", aides:["Aide alimentaire","Accès aux droits"],
+      notes:[
+        { date:"2026-09-02", auteur:"Sophie M.", contenu:"Premier passage, orientation vers l'aide alimentaire hebdomadaire." },
+        { date:"2026-09-16", auteur:"Karim B.", contenu:"Accompagnement pour une démarche CAF, dossier en cours." },
+        { date:"2026-10-02", auteur:"Sophie M.", contenu:"Retrait panier épicerie solidaire, situation stable." }
+      ] },
+    { id:2, code:"Famille B (fictive)", composition:"1 adulte · 1 enfant", aides:["Accueil et écoute","Aide matérielle"],
+      notes:[
+        { date:"2026-08-20", auteur:"Lucie P.", contenu:"Accueil initial, besoin de matériel de puériculture identifié." },
+        { date:"2026-09-28", auteur:"Lucie P.", contenu:"Remise d'un lit bébé via la boutique solidaire." }
+      ] },
+    { id:3, code:"Famille C (fictive)", composition:"2 adultes", aides:["Accès aux droits"],
+      notes:[
+        { date:"2026-10-05", auteur:"Karim B.", contenu:"Premier rendez-vous, aide à la constitution d'un dossier de surendettement." }
+      ] }
+  ];
+
+  let families = [];
+  let detailFamilyId = null;
+  let lastFocused = null;
+  let filterQuery = "";
+
+  function loadFamilies(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* stockage indisponible : on retombe sur les familles d'exemple */ }
+    return structuredClone(DEFAULT_FAMILIES);
+  }
+  function saveFamilies(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(families)); } catch (e) { /* stockage indisponible */ } }
+
+  function renderStats(){
+    const total = families.length;
+    const totalNotes = families.reduce((sum, f) => sum + f.notes.length, 0);
+    const recent = families.filter((f) => {
+      if (!f.notes.length) return false;
+      const last = f.notes.at(-1).date;
+      return Date.now() - new Date(last) < 1000 * 60 * 60 * 24 * 30;
+    }).length;
+    document.getElementById("statsRow").innerHTML = `
+      <div class="stat-tile"><b>${total}</b><span>familles suivies</span></div>
+      <div class="stat-tile"><b>${totalNotes}</b><span>notes de suivi au total</span></div>
+      <div class="stat-tile"><b>${recent}</b><span>vues dans les 30 derniers jours</span></div>
+    `;
+  }
+
+  function renderTable(){
+    const tbody = document.getElementById("tableBody");
+    const list = families.filter((f) => !filterQuery || f.code.toLowerCase().includes(filterQuery.toLowerCase()));
+    document.getElementById("resultsCount").textContent = `${list.length} ${list.length > 1 ? "familles" : "famille"}`;
+    tbody.innerHTML = "";
+
+    list.forEach((f) => {
+      const last = f.notes.length ? f.notes.at(-1).date : "—";
+      const tags = f.aides.map((a) => `<span class="tag">${a}</span>`).join("");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td data-label="Famille" class="cell-code">${f.code}<span>${f.notes.length} note(s) de suivi</span></td>
+        <td data-label="Composition">${f.composition}</td>
+        <td data-label="Aides"><div class="tag-list">${tags}</div></td>
+        <td data-label="Dernière visite">${last}</td>
+        <td data-label="Actions"></td>
+      `;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-ghost btn-sm";
+      btn.textContent = "Voir la fiche";
+      btn.addEventListener("click", () => openDetail(f.id));
+      tr.querySelector("td:last-child").appendChild(btn);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderAll(){ renderStats(); renderTable(); }
+
+  function openDetail(familyId){
+    lastFocused = document.activeElement;
+    detailFamilyId = familyId;
+    const f = families.find((x) => x.id === familyId);
+    document.getElementById("detailTitle").textContent = f.code;
+    document.getElementById("detailComposition").textContent = f.composition;
+    document.getElementById("detailAides").innerHTML = f.aides.map((a) => `<span class="tag">${a}</span>`).join("");
+    renderTimeline(f);
+    document.getElementById("noteContent").value = "";
+    document.getElementById("detailModalBackdrop").classList.add("open");
+    document.getElementById("noteContent").focus();
+  }
+  function renderTimeline(f){
+    const el = document.getElementById("detailTimeline");
+    if (!f.notes.length) {
+      el.innerHTML = '<p class="timeline-empty">Aucune note pour l\'instant.</p>';
+      return;
+    }
+    el.innerHTML = f.notes
+      .slice()
+      .reverse()
+      .map((n) => `<div class="timeline-item"><div class="meta">${n.date} · ${n.auteur}</div><p>${n.contenu}</p></div>`)
+      .join("");
+  }
+  function closeDetail(){
+    document.getElementById("detailModalBackdrop").classList.remove("open");
+    detailFamilyId = null;
+    lastFocused?.focus();
+  }
+  document.getElementById("detailClose").addEventListener("click", closeDetail);
+  document.getElementById("detailModalBackdrop").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeDetail();
+  });
+
+  document.getElementById("noteForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const content = document.getElementById("noteContent").value.trim();
+    if (!content) return;
+    const f = families.find((x) => x.id === detailFamilyId);
+    f.notes.push({ date: new Date().toISOString().slice(0, 10), auteur: "Vous (démo)", contenu: content });
+    saveFamilies();
+    renderTimeline(f);
+    renderAll();
+    document.getElementById("noteContent").value = "";
+  });
+
+  function openAddModal(){
+    lastFocused = document.activeElement;
+    document.getElementById("familyForm").reset();
+    document.getElementById("addModalBackdrop").classList.add("open");
+    document.getElementById("fCode").focus();
+  }
+  function closeAddModal(){
+    document.getElementById("addModalBackdrop").classList.remove("open");
+    lastFocused?.focus();
+  }
+  document.getElementById("addFamilyBtn").addEventListener("click", openAddModal);
+  document.getElementById("addCancel").addEventListener("click", closeAddModal);
+  document.getElementById("addClose").addEventListener("click", closeAddModal);
+  document.getElementById("addModalBackdrop").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeAddModal();
+  });
+
+  document.getElementById("familyForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const code = document.getElementById("fCode").value.trim();
+    const composition = document.getElementById("fComposition").value.trim();
+    const aides = document.getElementById("fAides").value.split(",").map((s) => s.trim()).filter(Boolean);
+    if (!code || !composition || !aides.length) return;
+    const nextId = families.reduce((max, f) => Math.max(max, f.id), 0) + 1;
+    families.push({ id: nextId, code, composition, aides, notes: [] });
+    saveFamilies();
+    renderAll();
+    closeAddModal();
+  });
+
+  document.getElementById("filterSearch").addEventListener("input", (e) => {
+    filterQuery = e.target.value;
+    renderTable();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeDetail(); closeAddModal(); }
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!window.confirm("Réinitialiser la démo avec les familles fictives d'exemple ?")) return;
+    families = structuredClone(DEFAULT_FAMILIES);
+    saveFamilies();
+    renderAll();
+  });
+
+  families = loadFamilies();
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
