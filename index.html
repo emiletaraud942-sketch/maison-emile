@@ -450,6 +450,33 @@ img { display: block; max-width: 100%; }
 .legal ul.tight li { margin: 5px 0; }
 .key { display: inline-block; font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .55; margin-bottom: 4px; }
 
+/* ---------- cahier des charges guidé ---------- */
+.cahier-page { padding-top: 140px; padding-bottom: 110px; min-height: 100vh; }
+.cahier-progress-label { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; opacity: .5; margin-bottom: 14px; }
+.cahier-progress-bar { height: 3px; background: var(--line-light); border-radius: 999px; margin-bottom: 40px; overflow: hidden; }
+.cahier-progress-bar span { display: block; height: 100%; background: var(--ink); transition: width .4s var(--ease); }
+.cahier-cat { font-family: var(--font-serif); font-style: italic; font-size: 15px; opacity: .6; display: block; margin-bottom: 12px; }
+.cahier-question { font-family: var(--font-hand); font-weight: 700; font-size: clamp(28px, 4.2vw, 46px); line-height: 1.08; margin: 0 0 32px; text-wrap: balance; }
+.cahier-choices { display: flex; flex-direction: column; gap: 12px; }
+.cahier-choice {
+  text-align: left; padding: 18px 22px; border: 1px solid var(--line-light); border-radius: 12px;
+  background: transparent; font-family: var(--font-sans); font-size: 16px; font-weight: 500;
+  cursor: pointer; transition: border-color .2s var(--ease), background .2s var(--ease), color .2s var(--ease);
+  color: var(--ink);
+}
+.cahier-choice:hover { border-color: var(--ink); }
+.cahier-choice.is-selected { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.cahier-footnav { display: flex; justify-content: space-between; align-items: center; margin-top: 36px; }
+.cahier-back {
+  font-family: var(--font-sans); font-size: 14px; opacity: .6; text-decoration: underline;
+  cursor: pointer; background: none; border: 0; padding: 0; color: var(--ink);
+}
+.cahier-back:disabled { opacity: .25; cursor: default; }
+.cahier-intro p.lead { margin-bottom: 30px; }
+.cahier-done { text-align: center; padding: 60px 0; }
+
+@media (prefers-reduced-motion: reduce){ .cahier-progress-bar span { transition: none; } }
+
 </style>
 <script>
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
@@ -1283,6 +1310,9 @@ img { display: block; max-width: 100%; }
         <p class="muted" style="margin-top:26px;font-size:15px">Vous préférez écrire directement ?<br />
           <a class="linkline" href="mailto:emiletaraud942@gmail.com" style="margin-top:8px">emiletaraud942@gmail.com</a>
         </p>
+        <p class="muted" style="margin-top:22px;font-size:15px">Besoin d'aide pour cadrer précisément votre projet ?<br />
+          <a class="linkline" href="#cahier" data-nav="cahier" style="margin-top:8px">Remplir le cahier des charges guidé →</a>
+        </p>
       </div>
       <form class="reveal" id="devisForm" novalidate>
         <div class="form-2">
@@ -1798,6 +1828,25 @@ img { display: block; max-width: 100%; }
 </main>
 </div><!-- /page-confid -->
 
+<!-- ===================== CAHIER DES CHARGES GUIDÉ ===================== -->
+<div id="page-cahier" style="display:none">
+<!-- NAV -->
+<nav class="nav scrolled" style="position:sticky;background:var(--cream);color:var(--ink);border-color:var(--line-light)">
+  <a class="logo" href="#" data-nav="home" aria-label="Émile, accueil">
+    <span class="word">Émile<small>logiciels · rouen</small></span>
+  </a>
+  <ul class="menu" style="color:var(--ink)">
+    <li><a class="navbtn" href="#" data-nav="home" style="border-color:var(--line-light)">← Retour au site</a></li>
+  </ul>
+</nav>
+
+<main class="cahier-page" data-screen-label="Cahier des charges guidé">
+  <div class="container" style="max-width:720px">
+    <div id="cahierWizard"></div>
+  </div>
+</main>
+</div><!-- /page-cahier -->
+
 <script>
 /* ---- Réalisations (carrousel coverflow) ---- */
 (function () {
@@ -2211,19 +2260,284 @@ document.getElementById('ckRefuse').addEventListener('click', () => closeCookie(
   else { raf = requestAnimationFrame(tick); }
 })();
 
-/* ---- Routeur interne : Accueil / CGV / Mentions / Confidentialité ---- */
+/* ---- Cahier des charges guidé ---- */
+(function(){
+  var root = document.getElementById('cahierWizard');
+  if (!root) return;
+
+  var CAHIER = [
+    {
+      id: 'equipe', label: "Équipe & organisation",
+      question: "Avez-vous une équipe ou des bénévoles à organiser au quotidien ?",
+      options: ["Oui, des salariés", "Oui, des bénévoles", "Oui, les deux", "Non, pas de gestion d'équipe"],
+      skipIf: function(a){ return a === "Non, pas de gestion d'équipe"; },
+      followups: [
+        { question: "Combien de personnes à gérer, environ ?", options: ["1 à 5", "6 à 20", "21 à 50", "Plus de 50"] },
+        { question: "Un seul site ou plusieurs ?", options: ["Un seul site", "Plusieurs sites ou boutiques"] },
+        { question: "Comment gérez-vous les plannings aujourd'hui ?", options: ["Papier", "Excel / Google Sheets", "Un logiciel déjà en place", "Rien de formalisé"] }
+      ]
+    },
+    {
+      id: 'materiel', label: "Matériel & environnement",
+      question: "Votre équipe dispose-t-elle d'un appareil connecté sur le terrain (tablette, téléphone, ordinateur) ?",
+      options: ["Oui, un par personne ou par site", "Oui, partagé entre plusieurs", "Non, aucun équipement dédié", "Je ne sais pas encore"],
+      followups: [
+        { question: "Une connexion internet fiable est-elle disponible sur chaque site ?", options: ["Oui, partout", "Variable selon les sites", "Non", "Je ne sais pas"] }
+      ]
+    },
+    {
+      id: 'flux', label: "Activité à outiller",
+      question: "Qu'est-ce qui occupe le plus de temps administratif aujourd'hui ?",
+      options: ["Suivi de stock ou de matériel", "Suivi de dossiers, bénéficiaires ou clients", "Prise de rendez-vous", "Autre chose"],
+      followups: [
+        { question: "Comment faites-vous ce suivi aujourd'hui ?", options: ["Cahier papier", "Tableur (Excel / Sheets)", "Un logiciel existant", "Rien de formalisé"] }
+      ]
+    },
+    {
+      id: 'finances', label: "Finances & facturation",
+      question: "Avez-vous besoin de devis, factures ou suivi de frais dans l'outil ?",
+      options: ["Oui", "Non", "Je ne sais pas encore"],
+      skipIf: function(a){ return a !== "Oui"; },
+      followups: [
+        { question: "Qui doit pouvoir les créer ou les valider ?", options: ["Une seule personne", "Plusieurs personnes avec des droits différents"] }
+      ]
+    },
+    {
+      id: 'communication', label: "Communication",
+      question: "Avec qui communiquez-vous le plus dans le cadre de cette activité ?",
+      options: ["Vos clients", "Des familles ou des proches", "Des bénévoles ou salariés", "Des fournisseurs ou partenaires"],
+      followups: [
+        { question: "Par quel moyen aujourd'hui ?", options: ["Téléphone", "Email", "SMS", "En personne uniquement"] }
+      ]
+    },
+    {
+      id: 'donnees', label: "Données & accès",
+      question: "Votre activité implique-t-elle des données sensibles (santé, mineurs, situation financière) ?",
+      options: ["Oui", "Non", "Je ne sais pas"],
+      skipIf: function(a){ return a !== "Oui"; },
+      followups: [
+        { question: "Qui doit avoir accès à ces données ?", options: ["La direction uniquement", "Toute l'équipe", "Selon le rôle de chacun"] }
+      ]
+    },
+    {
+      id: 'contraintes', label: "Contraintes & priorités",
+      question: "Votre budget est-il déjà déterminé ?",
+      options: ["Oui, un montant fixe", "Oui, une fourchette", "Pas encore, à définir ensemble"],
+      followups: []
+    }
+  ];
+
+  var qs = new URLSearchParams(location.search);
+  var projet = (qs.get('projet') || '').trim();
+
+  var phase = 'intro'; // intro | questions | contact | done
+  var catIndex = 0, subIndex = -1; // -1 = question principale de la catégorie
+  var answers = {};
+  var hist = [];
+
+  function currentQuestion(){
+    var cat = CAHIER[catIndex];
+    if (!cat) return null;
+    if (subIndex === -1) return { key: cat.id, label: cat.label, question: cat.question, options: cat.options };
+    var f = cat.followups[subIndex];
+    return { key: cat.id + '_f' + subIndex, label: cat.label, question: f.question, options: f.options };
+  }
+
+  function nextCategory(){
+    catIndex++; subIndex = -1;
+    if (catIndex >= CAHIER.length) phase = 'contact';
+  }
+
+  function choose(key, value){
+    answers[key] = value;
+    hist.push({ catIndex: catIndex, subIndex: subIndex });
+    var cat = CAHIER[catIndex];
+    if (subIndex === -1){
+      if (cat.skipIf && cat.skipIf(value)) nextCategory();
+      else if (cat.followups && cat.followups.length) subIndex = 0;
+      else nextCategory();
+    } else {
+      if (subIndex + 1 < cat.followups.length) subIndex++;
+      else nextCategory();
+    }
+    render();
+  }
+
+  function goBack(){
+    if (phase === 'contact' || phase === 'questions'){
+      var prev = hist.pop();
+      if (!prev){ phase = 'intro'; render(); return; }
+      phase = 'questions'; catIndex = prev.catIndex; subIndex = prev.subIndex;
+      render();
+    }
+  }
+
+  function buildSummary(){
+    var lines = [];
+    CAHIER.forEach(function(cat){
+      var primary = answers[cat.id];
+      if (primary === undefined) return;
+      lines.push('• ' + cat.label + ' — ' + cat.question + ' → ' + primary);
+      (cat.followups || []).forEach(function(f, i){
+        var v = answers[cat.id + '_f' + i];
+        if (v !== undefined) lines.push('   ↳ ' + f.question + ' → ' + v);
+      });
+    });
+    return lines.join('\n');
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function render(){
+    if (phase === 'intro') return renderIntro();
+    if (phase === 'questions') return renderQuestion();
+    if (phase === 'contact') return renderContact();
+    if (phase === 'done') return renderDone();
+  }
+
+  function renderIntro(){
+    root.innerHTML =
+      '<span class="eyebrow reveal in"><span class="idx">Cahier des charges</span>Cadrons votre projet ensemble</span>' +
+      '<h1 class="hand h-md" style="margin:18px 0 22px">' + (projet ? 'Votre projet,<br />' + escapeHtml(projet) + '.' : 'Quelques questions,<br />guidées.') + '</h1>' +
+      '<p class="lead muted cahier-intro">Répondez en quelques clics — aucune question technique, uniquement des choix concrets sur votre activité. Comptez environ 5 minutes. Rien n\'est figé : ce cahier des charges sert de base de discussion, pas un engagement.</p>' +
+      '<button class="btn solid-dark" id="cahierStart">Commencer <span class="ar">→</span></button>';
+    document.getElementById('cahierStart').addEventListener('click', function(){
+      phase = 'questions'; render();
+    });
+  }
+
+  function renderQuestion(){
+    var q = currentQuestion();
+    var progress = Math.round(((catIndex + (subIndex >= 0 ? 1 : 0)) / CAHIER.length) * 100);
+    var choicesHtml = q.options.map(function(opt){
+      var sel = answers[q.key] === opt ? ' is-selected' : '';
+      return '<button type="button" class="cahier-choice' + sel + '" data-value="' + escapeHtml(opt) + '">' + escapeHtml(opt) + '</button>';
+    }).join('');
+    root.innerHTML =
+      '<div class="cahier-progress-label">Étape ' + (catIndex + 1) + ' / ' + CAHIER.length + '</div>' +
+      '<div class="cahier-progress-bar"><span style="width:' + progress + '%"></span></div>' +
+      '<span class="cahier-cat">' + escapeHtml(q.label) + '</span>' +
+      '<h2 class="cahier-question">' + escapeHtml(q.question) + '</h2>' +
+      '<div class="cahier-choices">' + choicesHtml + '</div>' +
+      '<div class="cahier-footnav"><button type="button" class="cahier-back" id="cahierBack"' + (hist.length ? '' : ' disabled') + '>← Précédent</button></div>';
+    root.querySelectorAll('.cahier-choice').forEach(function(btn){
+      btn.addEventListener('click', function(){ choose(q.key, btn.getAttribute('data-value')); });
+    });
+    document.getElementById('cahierBack').addEventListener('click', goBack);
+  }
+
+  function renderContact(){
+    root.innerHTML =
+      '<span class="eyebrow reveal in"><span class="idx">Dernière étape</span>Pour vous recontacter</span>' +
+      '<h2 class="hand h-md" style="margin:18px 0 30px">Et vous,<br />qui êtes-vous ?</h2>' +
+      '<form id="cahierForm" novalidate>' +
+        '<div class="form-2">' +
+          '<div class="field"><label for="ch-nom">Nom</label><input id="ch-nom" name="nom" type="text" placeholder="Votre nom" required /></div>' +
+          '<div class="field"><label for="ch-tel">Téléphone</label><input id="ch-tel" name="tel" type="tel" placeholder="06 00 00 00 00" /></div>' +
+        '</div>' +
+        '<div class="field"><label for="ch-email">Email</label><input id="ch-email" name="email" type="email" placeholder="vous@email.com" required /></div>' +
+        '<div class="field"><label for="ch-projet">Structure / projet</label><input id="ch-projet" name="projet" type="text" placeholder="Nom de votre structure" value="' + escapeHtml(projet) + '" /></div>' +
+        '<div class="field"><label for="ch-libre">Autre chose à préciser</label><textarea id="ch-libre" name="libre" placeholder="Tout ce qui n\'est pas couvert par les questions précédentes…"></textarea></div>' +
+        '<button class="btn solid-dark" type="submit" style="width:100%;justify-content:center">Envoyer mon cahier des charges <span class="ar">→</span></button>' +
+        '<p id="cahierNote" class="muted" style="font-size:13px;margin-top:14px;display:none"></p>' +
+      '</form>' +
+      '<div class="cahier-footnav"><button type="button" class="cahier-back" id="cahierBack">← Précédent</button></div>';
+
+    document.getElementById('cahierBack').addEventListener('click', goBack);
+
+    var form = document.getElementById('cahierForm');
+    form.addEventListener('submit', function(e){ e.preventDefault(); submitCahier(form); });
+  }
+
+  function submitCahier(form){
+    var note = document.getElementById('cahierNote');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var submitLabel = submitBtn.innerHTML;
+    function showNote(msg, ok){
+      note.style.display = 'block'; note.textContent = msg; note.style.color = ok ? '' : '#b3261e';
+    }
+    if (!form.checkValidity()){ form.reportValidity(); return; }
+
+    var data = new FormData(form);
+    var nomVal = data.get('nom') || '';
+    var emailVal = data.get('email') || '';
+    var projetVal = data.get('projet') || projet || '(non précisé)';
+    var libreVal = data.get('libre') || '';
+    var message = 'Projet / structure : ' + projetVal + '\n\n' + buildSummary() +
+      '\n\nPrécisions supplémentaires :\n' + (libreVal || '(aucune)');
+
+    var params = {
+      nom: nomVal, email: emailVal, tel: data.get('tel') || '—',
+      prestation: 'Cahier des charges guidé' + (projetVal ? ' — ' + projetVal : ''),
+      budget: answers['contraintes'] || '—',
+      message: message,
+      date: new Date().toLocaleString('fr-FR'),
+      owner_email: EMAILJS.OWNER_EMAIL,
+      to_email: emailVal, reply_to: emailVal
+    };
+
+    var cfg = EMAILJS;
+    if (!window.emailjs || cfg.PUBLIC_KEY.indexOf('TA_') === 0 || cfg.TEMPLATE_OWNER.indexOf('TON_') === 0){
+      showNote('L\'envoi automatique n\'est pas configuré. Écrivez-moi directement à ' + cfg.OWNER_EMAIL + ' avec ce récapitulatif.', false);
+      return;
+    }
+    submitBtn.disabled = true; submitBtn.innerHTML = 'Envoi en cours…';
+    Promise.resolve()
+      .then(function(){ return emailjs.send(cfg.SERVICE_ID, cfg.TEMPLATE_OWNER, params); })
+      .then(function(){ return emailjs.send(cfg.SERVICE_ID, cfg.TEMPLATE_CLIENT, params); })
+      .then(function(){
+        phase = 'done'; render();
+      })
+      .catch(function(err){
+        console.error('EmailJS error:', err);
+        showNote('Oups, l\'envoi a échoué. Réessayez ou écrivez-moi à ' + cfg.OWNER_EMAIL + '.', false);
+        submitBtn.disabled = false; submitBtn.innerHTML = submitLabel;
+      });
+  }
+
+  function renderDone(){
+    root.innerHTML =
+      '<div class="cahier-done">' +
+        '<span class="eyebrow reveal in"><span class="idx">Merci</span>C\'est envoyé</span>' +
+        '<h2 class="hand h-md" style="margin:18px 0 22px">On en parle<br />très vite.</h2>' +
+        '<p class="lead muted">J\'ai bien reçu votre cahier des charges et je reviens vers vous rapidement avec une proposition adaptée.</p>' +
+        '<a class="btn solid-dark" href="#" id="cahierDoneHome" style="margin-top:20px;display:inline-flex">Retour au site <span class="ar">→</span></a>' +
+      '</div>';
+    document.getElementById('cahierDoneHome').addEventListener('click', function(e){
+      e.preventDefault();
+      document.getElementById('page-cahier').style.display = 'none';
+      document.getElementById('page-home').style.display = '';
+      window.scrollTo(0, 0);
+      history.replaceState(null, '', location.pathname + location.search);
+    });
+  }
+
+  render();
+})();
+
+/* ---- Routeur interne : Accueil / CGV / Mentions / Confidentialité / Cahier des charges ---- */
 (function(){
   var pages = {
     home:   document.getElementById('page-home'),
     cgv:    document.getElementById('page-cgv'),
     legal:  document.getElementById('page-legal'),
-    confid: document.getElementById('page-confid')
+    confid: document.getElementById('page-confid'),
+    cahier: document.getElementById('page-cahier')
   };
-  function show(name){
+  function show(name, skipHash){
+    if (!pages[name]) name = 'home';
     Object.keys(pages).forEach(function(k){
       if (pages[k]) pages[k].style.display = (k === name) ? '' : 'none';
     });
     window.scrollTo(0, 0);
+    if (!skipHash) {
+      if (name === 'home') history.replaceState(null, '', location.pathname + location.search);
+      else history.replaceState(null, '', '#' + name);
+    }
   }
   document.querySelectorAll('[data-nav]').forEach(function(a){
     a.addEventListener('click', function(e){
@@ -2231,6 +2545,9 @@ document.getElementById('ckRefuse').addEventListener('click', () => closeCookie(
       show(a.getAttribute('data-nav') || 'home');
     });
   });
+  // Lien direct partageable : maison-emile.vercel.app/#cahier ouvre cette page directement
+  var initial = (location.hash || '').replace('#', '');
+  if (pages[initial]) show(initial, true);
 })();
 </script>
 </body>
