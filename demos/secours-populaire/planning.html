@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Planning des permanences & rendez-vous — Secours populaire (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : un planning partagé des permanences bénévoles et une prise de rendez-vous en ligne pour les familles, pour réduire le temps passé à coordonner par téléphone. Document de travail, non officiel." />
+<link rel="icon" href="https://images.secourspopulaire.fr/gravity:sm/rs:auto:32:32/app/uploads/2023/06/cropped-favicon-spf-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  header{background:#fff;border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand img{height:38px;width:auto}
+  .brand .name{font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.15;color:var(--ink);text-transform:uppercase}
+  .brand .name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--red)}
+  .nav-right{display:flex;align-items:center;gap:14px;font-size:13.5px}
+  .nav-right a{text-decoration:none;color:var(--muted);font-weight:600}
+  .nav-right a:hover{color:var(--red)}
+
+  .toolbar{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}
+  .toolbar .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  .view-tabs{display:flex;gap:6px;margin-top:18px}
+  .view-tab{font-family:var(--font-head);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;padding:9px 18px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+  .view-tab[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  main{padding:36px 0 80px}
+  .cell-slot b{display:block}
+  .cell-slot span{font-size:12px;color:var(--muted-light)}
+  .cell-benevole.empty{color:var(--muted-light);font-style:italic}
+  .seats{font-size:12px;color:var(--muted-light)}
+  .rdv-select{margin-bottom:18px}
+</style>
+</head>
+<body>
+
+<div class="demo-ribbon">
+  <div class="container">
+    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, planning & RDV pour l'antenne. Non en ligne officiellement.</span>
+    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
+  </div>
+</div>
+
+<div class="suite-nav">
+  <div class="wrap">
+    <a href="index.html">Boutique solidaire</a>
+    <a href="admin.html">Gestion du stock</a>
+    <a href="planning.html" class="current">Planning &amp; RDV</a>
+    <a href="familles.html">Suivi des familles</a>
+    <a href="dons-matching.html">Dons ↔ Besoins</a>
+    <a href="benevoles-onboarding.html">Nouveaux bénévoles</a>
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E'" />
+      <span class="name">Secours populaire<small>Permanences & rendez-vous</small></span>
+    </a>
+    <div class="nav-right">
+      <span>Connecté·e en tant que <strong>Bénévole — Antenne Centre</strong></span>
+      <a href="index.html">↗ Voir la boutique publique</a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <p class="eyebrow">Coordination des permanences</p>
+    <div class="row">
+      <h1 style="margin:0">Planning & rendez-vous</h1>
+    </div>
+    <div class="stats-row" id="statsRow" style="margin-top:18px"></div>
+    <div class="view-tabs" role="tablist" aria-label="Changer de vue">
+      <button class="view-tab" id="tabPlanning" type="button" role="tab" aria-pressed="true">Planning bénévoles</button>
+      <button class="view-tab" id="tabRdv" type="button" role="tab" aria-pressed="false">Prendre rendez-vous (famille)</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="demo-note">
+      <b>Démo locale :</b> les positionnements et rendez-vous restent dans ce navigateur, pour montrer le principe.
+      La vraie version serait partagée par toute l'équipe et préviendrait automatiquement la coordination en cas d'absence.
+      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm" style="margin-top:10px">Réinitialiser la démo</button>
+    </div>
+
+    <section id="viewPlanning" style="padding:0">
+      <div class="panel">
+        <div class="panel-head">
+          <p style="margin:0;font-size:14px">Qui tient quelle permanence cette semaine, et où il manque encore un bénévole.</p>
+          <span id="planningCount" style="font-size:13px;color:var(--muted-light)"></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Créneau</th>
+              <th>Permanence</th>
+              <th>Bénévole</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="planningBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="viewRdv" style="padding:0;display:none">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="filters rdv-select">
+            <select id="motifSelect">
+              <option value="tous">Tous les motifs</option>
+              <option value="accueil-ecoute">Accueil et écoute</option>
+              <option value="aide-alimentaire">Aide alimentaire</option>
+              <option value="acces-droits">Accès aux droits</option>
+            </select>
+          </div>
+          <span id="rdvCount" style="font-size:13px;color:var(--muted-light)"></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Créneau</th>
+              <th>Permanence</th>
+              <th>Places restantes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rdvBody"></tbody>
+        </table>
+        <div class="empty-state" id="rdvEmpty" style="display:none">Aucun créneau disponible pour ce motif cette semaine — contactez l'antenne directement.</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<div class="modal-backdrop" id="assignModalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="assignTitle">
+    <button class="close-x" id="assignClose" aria-label="Fermer">×</button>
+    <h2 id="assignTitle">Je me positionne sur ce créneau</h2>
+    <div class="field">
+      <label for="assignName">Votre nom</label>
+      <input id="assignName" type="text" />
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost btn-sm" id="assignCancel">Annuler</button>
+      <button type="button" class="btn btn-primary btn-sm" id="assignConfirm">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="rdvModalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rdvTitle">
+    <button class="close-x" id="rdvClose" aria-label="Fermer">×</button>
+    <h2 id="rdvTitle">Prendre rendez-vous</h2>
+    <div class="item-recap" id="rdvRecap" style="background:var(--bg);padding:12px;margin:14px 0 20px;font-size:14px"></div>
+    <div class="field">
+      <label for="rdvName">Votre nom</label>
+      <input id="rdvName" type="text" />
+    </div>
+    <div class="field">
+      <label for="rdvPhone">Téléphone</label>
+      <input id="rdvPhone" type="tel" />
+    </div>
+    <p class="note" style="margin-top:0">Votre demande sera confirmée par un bénévole avant le rendez-vous.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost btn-sm" id="rdvCancel">Annuler</button>
+      <a class="btn btn-primary btn-sm" id="rdvMailBtn" href="#">Envoyer la demande par e-mail</a>
+    </div>
+  </div>
+</div>
+
+<div class="pitch-fab">
+  <b>Et la vraie coordination ?</b>
+  On peut relier ce planning aux SMS/e-mails de rappel et aux remplacements automatiques en cas d'absence.
+  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
+  var STORAGE_KEY = "spf-planning-demo-slots";
+
+  var MOTIF_LABELS = {
+    "accueil-ecoute": "Accueil et écoute",
+    "aide-alimentaire": "Aide alimentaire",
+    "acces-droits": "Accès aux droits"
+  };
+
+  var DEFAULT_SLOTS = [
+    { id:1, day:"Mardi", time:"9h30–12h30", type:"accueil-ecoute", benevole:"Sophie M.", capacity:6, booked:4 },
+    { id:2, day:"Mardi", time:"14h–17h30", type:"aide-alimentaire", benevole:"Antenne Centre (équipe)", capacity:20, booked:14 },
+    { id:3, day:"Mercredi", time:"9h30–12h30", type:"acces-droits", benevole:null, capacity:4, booked:0 },
+    { id:4, day:"Jeudi", time:"9h–12h", type:"accueil-ecoute", benevole:"Karim B.", capacity:6, booked:2 },
+    { id:5, day:"Jeudi", time:"14h–17h", type:"aide-alimentaire", benevole:"Antenne Centre (équipe)", capacity:20, booked:18 },
+    { id:6, day:"Vendredi", time:"9h30–12h30", type:"acces-droits", benevole:"Lucie P.", capacity:4, booked:1 },
+    { id:7, day:"Samedi", time:"9h30–12h30", type:"accueil-ecoute", benevole:null, capacity:6, booked:0 }
+  ];
+
+  var slots = [];
+  var assigningSlotId = null;
+  var rdvSlotId = null;
+  var lastFocused = null;
+
+  function loadSlots(){
+    try{ var raw = localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT_SLOTS));
+  }
+  function saveSlots(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(slots)); } catch(e){} }
+
+  function renderStats(){
+    var total = slots.length;
+    var covered = slots.filter(function(s){ return !!s.benevole; }).length;
+    var toCover = total - covered;
+    var rdvThisWeek = slots.reduce(function(s,i){ return s + i.booked; }, 0);
+    document.getElementById("statsRow").innerHTML =
+      '<div class="stat-tile"><b>' + total + '</b><span>créneaux cette semaine</span></div>' +
+      '<div class="stat-tile"><b>' + covered + '</b><span>couverts par un bénévole</span></div>' +
+      '<div class="stat-tile"><b>' + toCover + '</b><span>à pourvoir</span></div>' +
+      '<div class="stat-tile"><b>' + rdvThisWeek + '</b><span>rendez-vous pris</span></div>';
+  }
+
+  function renderPlanning(){
+    var tbody = document.getElementById("planningBody");
+    tbody.innerHTML = "";
+    document.getElementById("planningCount").textContent = slots.length + " créneaux";
+
+    slots.forEach(function(slot){
+      var tr = document.createElement("tr");
+      var statusPill = slot.benevole
+        ? '<span class="status-pill status-ok">Couvert</span>'
+        : '<span class="status-pill status-warn">À pourvoir</span>';
+
+      tr.innerHTML =
+        '<td data-label="Créneau" class="cell-slot"><b>' + slot.day + '</b><span>' + slot.time + '</span></td>' +
+        '<td data-label="Permanence">' + MOTIF_LABELS[slot.type] + '</td>' +
+        '<td data-label="Bénévole" class="cell-benevole' + (slot.benevole ? '' : ' empty') + '">' + (slot.benevole || 'Personne pour l\'instant') + '</td>' +
+        '<td data-label="Statut">' + statusPill + '</td>' +
+        '<td data-label="Actions"></td>';
+
+      var actionsCell = tr.querySelector('td:last-child');
+      var actions = document.createElement('div');
+      actions.className = 'row-actions';
+
+      if(!slot.benevole){
+        var takeBtn = document.createElement('button');
+        takeBtn.type = 'button';
+        takeBtn.textContent = 'Je me positionne';
+        takeBtn.addEventListener('click', function(){ openAssignModal(slot.id); });
+        actions.appendChild(takeBtn);
+      } else {
+        var freeBtn = document.createElement('button');
+        freeBtn.type = 'button';
+        freeBtn.className = 'danger';
+        freeBtn.textContent = 'Signaler une absence';
+        freeBtn.addEventListener('click', function(){ releaseSlot(slot.id); });
+        actions.appendChild(freeBtn);
+      }
+      actionsCell.appendChild(actions);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderRdv(){
+    var tbody = document.getElementById("rdvBody");
+    var motif = document.getElementById("motifSelect").value;
+    var list = slots.filter(function(s){
+      if(!s.benevole) return false;
+      if(motif !== "tous" && s.type !== motif) return false;
+      return s.booked < s.capacity;
+    });
+
+    document.getElementById("rdvCount").textContent = list.length + " créneau(x) disponible(s)";
+    document.getElementById("rdvEmpty").style.display = list.length ? "none" : "block";
+    tbody.innerHTML = "";
+
+    list.forEach(function(slot){
+      var remaining = slot.capacity - slot.booked;
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td data-label="Créneau" class="cell-slot"><b>' + slot.day + '</b><span>' + slot.time + '</span></td>' +
+        '<td data-label="Permanence">' + MOTIF_LABELS[slot.type] + '</td>' +
+        '<td data-label="Places" class="seats">' + remaining + ' place' + (remaining > 1 ? 's' : '') + '</td>' +
+        '<td data-label="Actions"></td>';
+      var cell = tr.querySelector('td:last-child');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-primary btn-sm';
+      btn.textContent = 'Réserver ce créneau';
+      btn.addEventListener('click', function(){ openRdvModal(slot.id); });
+      cell.appendChild(btn);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderAll(){ renderStats(); renderPlanning(); renderRdv(); }
+
+  function openAssignModal(slotId){
+    lastFocused = document.activeElement;
+    assigningSlotId = slotId;
+    document.getElementById("assignName").value = "";
+    document.getElementById("assignModalBackdrop").classList.add("open");
+    document.getElementById("assignName").focus();
+  }
+  function closeAssignModal(){
+    document.getElementById("assignModalBackdrop").classList.remove("open");
+    assigningSlotId = null;
+    if(lastFocused) lastFocused.focus();
+  }
+  document.getElementById("assignConfirm").addEventListener("click", function(){
+    var name = document.getElementById("assignName").value.trim();
+    if(!name) return;
+    var slot = slots.find(function(s){ return s.id === assigningSlotId; });
+    if(slot){ slot.benevole = name; saveSlots(); renderAll(); }
+    closeAssignModal();
+  });
+  document.getElementById("assignCancel").addEventListener("click", closeAssignModal);
+  document.getElementById("assignClose").addEventListener("click", closeAssignModal);
+
+  function releaseSlot(slotId){
+    var slot = slots.find(function(s){ return s.id === slotId; });
+    if(!slot) return;
+    if(!window.confirm("Signaler votre absence sur ce créneau ? Il repassera \"à pourvoir\" et la coordination sera alertée.")) return;
+    var mailBody = encodeURIComponent(
+      "Bonjour,\n\n" + slot.benevole + " ne peut plus tenir le créneau " + slot.day + " " + slot.time +
+      " (" + MOTIF_LABELS[slot.type] + "). Merci de trouver un remplacement.\n"
+    );
+    window.location.href = "mailto:" + ANTENNE_EMAIL + "?subject=" + encodeURIComponent("Créneau à pourvoir : " + slot.day + " " + slot.time) + "&body=" + mailBody;
+    slot.benevole = null;
+    saveSlots();
+    renderAll();
+  }
+
+  function openRdvModal(slotId){
+    lastFocused = document.activeElement;
+    rdvSlotId = slotId;
+    var slot = slots.find(function(s){ return s.id === slotId; });
+    document.getElementById("rdvRecap").innerHTML =
+      '<strong>' + MOTIF_LABELS[slot.type] + '</strong><br>' + slot.day + ' · ' + slot.time;
+    document.getElementById("rdvName").value = "";
+    document.getElementById("rdvPhone").value = "";
+    document.getElementById("rdvModalBackdrop").classList.add("open");
+    document.getElementById("rdvName").focus();
+    updateRdvMailLink();
+  }
+  function closeRdvModal(){
+    document.getElementById("rdvModalBackdrop").classList.remove("open");
+    rdvSlotId = null;
+    if(lastFocused) lastFocused.focus();
+  }
+  function updateRdvMailLink(){
+    var slot = slots.find(function(s){ return s.id === rdvSlotId; });
+    if(!slot) return;
+    var name = document.getElementById("rdvName").value || "[votre nom]";
+    var phone = document.getElementById("rdvPhone").value || "[votre téléphone]";
+    var subject = encodeURIComponent("Demande de rendez-vous : " + MOTIF_LABELS[slot.type]);
+    var body = encodeURIComponent(
+      "Bonjour,\n\nJe souhaite un rendez-vous pour : " + MOTIF_LABELS[slot.type] + "\n" +
+      "Créneau souhaité : " + slot.day + " " + slot.time + "\n" +
+      "Nom : " + name + "\nTéléphone : " + phone + "\n\nMerci de me confirmer ce rendez-vous.\n"
+    );
+    document.getElementById("rdvMailBtn").href = "mailto:" + ANTENNE_EMAIL + "?subject=" + subject + "&body=" + body;
+  }
+  document.getElementById("rdvName").addEventListener("input", updateRdvMailLink);
+  document.getElementById("rdvPhone").addEventListener("input", updateRdvMailLink);
+  document.getElementById("rdvMailBtn").addEventListener("click", function(){
+    var slot = slots.find(function(s){ return s.id === rdvSlotId; });
+    if(slot && slot.booked < slot.capacity){ slot.booked++; saveSlots(); }
+    setTimeout(function(){ closeRdvModal(); renderAll(); }, 150);
+  });
+  document.getElementById("rdvCancel").addEventListener("click", closeRdvModal);
+  document.getElementById("rdvClose").addEventListener("click", closeRdvModal);
+
+  [document.getElementById("assignModalBackdrop"), document.getElementById("rdvModalBackdrop")].forEach(function(bd){
+    bd.addEventListener("click", function(e){ if(e.target === this){ closeAssignModal(); closeRdvModal(); } });
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){ closeAssignModal(); closeRdvModal(); }
+  });
+
+  document.getElementById("motifSelect").addEventListener("change", renderRdv);
+
+  var tabPlanning = document.getElementById("tabPlanning");
+  var tabRdv = document.getElementById("tabRdv");
+  tabPlanning.addEventListener("click", function(){
+    tabPlanning.setAttribute("aria-pressed", "true");
+    tabRdv.setAttribute("aria-pressed", "false");
+    document.getElementById("viewPlanning").style.display = "";
+    document.getElementById("viewRdv").style.display = "none";
+  });
+  tabRdv.addEventListener("click", function(){
+    tabRdv.setAttribute("aria-pressed", "true");
+    tabPlanning.setAttribute("aria-pressed", "false");
+    document.getElementById("viewRdv").style.display = "";
+    document.getElementById("viewPlanning").style.display = "none";
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!window.confirm("Réinitialiser la démo avec le planning d'exemple ?")) return;
+    slots = JSON.parse(JSON.stringify(DEFAULT_SLOTS));
+    saveSlots();
+    renderAll();
+  });
+
+  slots = loadSlots();
+  renderAll();
+})();
+</script>
+
+</body>
+</html>

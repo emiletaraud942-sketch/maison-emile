@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dons ↔ Besoins entre antennes — Secours populaire (démo Maison Émile)</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Maquette de démonstration réalisée par Maison Émile : signaler un don disponible et le faire correspondre automatiquement aux besoins exprimés par les antennes voisines, au lieu de coups de fil improvisés. Document de travail, non officiel." />
+<link rel="icon" href="https://images.secourspopulaire.fr/gravity:sm/rs:auto:32:32/app/uploads/2023/06/cropped-favicon-spf-512.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  header{background:#fff;border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand img{height:38px;width:auto}
+  .brand .name{font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.15;color:var(--ink);text-transform:uppercase}
+  .brand .name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--red)}
+  .nav-right{display:flex;align-items:center;gap:14px;font-size:13.5px}
+  .nav-right a{text-decoration:none;color:var(--muted);font-weight:600}
+  .nav-right a:hover{color:var(--red)}
+
+  .toolbar{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}
+  .toolbar .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+
+  main{padding:36px 0 80px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  @media (max-width:900px){.two-col{grid-template-columns:1fr}}
+  .panel form{padding:20px 22px}
+  .need-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line)}
+  .need-row:last-child{border-bottom:0}
+  .need-row b{display:block}
+  .need-row span{font-size:12px;color:var(--muted-light)}
+  .match-result{background:#e7f3ea;border:1px solid var(--ok);padding:16px 18px;margin:18px 22px;display:none}
+  .match-result.show{display:block}
+  .match-result h3{color:var(--ok);margin-bottom:8px}
+  .match-result ul{margin:0 0 14px;padding-left:18px;font-size:14px;color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="demo-ribbon">
+  <div class="container">
+    <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, matching dons/besoins entre antennes. Non en ligne officiellement.</span>
+    <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
+  </div>
+</div>
+
+<div class="suite-nav">
+  <div class="wrap">
+    <a href="index.html">Boutique solidaire</a>
+    <a href="admin.html">Gestion du stock</a>
+    <a href="planning.html">Planning &amp; RDV</a>
+    <a href="familles.html">Suivi des familles</a>
+    <a href="dons-matching.html" class="current">Dons ↔ Besoins</a>
+    <a href="benevoles-onboarding.html">Nouveaux bénévoles</a>
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">
+      <img src="https://images.secourspopulaire.fr/app/uploads/sites/3/2025/04/logo-desktop.svg" alt="Le logo du Secours populaire français : une main tendue avec des ailes rouges et bleues" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E'" />
+      <span class="name">Secours populaire<small>Dons ↔ Besoins</small></span>
+    </a>
+    <div class="nav-right">
+      <span>Connecté·e en tant que <strong>Bénévole — Antenne Centre</strong></span>
+      <a href="index.html">↗ Voir la boutique publique</a>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <p class="eyebrow">Entraide inter-antennes</p>
+    <div class="row">
+      <h1 style="margin:0">Dons ↔ Besoins</h1>
+    </div>
+    <div class="stats-row" id="statsRow" style="margin-top:18px"></div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="demo-note">
+      <b>Démo locale :</b> les dons signalés et le matching restent dans ce navigateur, pour montrer le principe.
+      La vraie version alerterait automatiquement les antennes concernées (SMS/e-mail) dès qu'un don correspond à un besoin exprimé.
+      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm" style="margin-top:10px">Réinitialiser la démo</button>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">
+          <h2 style="margin:0;font-size:17px">Signaler un don disponible</h2>
+        </div>
+        <form id="donForm">
+          <div class="field">
+            <label for="dCategory">Catégorie</label>
+            <select id="dCategory">
+              <option value="alimentaire-bebe">Alimentation bébé / puériculture</option>
+              <option value="hygiene">Hygiène</option>
+              <option value="alimentaire-general">Alimentaire (général)</option>
+              <option value="textile">Textile</option>
+              <option value="electromenager">Électroménager</option>
+              <option value="mobilier">Mobilier</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="dDescription">Description</label>
+            <input id="dDescription" type="text" placeholder="Ex. Palette de yaourts, lots de couches T3…" required />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="dQuantite">Quantité</label>
+              <input id="dQuantite" type="text" placeholder="Ex. 40 kg, 12 cartons…" required />
+            </div>
+            <div class="field">
+              <label for="dLimite">À enlever avant le</label>
+              <input id="dLimite" type="date" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="dOrigine">Antenne / enseigne d'origine</label>
+            <input id="dOrigine" type="text" value="Antenne Centre" required />
+          </div>
+          <div class="modal-actions" style="justify-content:flex-start">
+            <button type="submit" class="btn btn-primary btn-sm">Signaler ce don</button>
+          </div>
+        </form>
+
+        <div class="match-result" id="matchResult">
+          <h3 id="matchHeading"></h3>
+          <ul id="matchList"></ul>
+          <a class="btn btn-secondary btn-sm" id="broadcastBtn" href="#">Diffuser aux antennes concernées</a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2 style="margin:0;font-size:17px">Besoins exprimés par les antennes</h2>
+          <span id="needsCount" style="font-size:13px;color:var(--muted-light)"></span>
+        </div>
+        <div id="needsList"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:24px">
+      <div class="panel-head">
+        <h2 style="margin:0;font-size:17px">Dons signalés récemment</h2>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Don</th><th>Catégorie</th><th>Origine</th><th>Statut</th></tr>
+        </thead>
+        <tbody id="donsBody"></tbody>
+      </table>
+      <div class="empty-state" id="donsEmpty" style="display:none">Aucun don signalé pour l'instant.</div>
+    </div>
+
+  </div>
+</main>
+
+<div class="pitch-fab">
+  <b>Et les alertes automatiques ?</b>
+  On peut brancher ça sur de vraies notifications SMS/e-mail entre antennes, dès qu'un don correspond à un besoin.
+  <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "spf-dons-matching-demo-v1";
+
+  var CATEGORY_LABELS = {
+    "alimentaire-bebe": "Alimentation bébé / puériculture",
+    "hygiene": "Hygiène",
+    "alimentaire-general": "Alimentaire (général)",
+    "textile": "Textile",
+    "electromenager": "Électroménager",
+    "mobilier": "Mobilier"
+  };
+
+  var NEEDS = [
+    { id:1, antenne:"Antenne Nord", email:"antenne.nord@secourspopulaire-exemple.org", categorie:"alimentaire-bebe", besoin:"Lait infantile et couches T2/T3", urgence:"haute", depuis:"5 jours" },
+    { id:2, antenne:"Antenne Sud", email:"antenne.sud@secourspopulaire-exemple.org", categorie:"hygiene", besoin:"Produits d'hygiène féminine et dentaire", urgence:"moyenne", depuis:"2 semaines" },
+    { id:3, antenne:"Antenne Nord", email:"antenne.nord@secourspopulaire-exemple.org", categorie:"textile", besoin:"Manteaux enfants toutes tailles (hiver)", urgence:"haute", depuis:"3 jours" },
+    { id:4, antenne:"Antenne Est", email:"antenne.est@secourspopulaire-exemple.org", categorie:"electromenager", besoin:"Réfrigérateurs et plaques de cuisson", urgence:"moyenne", depuis:"1 mois" },
+    { id:5, antenne:"Antenne Sud", email:"antenne.sud@secourspopulaire-exemple.org", categorie:"alimentaire-general", besoin:"Conserves et féculents", urgence:"moyenne", depuis:"1 semaine" }
+  ];
+
+  var DEFAULT_DONS = [
+    { id:1, categorie:"textile", description:"Lot de doudounes enfants", quantite:"30 pièces", origine:"Antenne Centre", status:"diffuse" }
+  ];
+
+  var dons = [];
+  var lastMatches = [];
+
+  function loadDons(){
+    try{ var raw = localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); } catch(e){}
+    return JSON.parse(JSON.stringify(DEFAULT_DONS));
+  }
+  function saveDons(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(dons)); } catch(e){} }
+
+  function renderStats(){
+    var haute = NEEDS.filter(function(n){ return n.urgence === "haute"; }).length;
+    document.getElementById("statsRow").innerHTML =
+      '<div class="stat-tile"><b>' + NEEDS.length + '</b><span>besoins exprimés</span></div>' +
+      '<div class="stat-tile"><b>' + haute + '</b><span>urgence haute</span></div>' +
+      '<div class="stat-tile"><b>' + dons.length + '</b><span>dons signalés</span></div>';
+  }
+
+  function renderNeeds(){
+    var el = document.getElementById("needsList");
+    document.getElementById("needsCount").textContent = NEEDS.length + " besoins actifs";
+    el.innerHTML = NEEDS.map(function(n){
+      var pill = n.urgence === "haute" ? '<span class="status-pill status-last">Urgent</span>' : '<span class="status-pill status-warn">À surveiller</span>';
+      return '<div class="need-row"><div><b>' + n.besoin + '</b><span>' + n.antenne + ' · ' + CATEGORY_LABELS[n.categorie] + ' · depuis ' + n.depuis + '</span></div>' + pill + '</div>';
+    }).join('');
+  }
+
+  function renderDonsTable(){
+    var tbody = document.getElementById("donsBody");
+    document.getElementById("donsEmpty").style.display = dons.length ? "none" : "block";
+    tbody.innerHTML = dons.slice().reverse().map(function(d){
+      var pill = d.status === "diffuse" ? '<span class="status-pill status-ok">Diffusé</span>' : '<span class="status-pill status-warn">Proposé</span>';
+      return '<tr><td data-label="Don">' + d.description + ' (' + d.quantite + ')</td>' +
+        '<td data-label="Catégorie">' + CATEGORY_LABELS[d.categorie] + '</td>' +
+        '<td data-label="Origine">' + d.origine + '</td>' +
+        '<td data-label="Statut">' + pill + '</td></tr>';
+    }).join('');
+  }
+
+  function renderAll(){ renderStats(); renderNeeds(); renderDonsTable(); }
+
+  document.getElementById("donForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var categorie = document.getElementById("dCategory").value;
+    var description = document.getElementById("dDescription").value.trim();
+    var quantite = document.getElementById("dQuantite").value.trim();
+    var limite = document.getElementById("dLimite").value;
+    var origine = document.getElementById("dOrigine").value.trim();
+    if(!description || !quantite || !origine) return;
+
+    var nextId = dons.reduce(function(m,d){ return Math.max(m,d.id); }, 0) + 1;
+    var don = { id: nextId, categorie: categorie, description: description, quantite: quantite, limite: limite, origine: origine, status: "propose" };
+    dons.push(don);
+    saveDons();
+    renderAll();
+
+    lastMatches = NEEDS.filter(function(n){ return n.categorie === categorie; });
+    var resultEl = document.getElementById("matchResult");
+    if(lastMatches.length){
+      resultEl.classList.add("show");
+      document.getElementById("matchHeading").textContent =
+        lastMatches.length + " antenne(s) ont signalé un besoin correspondant :";
+      document.getElementById("matchList").innerHTML = lastMatches.map(function(n){
+        return '<li>' + n.antenne + ' — ' + n.besoin + ' (urgence ' + n.urgence + ')</li>';
+      }).join('');
+      var emails = lastMatches.map(function(n){ return n.email; }).join(',');
+      var subject = encodeURIComponent("Don disponible : " + description);
+      var body = encodeURIComponent(
+        "Bonjour,\n\nL'" + origine + " signale un don disponible qui correspond à votre besoin :\n\n" +
+        "Description : " + description + "\nQuantité : " + quantite + "\n" +
+        (limite ? "À enlever avant le : " + limite + "\n" : "") +
+        "\nMerci de nous contacter si vous souhaitez le récupérer.\n"
+      );
+      document.getElementById("broadcastBtn").href = "mailto:" + emails + "?subject=" + subject + "&body=" + body;
+      document.getElementById("broadcastBtn").onclick = function(){
+        don.status = "diffuse";
+        saveDons();
+        renderAll();
+      };
+    } else {
+      resultEl.classList.remove("show");
+      window.alert("Aucun besoin correspondant actuellement signalé pour cette catégorie — le don reste visible dans la liste ci-dessous pour les antennes qui consultent la page.");
+    }
+
+    document.getElementById("donForm").reset();
+    document.getElementById("dOrigine").value = origine;
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!window.confirm("Réinitialiser la démo avec les dons d'exemple ?")) return;
+    dons = JSON.parse(JSON.stringify(DEFAULT_DONS));
+    saveDons();
+    document.getElementById("matchResult").classList.remove("show");
+    renderAll();
+  });
+
+  dons = loadDons();
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
