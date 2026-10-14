@@ -228,7 +228,7 @@
       tr.innerHTML = `
         <td data-label="Créneau" class="cell-slot"><b>${slot.day}</b><span>${slot.time}</span></td>
         <td data-label="Permanence">${MOTIF_LABELS[slot.type]}</td>
-        <td data-label="Bénévole" class="cell-benevole${slot.benevole ? "" : " empty"}">${slot.benevole || "Personne pour l'instant"}</td>
+        <td data-label="Bénévole" class="cell-benevole${slot.benevole ? "" : " empty"}">${slot.benevole ? SPFDemo.escapeHtml(slot.benevole) : "Personne pour l'instant"}</td>
         <td data-label="Statut">${statusPill}</td>
         <td data-label="Actions"></td>
       `;

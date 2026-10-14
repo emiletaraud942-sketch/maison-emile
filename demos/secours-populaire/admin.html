@@ -248,7 +248,7 @@
       const status = STATUS_LABELS[item.status] || STATUS_LABELS.ok;
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td data-label="Article" class="cell-name">${item.name}<span class="origin">${item.origin} · ${item.condition}</span></td>
+        <td data-label="Article" class="cell-name">${SPFDemo.escapeHtml(item.name)}<span class="origin">${SPFDemo.escapeHtml(item.origin)} · ${SPFDemo.escapeHtml(item.condition)}</span></td>
         <td data-label="Catégorie">${CATEGORY_LABELS[item.category]}</td>
         <td data-label="Prix" class="cell-price"><span class="now">${euros(item.price)}</span>${item.was ? `<span class="was">${euros(item.was)} neuf</span>` : ""}</td>
         <td data-label="Statut"><span class="status-pill ${status.cls}">${status.label}</span></td>
