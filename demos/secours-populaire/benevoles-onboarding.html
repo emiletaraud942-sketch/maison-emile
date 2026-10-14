@@ -12,22 +12,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-  header{position:sticky;top:39px;z-index:60;background:#fff;border-bottom:1px solid var(--line)}
-  @media (max-width:640px){ header{top:0} }
-  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:24px}
-  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex:none}
-  .brand img{height:40px;width:auto}
-  .brand .name{font-family:var(--font-head);font-weight:600;font-size:15px;line-height:1.15;color:var(--ink);text-transform:uppercase}
-  .brand .name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--red)}
-  .nav-right a{text-decoration:none;color:var(--muted);font-weight:600;font-size:13.5px}
-  .nav-right a:hover{color:var(--red)}
-
   .hero{padding:48px 0 36px}
   .hero .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
   @media (max-width:900px){.hero .grid{grid-template-columns:1fr}}
   .hero h1{font-size:clamp(30px,4.6vw,46px)}
+  .signup-form{padding:20px 22px}
+  .signup-note{margin-top:14px}
+  .section-tight-top{padding-top:0}
 
   .progress-wrap{background:var(--bg);border:1px solid var(--line);padding:18px 20px;margin-bottom:20px}
+  .progress-head{display:flex;justify-content:space-between;font-size:13px;font-weight:600}
   .progress-bar{height:10px;background:var(--line);margin-top:10px;overflow:hidden}
   .progress-bar > div{height:100%;background:var(--red);transition:width .25s ease}
   .steps-list{display:flex;flex-direction:column;gap:12px}
@@ -66,9 +60,9 @@
       </div>
       <div class="panel">
         <div class="panel-head">
-          <h2 style="margin:0;font-size:17px">Je m'inscris</h2>
+          <h2>Je m'inscris</h2>
         </div>
-        <form id="signupForm" style="padding:20px 22px">
+        <form id="signupForm" class="signup-form">
           <div class="field">
             <label for="sName">Nom complet</label>
             <input id="sName" type="text" required />
@@ -91,16 +85,16 @@
             <label for="sMotivation">Pourquoi souhaitez-vous rejoindre le Secours populaire ?</label>
             <textarea id="sMotivation" rows="3" required></textarea>
           </div>
-          <div class="modal-actions" style="justify-content:flex-start">
+          <div class="modal-actions form-actions-left">
             <a class="btn btn-primary btn-sm" id="signupMailBtn" href="#">Envoyer mon inscription</a>
           </div>
-          <p class="note" style="margin-top:14px">Ouvre votre messagerie avec un message pré-rempli — un bénévole vous recontacte pour fixer votre premier rendez-vous.</p>
+          <p class="note signup-note">Ouvre votre messagerie avec un message pré-rempli — un bénévole vous recontacte pour fixer votre premier rendez-vous.</p>
         </form>
       </div>
     </div>
   </section>
 
-  <section style="padding-top:0">
+  <section class="section-tight-top">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Parcours d'accueil</p>
@@ -109,7 +103,7 @@
       </div>
 
       <div class="progress-wrap">
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600">
+        <div class="progress-head">
           <span id="progressLabel">0 / 5 étapes terminées</span>
           <span id="progressPct">0%</span>
         </div>
@@ -131,13 +125,13 @@
 });</script>
 
 <script>
-(function(){
+(() => {
   "use strict";
 
-  var ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
-  var STORAGE_KEY = "spf-onboarding-demo-steps";
+  const { ANTENNE_EMAIL } = SPFDemo;
+  const STORAGE_KEY = "spf-onboarding-demo-steps";
 
-  var STEPS = [
+  const STEPS = [
     { id:"valeurs", title:"Découvrir nos valeurs", desc:"Une page de 5 minutes sur l'histoire et les principes du Secours populaire." },
     { id:"charte", title:"Charte de confidentialité et de discrétion", desc:"Ce que vous pouvez partager, et ce qui reste strictement entre vous et l'antenne." },
     { id:"gestes", title:"Premiers gestes utiles", desc:"Accueil d'une personne en difficulté, sécurité, et qui contacter en cas de doute." },
@@ -145,25 +139,29 @@
     { id:"creneau", title:"Choisir votre premier créneau", desc:"Vous rejoignez une permanence déjà en place, accompagné·e par un bénévole expérimenté." }
   ];
 
-  var done = {};
+  let done = {};
 
   function load(){
-    try{ var raw = localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); } catch(e){}
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* stockage indisponible */ }
     return {};
   }
-  function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(done)); } catch(e){} }
+  function save(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(done)); } catch (e) { /* stockage indisponible */ } }
 
   function renderSteps(){
-    var el = document.getElementById("stepsList");
+    const el = document.getElementById("stepsList");
     el.innerHTML = "";
-    STEPS.forEach(function(step){
-      var isDone = !!done[step.id];
-      var item = document.createElement("label");
-      item.className = "step-item" + (isDone ? " done" : "");
-      item.innerHTML =
-        '<input type="checkbox" ' + (isDone ? "checked" : "") + ' />' +
-        '<span><h3>' + step.title + '</h3><p>' + step.desc + '</p></span>';
-      item.querySelector("input").addEventListener("change", function(e){
+    STEPS.forEach((step) => {
+      const isDone = Boolean(done[step.id]);
+      const item = document.createElement("label");
+      item.className = `step-item${isDone ? " done" : ""}`;
+      item.innerHTML = `
+        <input type="checkbox" ${isDone ? "checked" : ""} />
+        <span><h3>${step.title}</h3><p>${step.desc}</p></span>
+      `;
+      item.querySelector("input").addEventListener("change", (e) => {
         done[step.id] = e.target.checked;
         save();
         renderSteps();
@@ -174,34 +172,34 @@
   }
 
   function renderProgress(){
-    var count = STEPS.filter(function(s){ return done[s.id]; }).length;
-    var pct = Math.round((count / STEPS.length) * 100);
-    document.getElementById("progressLabel").textContent = count + " / " + STEPS.length + " étapes terminées";
-    document.getElementById("progressPct").textContent = pct + "%";
-    document.getElementById("progressFill").style.width = pct + "%";
+    const count = STEPS.filter((s) => done[s.id]).length;
+    const pct = Math.round((count / STEPS.length) * 100);
+    document.getElementById("progressLabel").textContent = `${count} / ${STEPS.length} étapes terminées`;
+    document.getElementById("progressPct").textContent = `${pct}%`;
+    document.getElementById("progressFill").style.width = `${pct}%`;
   }
 
   function updateSignupLink(){
-    var name = document.getElementById("sName").value || "[votre nom]";
-    var email = document.getElementById("sEmail").value || "[votre e-mail]";
-    var phone = document.getElementById("sPhone").value || "[votre téléphone]";
-    var dispo = document.getElementById("sDispo").value || "[vos disponibilités]";
-    var motivation = document.getElementById("sMotivation").value || "[votre motivation]";
-    var subject = encodeURIComponent("Inscription bénévole : " + name);
-    var body = encodeURIComponent(
-      "Bonjour,\n\nJe souhaite devenir bénévole au Secours populaire.\n\n" +
-      "Nom : " + name + "\nE-mail : " + email + "\nTéléphone : " + phone + "\n" +
-      "Disponibilités : " + dispo + "\n\nMotivation :\n" + motivation + "\n"
+    const name = document.getElementById("sName").value || "[votre nom]";
+    const email = document.getElementById("sEmail").value || "[votre e-mail]";
+    const phone = document.getElementById("sPhone").value || "[votre téléphone]";
+    const dispo = document.getElementById("sDispo").value || "[vos disponibilités]";
+    const motivation = document.getElementById("sMotivation").value || "[votre motivation]";
+    const subject = encodeURIComponent(`Inscription bénévole : ${name}`);
+    const body = encodeURIComponent(
+      `Bonjour,\n\nJe souhaite devenir bénévole au Secours populaire.\n\n` +
+      `Nom : ${name}\nE-mail : ${email}\nTéléphone : ${phone}\n` +
+      `Disponibilités : ${dispo}\n\nMotivation :\n${motivation}\n`
     );
-    document.getElementById("signupMailBtn").href = "mailto:" + ANTENNE_EMAIL + "?subject=" + subject + "&body=" + body;
+    document.getElementById("signupMailBtn").href = `mailto:${ANTENNE_EMAIL}?subject=${subject}&body=${body}`;
   }
-  ["sName","sEmail","sPhone","sDispo","sMotivation"].forEach(function(id){
+  for (const id of ["sName", "sEmail", "sPhone", "sDispo", "sMotivation"]) {
     document.getElementById(id).addEventListener("input", updateSignupLink);
-  });
-  document.getElementById("signupForm").addEventListener("submit", function(e){ e.preventDefault(); });
+  }
+  document.getElementById("signupForm").addEventListener("submit", (e) => e.preventDefault());
 
-  document.getElementById("resetBtn").addEventListener("click", function(){
-    if(!window.confirm("Réinitialiser votre progression de démo ?")) return;
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!window.confirm("Réinitialiser votre progression de démo ?")) return;
     done = {};
     save();
     renderSteps();

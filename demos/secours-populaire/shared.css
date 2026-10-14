@@ -47,6 +47,28 @@ p{color:var(--muted)}
 .suite-nav a:hover{color:var(--red)}
 .suite-nav a.current{color:var(--red);border-bottom-color:var(--red)}
 
+/* simple "bénévole" header, shared by every back-office-style page
+   (admin, planning, familles, dons-matching, benevoles-onboarding) */
+header{background:#fff;border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand img{height:38px;width:auto}
+.brand .name{font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.15;color:var(--ink);text-transform:uppercase}
+.brand .name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--red)}
+.nav-right{display:flex;align-items:center;gap:14px;font-size:13.5px}
+.nav-right a{text-decoration:none;color:var(--muted);font-weight:600}
+.nav-right a:hover{color:var(--red)}
+
+.toolbar{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}
+.toolbar .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.toolbar h1{margin:0}
+.toolbar .stats-row{margin-top:18px}
+.panel-head h2{margin:0;font-size:17px}
+.demo-note .btn{margin-top:10px}
+.muted-sm{font-size:13px;color:var(--muted-light)}
+.hidden{display:none}
+.form-actions-left{justify-content:flex-start}
+
 /* pitch fab */
 .pitch-fab{position:fixed;bottom:22px;right:22px;z-index:65;background:var(--ink);color:rgba(255,255,255,.85);border-left:4px solid var(--red);padding:14px 18px;max-width:250px;font-size:12.5px;box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .pitch-fab b{display:block;color:#fff;font-family:var(--font-head);font-size:15px;margin-bottom:6px;text-transform:uppercase}

@@ -151,6 +151,8 @@
   .modal .item-recap{display:flex;gap:14px;align-items:center;background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin:16px 0 20px}
   .modal .item-recap .thumb-sm{width:52px;height:52px;border-radius:var(--radius-sm);background:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
   .modal .item-recap .price-sm{font-family:var(--font-head);color:var(--red);font-weight:700}
+  .note-tight{margin-top:0}
+  .band .note-light{color:rgba(255,255,255,.55)}
 </style>
 </head>
 <body>
@@ -301,7 +303,7 @@
         </div>
         <div>
           <a class="btn btn-secondary" id="partnerMailBtn" href="#">Proposer un partenariat par e-mail</a>
-          <p class="note" style="color:rgba(255,255,255,.55)">Ouvre votre messagerie avec un message pré-rempli — à compléter avant envoi.</p>
+          <p class="note note-light">Ouvre votre messagerie avec un message pré-rempli — à compléter avant envoi.</p>
         </div>
       </div>
     </div>
@@ -430,7 +432,7 @@
       <label for="reservePhone">Téléphone</label>
       <input id="reservePhone" type="tel" autocomplete="tel" />
     </div>
-    <p class="note" style="margin-top:0">Ces boutons ouvrent votre messagerie ou votre téléphone avec un message pré-rempli — la demande n'est confirmée qu'une fois reçue par l'antenne.</p>
+    <p class="note note-tight">Ces boutons ouvrent votre messagerie ou votre téléphone avec un message pré-rempli — la demande n'est confirmée qu'une fois reçue par l'antenne.</p>
     <div class="modal-actions">
       <a class="btn btn-primary btn-sm" id="modalMailBtn" href="#">Envoyer par e-mail</a>
       <a class="btn btn-ghost btn-sm" id="modalCallBtn" href="tel:+33000000000">Appeler la boutique</a>
@@ -439,12 +441,12 @@
 </div>
 
 <script>
-(function(){
+(() => {
   "use strict";
 
-  var ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
+  const { ANTENNE_EMAIL } = SPFDemo;
 
-  var CATEGORIES = [
+  const CATEGORIES = [
     { key: "tous", label: "Tous" },
     { key: "electromenager", label: "Électroménager" },
     { key: "textile", label: "Textile" },
@@ -454,12 +456,12 @@
     { key: "alimentaire", label: "Alimentaire" }
   ];
 
-  var ICONS = {
+  const ICONS = {
     electromenager: "🔌", textile: "👕", mobilier: "🪑",
     multimedia: "📺", "hygiene-bazar": "🧴", alimentaire: "🥫"
   };
 
-  var ITEMS = [
+  const ITEMS = [
     { id:1, name:"Lave-linge hublot 8 kg", category:"electromenager", price:149, was:480, condition:"Testé & garanti 30 jours", origin:"Don : enseigne d'électroménager partenaire", stock:"last" },
     { id:2, name:"Réfrigérateur top 2 portes", category:"electromenager", price:99, was:320, condition:"Bon état", origin:"Don : grande surface partenaire", stock:"ok" },
     { id:3, name:"Four micro-ondes grill", category:"electromenager", price:19, was:89, condition:"Très bon état", origin:"Don : grande surface partenaire", stock:"ok" },
@@ -478,22 +480,22 @@
     { id:16, name:"Lot conserves & féculents", category:"alimentaire", price:3, was:null, condition:"Date de consommation proche", origin:"Don : grande surface partenaire", stock:"reserved" }
   ];
 
-  var state = { category:"tous", query:"" };
-  var lastFocused = null;
+  const state = { category: "tous", query: "" };
+  let lastFocused = null;
 
-  function euros(n){ return n.toLocaleString("fr-FR") + " €"; }
+  const euros = (n) => `${n.toLocaleString("fr-FR")} €`;
 
   function renderTabs(){
-    var tabsEl = document.getElementById("tabs");
+    const tabsEl = document.getElementById("tabs");
     tabsEl.innerHTML = "";
-    CATEGORIES.forEach(function(cat){
-      var b = document.createElement("button");
+    CATEGORIES.forEach((cat) => {
+      const b = document.createElement("button");
       b.className = "tab";
       b.type = "button";
       b.role = "tab";
       b.textContent = cat.label;
       b.setAttribute("aria-pressed", String(cat.key === state.category));
-      b.addEventListener("click", function(){
+      b.addEventListener("click", () => {
         state.category = cat.key;
         renderTabs();
         renderGrid();
@@ -502,63 +504,60 @@
     });
   }
 
-  function matchesQuery(item, q){
-    if(!q) return true;
-    q = q.toLowerCase();
-    return item.name.toLowerCase().indexOf(q) !== -1 || item.condition.toLowerCase().indexOf(q) !== -1;
+  function matchesQuery(item, query){
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return item.name.toLowerCase().includes(q) || item.condition.toLowerCase().includes(q);
   }
 
   function renderGrid(){
-    var grid = document.getElementById("shopGrid");
-    var list = ITEMS.filter(function(item){
-      var catOk = state.category === "tous" || item.category === state.category;
+    const grid = document.getElementById("shopGrid");
+    const list = ITEMS.filter((item) => {
+      const catOk = state.category === "tous" || item.category === state.category;
       return catOk && matchesQuery(item, state.query);
     });
 
     document.getElementById("resultsCount").textContent =
-      list.length + (list.length > 1 ? " articles trouvés" : " article trouvé");
+      `${list.length} ${list.length > 1 ? "articles trouvés" : "article trouvé"}`;
 
     grid.innerHTML = "";
-    if(list.length === 0){
-      var empty = document.createElement("p");
+    if (list.length === 0) {
+      const empty = document.createElement("p");
       empty.textContent = "Aucun article ne correspond à votre recherche pour le moment.";
-      empty.style.color = "var(--muted)";
       grid.appendChild(empty);
       return;
     }
 
-    list.forEach(function(item){
-      var card = document.createElement("article");
+    list.forEach((item) => {
+      const card = document.createElement("article");
       card.className = "card";
 
-      var badge = "";
-      if(item.stock === "last") badge = '<span class="badge last">Dernière pièce</span>';
-      else if(item.stock === "reserved") badge = '<span class="badge reserved">Réservé</span>';
-      else if(item.condition.toLowerCase().indexOf("neuf") !== -1) badge = '<span class="badge isnew">Neuf étiqueté</span>';
+      let badge = "";
+      if (item.stock === "last") badge = '<span class="badge last">Dernière pièce</span>';
+      else if (item.stock === "reserved") badge = '<span class="badge reserved">Réservé</span>';
+      else if (item.condition.toLowerCase().includes("neuf")) badge = '<span class="badge isnew">Neuf étiqueté</span>';
 
-      card.innerHTML =
-        '<div class="thumb">' + badge + ICONS[item.category] + '</div>' +
-        '<div class="body">' +
-          '<h3>' + item.name + '</h3>' +
-          '<p class="origin">' + item.origin + '</p>' +
-          '<p class="condition">' + item.condition + '</p>' +
-          '<div class="prices"><span class="now">' + euros(item.price) + '</span>' +
-            (item.was ? '<span class="was">' + euros(item.was) + ' neuf</span>' : '') +
-          '</div>' +
-        '</div>';
+      card.innerHTML = `
+        <div class="thumb">${badge}${ICONS[item.category]}</div>
+        <div class="body">
+          <h3>${item.name}</h3>
+          <p class="origin">${item.origin}</p>
+          <p class="condition">${item.condition}</p>
+          <div class="prices"><span class="now">${euros(item.price)}</span>${item.was ? `<span class="was">${euros(item.was)} neuf</span>` : ""}</div>
+        </div>
+      `;
 
-      var body = card.querySelector(".body");
-      var btn = document.createElement("button");
+      const btn = document.createElement("button");
       btn.className = "btn btn-primary btn-sm reserve-btn";
       btn.type = "button";
-      if(item.stock === "reserved"){
+      if (item.stock === "reserved") {
         btn.textContent = "Déjà réservé";
         btn.disabled = true;
       } else {
         btn.textContent = "Réserver cet article";
-        btn.addEventListener("click", function(){ openModal(item); });
+        btn.addEventListener("click", () => openModal(item));
       }
-      body.appendChild(btn);
+      card.querySelector(".body").appendChild(btn);
 
       grid.appendChild(card);
     });
@@ -566,26 +565,27 @@
 
   function openModal(item){
     lastFocused = document.activeElement;
-    var backdrop = document.getElementById("modalBackdrop");
-    document.getElementById("itemRecap").innerHTML =
-      '<div class="thumb-sm" aria-hidden="true">' + ICONS[item.category] + '</div>' +
-      '<div><strong>' + item.name + '</strong><br><span class="price-sm">' + euros(item.price) + '</span></div>';
+    const backdrop = document.getElementById("modalBackdrop");
+    document.getElementById("itemRecap").innerHTML = `
+      <div class="thumb-sm" aria-hidden="true">${ICONS[item.category]}</div>
+      <div><strong>${item.name}</strong><br><span class="price-sm">${euros(item.price)}</span></div>
+    `;
 
-    document.getElementById("modalTitle").textContent = "Réserver : " + item.name;
+    document.getElementById("modalTitle").textContent = `Réserver : ${item.name}`;
     backdrop.classList.add("open");
     document.getElementById("modalClose").focus();
 
     function updateLinks(){
-      var antenne = document.getElementById("antenneSelect").value;
-      var name = document.getElementById("reserveName").value || "[votre nom]";
-      var phone = document.getElementById("reservePhone").value || "[votre téléphone]";
-      var subject = encodeURIComponent("Réservation boutique solidarité : " + item.name);
-      var body = encodeURIComponent(
-        "Bonjour,\n\nJe souhaite réserver l'article suivant : " + item.name + " (" + euros(item.price) + ").\n" +
-        "Boutique choisie : " + antenne + "\n" +
-        "Nom : " + name + "\nTéléphone : " + phone + "\n\nMerci de me confirmer la disponibilité.\n"
+      const antenne = document.getElementById("antenneSelect").value;
+      const name = document.getElementById("reserveName").value || "[votre nom]";
+      const phone = document.getElementById("reservePhone").value || "[votre téléphone]";
+      const subject = encodeURIComponent(`Réservation boutique solidarité : ${item.name}`);
+      const body = encodeURIComponent(
+        `Bonjour,\n\nJe souhaite réserver l'article suivant : ${item.name} (${euros(item.price)}).\n` +
+        `Boutique choisie : ${antenne}\n` +
+        `Nom : ${name}\nTéléphone : ${phone}\n\nMerci de me confirmer la disponibilité.\n`
       );
-      document.getElementById("modalMailBtn").href = "mailto:" + ANTENNE_EMAIL + "?subject=" + subject + "&body=" + body;
+      document.getElementById("modalMailBtn").href = `mailto:${ANTENNE_EMAIL}?subject=${subject}&body=${body}`;
     }
     updateLinks();
     document.getElementById("antenneSelect").oninput = updateLinks;
@@ -595,48 +595,48 @@
 
   function closeModal(){
     document.getElementById("modalBackdrop").classList.remove("open");
-    if(lastFocused) lastFocused.focus();
+    lastFocused?.focus();
   }
 
   document.getElementById("modalClose").addEventListener("click", closeModal);
-  document.getElementById("modalBackdrop").addEventListener("click", function(e){
-    if(e.target === this) closeModal();
+  document.getElementById("modalBackdrop").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeModal();
   });
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape") closeModal();
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
   });
 
-  document.getElementById("searchInput").addEventListener("input", function(e){
+  document.getElementById("searchInput").addEventListener("input", (e) => {
     state.query = e.target.value;
     renderGrid();
   });
 
-  // mobile menu
-  var mobilePanel = document.getElementById("mobilePanel");
-  var burgerBtn = document.getElementById("burgerBtn");
-  burgerBtn.addEventListener("click", function(){
+  // menu mobile
+  const mobilePanel = document.getElementById("mobilePanel");
+  const burgerBtn = document.getElementById("burgerBtn");
+  burgerBtn.addEventListener("click", () => {
     mobilePanel.classList.add("open");
     burgerBtn.setAttribute("aria-expanded", "true");
   });
-  document.getElementById("closeMobilePanel").addEventListener("click", function(){
+  document.getElementById("closeMobilePanel").addEventListener("click", () => {
     mobilePanel.classList.remove("open");
     burgerBtn.setAttribute("aria-expanded", "false");
   });
-  mobilePanel.querySelectorAll("a").forEach(function(a){
-    a.addEventListener("click", function(){
+  mobilePanel.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => {
       mobilePanel.classList.remove("open");
       burgerBtn.setAttribute("aria-expanded", "false");
     });
   });
 
-  // partner / volunteer mailto links
-  document.getElementById("partnerMailBtn").href = "mailto:" + ANTENNE_EMAIL +
-    "?subject=" + encodeURIComponent("Proposition de partenariat - dons d'invendus") +
-    "&body=" + encodeURIComponent("Bonjour,\n\nNotre enseigne [nom] souhaite proposer ses invendus (type de produits, fréquence estimée) à votre Boutique Solidarité.\n\nCordialement,\n[nom, enseigne, coordonnées]");
+  // liens mailto partenariat / bénévolat
+  document.getElementById("partnerMailBtn").href = `mailto:${ANTENNE_EMAIL}` +
+    `?subject=${encodeURIComponent("Proposition de partenariat - dons d'invendus")}` +
+    `&body=${encodeURIComponent("Bonjour,\n\nNotre enseigne [nom] souhaite proposer ses invendus (type de produits, fréquence estimée) à votre Boutique Solidarité.\n\nCordialement,\n[nom, enseigne, coordonnées]")}`;
 
-  document.getElementById("volunteerMailBtn").href = "mailto:" + ANTENNE_EMAIL +
-    "?subject=" + encodeURIComponent("Je souhaite devenir bénévole") +
-    "&body=" + encodeURIComponent("Bonjour,\n\nJe souhaite devenir bénévole à la Boutique Solidarité (tri, accueil, mise en rayon...).\nDisponibilités : [jours / créneaux]\n\nMerci de me recontacter.\n[nom, téléphone]");
+  document.getElementById("volunteerMailBtn").href = `mailto:${ANTENNE_EMAIL}` +
+    `?subject=${encodeURIComponent("Je souhaite devenir bénévole")}` +
+    `&body=${encodeURIComponent("Bonjour,\n\nJe souhaite devenir bénévole à la Boutique Solidarité (tri, accueil, mise en rayon...).\nDisponibilités : [jours / créneaux]\n\nMerci de me recontacter.\n[nom, téléphone]")}`;
 
   renderTabs();
   renderGrid();

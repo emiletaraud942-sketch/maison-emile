@@ -12,19 +12,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-  header{background:#fff;border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:20px;flex-wrap:wrap}
-  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
-  .brand img{height:38px;width:auto}
-  .brand .name{font-family:var(--font-head);font-weight:600;font-size:14px;line-height:1.15;color:var(--ink);text-transform:uppercase}
-  .brand .name small{display:block;font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--red)}
-  .nav-right{display:flex;align-items:center;gap:14px;font-size:13.5px}
-  .nav-right a{text-decoration:none;color:var(--muted);font-weight:600}
-  .nav-right a:hover{color:var(--red)}
-
-  .toolbar{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}
-  .toolbar .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
-
   main{padding:36px 0 80px}
   .cell-code{font-weight:700}
   .cell-code span{display:block;font-weight:400;font-size:12px;color:var(--muted-light);margin-top:2px}
@@ -35,7 +22,11 @@
   .timeline-item{border-left:3px solid var(--red);padding:4px 0 4px 14px}
   .timeline-item .meta{font-size:12px;color:var(--muted-light);font-weight:600;font-family:var(--font-head);text-transform:uppercase}
   .timeline-item p{margin:4px 0 0;color:var(--ink)}
+  .timeline-empty{color:var(--muted-light)}
   .family-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+  .family-head h2{margin-bottom:4px}
+  .family-head p{margin:0}
+  .modal-wide{max-width:600px}
 </style>
 </head>
 <body>
@@ -60,10 +51,10 @@
   <div class="wrap">
     <p class="eyebrow">Accompagnement</p>
     <div class="row">
-      <h1 style="margin:0">Familles accompagnées</h1>
+      <h1>Familles accompagnées</h1>
       <button class="btn btn-primary" id="addFamilyBtn">+ Ajouter une famille</button>
     </div>
-    <div class="stats-row" id="statsRow" style="margin-top:18px"></div>
+    <div class="stats-row" id="statsRow"></div>
   </div>
 </div>
 
@@ -75,7 +66,7 @@
       Ces fiches ne contiennent aucune personne réelle. La situation sociale est une donnée sensible : une vraie version demanderait
       une base légale claire, le consentement de la famille, un accès restreint par rôle, une durée de conservation définie,
       un hébergement sécurisé, et l'avis de votre délégué à la protection des données avant tout déploiement.
-      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm" style="margin-top:10px">Réinitialiser la démo</button>
+      <button type="button" id="resetBtn" class="btn btn-ghost btn-sm">Réinitialiser la démo</button>
     </div>
 
     <div class="panel">
@@ -83,7 +74,7 @@
         <div class="filters">
           <input id="filterSearch" type="search" placeholder="Rechercher un code famille…" />
         </div>
-        <span id="resultsCount" style="font-size:13px;color:var(--muted-light)"></span>
+        <span id="resultsCount" class="muted-sm"></span>
       </div>
       <table>
         <thead>
@@ -128,12 +119,12 @@
 </div>
 
 <div class="modal-backdrop" id="detailModalBackdrop">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle" style="max-width:600px">
+  <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
     <button class="close-x" id="detailClose" aria-label="Fermer">×</button>
     <div class="family-head">
       <div>
-        <h2 id="detailTitle" style="margin-bottom:4px">Famille</h2>
-        <p id="detailComposition" style="margin:0"></p>
+        <h2 id="detailTitle">Famille</h2>
+        <p id="detailComposition"></p>
       </div>
       <div class="tag-list" id="detailAides"></div>
     </div>
@@ -157,12 +148,12 @@
 });</script>
 
 <script>
-(function(){
+(() => {
   "use strict";
 
-  var STORAGE_KEY = "spf-familles-demo-v1";
+  const STORAGE_KEY = "spf-familles-demo-v1";
 
-  var DEFAULT_FAMILIES = [
+  const DEFAULT_FAMILIES = [
     { id:1, code:"Famille A (fictive)", composition:"2 adultes · 3 enfants", aides:["Aide alimentaire","Accès aux droits"],
       notes:[
         { date:"2026-09-02", auteur:"Sophie M.", contenu:"Premier passage, orientation vers l'aide alimentaire hebdomadaire." },
@@ -180,56 +171,58 @@
       ] }
   ];
 
-  var families = [];
-  var detailFamilyId = null;
-  var lastFocused = null;
-  var filterQuery = "";
+  let families = [];
+  let detailFamilyId = null;
+  let lastFocused = null;
+  let filterQuery = "";
 
   function loadFamilies(){
-    try{ var raw = localStorage.getItem(STORAGE_KEY); if(raw) return JSON.parse(raw); } catch(e){}
-    return JSON.parse(JSON.stringify(DEFAULT_FAMILIES));
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* stockage indisponible : on retombe sur les familles d'exemple */ }
+    return structuredClone(DEFAULT_FAMILIES);
   }
-  function saveFamilies(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(families)); } catch(e){} }
+  function saveFamilies(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(families)); } catch (e) { /* stockage indisponible */ } }
 
   function renderStats(){
-    var total = families.length;
-    var totalNotes = families.reduce(function(s,f){ return s + f.notes.length; }, 0);
-    var recent = families.filter(function(f){
-      if(!f.notes.length) return false;
-      var last = f.notes[f.notes.length - 1].date;
-      return (new Date() - new Date(last)) < 1000*60*60*24*30;
+    const total = families.length;
+    const totalNotes = families.reduce((sum, f) => sum + f.notes.length, 0);
+    const recent = families.filter((f) => {
+      if (!f.notes.length) return false;
+      const last = f.notes.at(-1).date;
+      return Date.now() - new Date(last) < 1000 * 60 * 60 * 24 * 30;
     }).length;
-    document.getElementById("statsRow").innerHTML =
-      '<div class="stat-tile"><b>' + total + '</b><span>familles suivies</span></div>' +
-      '<div class="stat-tile"><b>' + totalNotes + '</b><span>notes de suivi au total</span></div>' +
-      '<div class="stat-tile"><b>' + recent + '</b><span>vues dans les 30 derniers jours</span></div>';
+    document.getElementById("statsRow").innerHTML = `
+      <div class="stat-tile"><b>${total}</b><span>familles suivies</span></div>
+      <div class="stat-tile"><b>${totalNotes}</b><span>notes de suivi au total</span></div>
+      <div class="stat-tile"><b>${recent}</b><span>vues dans les 30 derniers jours</span></div>
+    `;
   }
 
   function renderTable(){
-    var tbody = document.getElementById("tableBody");
-    var list = families.filter(function(f){
-      if(!filterQuery) return true;
-      return f.code.toLowerCase().indexOf(filterQuery.toLowerCase()) !== -1;
-    });
-    document.getElementById("resultsCount").textContent = list.length + (list.length > 1 ? " familles" : " famille");
+    const tbody = document.getElementById("tableBody");
+    const list = families.filter((f) => !filterQuery || f.code.toLowerCase().includes(filterQuery.toLowerCase()));
+    document.getElementById("resultsCount").textContent = `${list.length} ${list.length > 1 ? "familles" : "famille"}`;
     tbody.innerHTML = "";
 
-    list.forEach(function(f){
-      var last = f.notes.length ? f.notes[f.notes.length - 1].date : "—";
-      var tr = document.createElement("tr");
-      tr.innerHTML =
-        '<td data-label="Famille" class="cell-code">' + f.code + '<span>' + f.notes.length + ' note(s) de suivi</span></td>' +
-        '<td data-label="Composition">' + f.composition + '</td>' +
-        '<td data-label="Aides"><div class="tag-list">' + f.aides.map(function(a){ return '<span class="tag">' + a + '</span>'; }).join('') + '</div></td>' +
-        '<td data-label="Dernière visite">' + last + '</td>' +
-        '<td data-label="Actions"></td>';
-      var cell = tr.querySelector('td:last-child');
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'btn btn-ghost btn-sm';
-      btn.textContent = 'Voir la fiche';
-      btn.addEventListener('click', function(){ openDetail(f.id); });
-      cell.appendChild(btn);
+    list.forEach((f) => {
+      const last = f.notes.length ? f.notes.at(-1).date : "—";
+      const tags = f.aides.map((a) => `<span class="tag">${a}</span>`).join("");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td data-label="Famille" class="cell-code">${f.code}<span>${f.notes.length} note(s) de suivi</span></td>
+        <td data-label="Composition">${f.composition}</td>
+        <td data-label="Aides"><div class="tag-list">${tags}</div></td>
+        <td data-label="Dernière visite">${last}</td>
+        <td data-label="Actions"></td>
+      `;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-ghost btn-sm";
+      btn.textContent = "Voir la fiche";
+      btn.addEventListener("click", () => openDetail(f.id));
+      tr.querySelector("td:last-child").appendChild(btn);
       tbody.appendChild(tr);
     });
   }
@@ -239,39 +232,43 @@
   function openDetail(familyId){
     lastFocused = document.activeElement;
     detailFamilyId = familyId;
-    var f = families.find(function(x){ return x.id === familyId; });
+    const f = families.find((x) => x.id === familyId);
     document.getElementById("detailTitle").textContent = f.code;
     document.getElementById("detailComposition").textContent = f.composition;
-    document.getElementById("detailAides").innerHTML = f.aides.map(function(a){ return '<span class="tag">' + a + '</span>'; }).join('');
+    document.getElementById("detailAides").innerHTML = f.aides.map((a) => `<span class="tag">${a}</span>`).join("");
     renderTimeline(f);
     document.getElementById("noteContent").value = "";
     document.getElementById("detailModalBackdrop").classList.add("open");
     document.getElementById("noteContent").focus();
   }
   function renderTimeline(f){
-    var el = document.getElementById("detailTimeline");
-    if(!f.notes.length){
-      el.innerHTML = '<p style="color:var(--muted-light)">Aucune note pour l\'instant.</p>';
+    const el = document.getElementById("detailTimeline");
+    if (!f.notes.length) {
+      el.innerHTML = '<p class="timeline-empty">Aucune note pour l\'instant.</p>';
       return;
     }
-    el.innerHTML = f.notes.slice().reverse().map(function(n){
-      return '<div class="timeline-item"><div class="meta">' + n.date + ' · ' + n.auteur + '</div><p>' + n.contenu + '</p></div>';
-    }).join('');
+    el.innerHTML = f.notes
+      .slice()
+      .reverse()
+      .map((n) => `<div class="timeline-item"><div class="meta">${n.date} · ${n.auteur}</div><p>${n.contenu}</p></div>`)
+      .join("");
   }
   function closeDetail(){
     document.getElementById("detailModalBackdrop").classList.remove("open");
     detailFamilyId = null;
-    if(lastFocused) lastFocused.focus();
+    lastFocused?.focus();
   }
   document.getElementById("detailClose").addEventListener("click", closeDetail);
-  document.getElementById("detailModalBackdrop").addEventListener("click", function(e){ if(e.target === this) closeDetail(); });
+  document.getElementById("detailModalBackdrop").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeDetail();
+  });
 
-  document.getElementById("noteForm").addEventListener("submit", function(e){
+  document.getElementById("noteForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    var content = document.getElementById("noteContent").value.trim();
-    if(!content) return;
-    var f = families.find(function(x){ return x.id === detailFamilyId; });
-    f.notes.push({ date: new Date().toISOString().slice(0,10), auteur: "Vous (démo)", contenu: content });
+    const content = document.getElementById("noteContent").value.trim();
+    if (!content) return;
+    const f = families.find((x) => x.id === detailFamilyId);
+    f.notes.push({ date: new Date().toISOString().slice(0, 10), auteur: "Vous (démo)", contenu: content });
     saveFamilies();
     renderTimeline(f);
     renderAll();
@@ -286,38 +283,40 @@
   }
   function closeAddModal(){
     document.getElementById("addModalBackdrop").classList.remove("open");
-    if(lastFocused) lastFocused.focus();
+    lastFocused?.focus();
   }
   document.getElementById("addFamilyBtn").addEventListener("click", openAddModal);
   document.getElementById("addCancel").addEventListener("click", closeAddModal);
   document.getElementById("addClose").addEventListener("click", closeAddModal);
-  document.getElementById("addModalBackdrop").addEventListener("click", function(e){ if(e.target === this) closeAddModal(); });
+  document.getElementById("addModalBackdrop").addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeAddModal();
+  });
 
-  document.getElementById("familyForm").addEventListener("submit", function(e){
+  document.getElementById("familyForm").addEventListener("submit", (e) => {
     e.preventDefault();
-    var code = document.getElementById("fCode").value.trim();
-    var composition = document.getElementById("fComposition").value.trim();
-    var aides = document.getElementById("fAides").value.split(",").map(function(s){ return s.trim(); }).filter(Boolean);
-    if(!code || !composition || !aides.length) return;
-    var nextId = families.reduce(function(m,f){ return Math.max(m,f.id); }, 0) + 1;
-    families.push({ id: nextId, code: code, composition: composition, aides: aides, notes: [] });
+    const code = document.getElementById("fCode").value.trim();
+    const composition = document.getElementById("fComposition").value.trim();
+    const aides = document.getElementById("fAides").value.split(",").map((s) => s.trim()).filter(Boolean);
+    if (!code || !composition || !aides.length) return;
+    const nextId = families.reduce((max, f) => Math.max(max, f.id), 0) + 1;
+    families.push({ id: nextId, code, composition, aides, notes: [] });
     saveFamilies();
     renderAll();
     closeAddModal();
   });
 
-  document.getElementById("filterSearch").addEventListener("input", function(e){
+  document.getElementById("filterSearch").addEventListener("input", (e) => {
     filterQuery = e.target.value;
     renderTable();
   });
 
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape"){ closeDetail(); closeAddModal(); }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeDetail(); closeAddModal(); }
   });
 
-  document.getElementById("resetBtn").addEventListener("click", function(){
-    if(!window.confirm("Réinitialiser la démo avec les familles fictives d'exemple ?")) return;
-    families = JSON.parse(JSON.stringify(DEFAULT_FAMILIES));
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!window.confirm("Réinitialiser la démo avec les familles fictives d'exemple ?")) return;
+    families = structuredClone(DEFAULT_FAMILIES);
     saveFamilies();
     renderAll();
   });

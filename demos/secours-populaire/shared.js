@@ -4,10 +4,12 @@
 (function (window, document) {
   "use strict";
 
-  var LOGO_FALLBACK =
+  const LOGO_FALLBACK =
     "data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M32 52C18 42 8 32 8 20c0-7 5-12 12-12 5 0 9 3 12 8 3-5 7-8 12-8 7 0 12 5 12 12 0 12-10 22-24 32z%27 fill=%27%23E2182F%27/%3E%3Cpath d=%27M32 52C22 44 14 36 10 27c3 2 7 3 11 3 7 0 11-5 11-11 0 6 4 11 11 11 4 0 8-1 11-3-4 9-12 17-22 25z%27 fill=%27%23000F9F%27/%3E%3C/svg%3E";
 
-  var PAGES = [
+  const ANTENNE_EMAIL = "boutique.solidarite@secourspopulaire-exemple.org";
+
+  const PAGES = [
     { key: "index", href: "index.html", label: "Boutique solidaire" },
     { key: "admin", href: "admin.html", label: "Gestion du stock" },
     { key: "planning", href: "planning.html", label: "Planning & RDV" },
@@ -17,46 +19,40 @@
   ];
 
   function ribbonHtml(context) {
-    return (
-      '<div class="demo-ribbon"><div class="container">' +
-      "<span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, " +
-      context +
-      ". Non en ligne officiellement.</span>" +
-      '<a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>' +
-      "</div></div>"
-    );
+    return `<div class="demo-ribbon"><div class="container">
+      <span>Maquette de démonstration — <strong>préparée par Maison Émile</strong>, ${context}. Non en ligne officiellement.</span>
+      <a href="mailto:emiletaraud942@gmail.com">En discuter avec Émile →</a>
+    </div></div>`;
   }
 
   function suiteNavHtml(currentKey) {
-    var links = PAGES.map(function (p) {
-      return (
-        '<a href="' + p.href + '"' + (p.key === currentKey ? ' class="current"' : "") + ">" + p.label + "</a>"
-      );
+    const links = PAGES.map((page) => {
+      const currentAttr = page.key === currentKey ? ' class="current"' : "";
+      return `<a href="${page.href}"${currentAttr}>${page.label}</a>`;
     }).join("");
-    return '<div class="suite-nav"><div class="wrap">' + links + "</div></div>";
+    return `<div class="suite-nav"><div class="wrap">${links}</div></div>`;
   }
 
-  function fabHtml(fab) {
-    return (
-      '<div class="pitch-fab"><b>' +
-      fab.title +
-      "</b>" +
-      fab.body +
-      '<br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a></div>'
-    );
+  function fabHtml({ title, body }) {
+    return `<div class="pitch-fab">
+      <b>${title}</b>${body}
+      <br><a href="mailto:emiletaraud942@gmail.com">Écrire à Maison Émile</a>
+    </div>`;
   }
 
   window.SPFDemo = {
+    ANTENNE_EMAIL,
+
     // Ribbon + suite-nav: called once, right at the top of <body>.
-    chrome: function (config) {
+    chrome(config) {
       document.write(ribbonHtml(config.ribbonContext) + suiteNavHtml(config.current));
     },
     // Floating pitch bubble: called once, right before </body>.
-    fab: function (config) {
+    fab(config) {
       document.write(fabHtml(config));
     },
     // Used as the onerror handler on the header logo <img>.
-    logoFallback: function (img) {
+    logoFallback(img) {
       img.onerror = null;
       img.src = LOGO_FALLBACK;
     }
