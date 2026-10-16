@@ -1310,9 +1310,10 @@ img { display: block; max-width: 100%; }
         <p class="muted" style="margin-top:26px;font-size:15px">Vous préférez écrire directement ?<br />
           <a class="linkline" href="mailto:emiletaraud942@gmail.com" style="margin-top:8px">emiletaraud942@gmail.com</a>
         </p>
-        <p class="muted" style="margin-top:22px;font-size:15px">Besoin d'aide pour cadrer précisément votre projet ?<br />
-          <a class="linkline" href="#cahier" data-nav="cahier" style="margin-top:8px">Remplir le cahier des charges guidé →</a>
-        </p>
+        <div style="margin-top:28px;padding:22px 24px;border:1px solid var(--line-light);border-radius:16px">
+          <p style="margin:0 0 14px;font-size:15px">Besoin d'un devis chiffré, ou juste envie de voir à quoi pourrait ressembler votre outil avant de vous engager ?</p>
+          <a class="btn" href="#cahier" data-nav="cahier">Remplir le cahier des charges guidé <span class="ar">→</span></a>
+        </div>
       </div>
       <form class="reveal" id="devisForm" novalidate>
         <div class="form-2">
@@ -2334,6 +2335,11 @@ document.getElementById('ckRefuse').addEventListener('click', () => closeCookie(
   var catIndex = 0, subIndex = -1; // -1 = question principale de la catégorie
   var answers = {};
   var hist = [];
+  var requestType = ''; // 'devis' | 'apercu'
+  var REQUEST_TYPES = {
+    devis: { label: 'Un devis chiffré', doneTitle: 'Votre devis<br />arrive vite.', doneText: "J'ai bien reçu votre cahier des charges et je reviens vers vous rapidement avec une proposition de devis adaptée." },
+    apercu: { label: 'Un aperçu / une maquette de mon outil', doneTitle: 'Votre aperçu<br />arrive vite.', doneText: "J'ai bien reçu votre cahier des charges et je reviens vers vous rapidement avec un aperçu concret de ce que votre outil pourrait donner." }
+  };
 
   function currentQuestion(){
     var cat = CAHIER[catIndex];
@@ -2404,9 +2410,16 @@ document.getElementById('ckRefuse').addEventListener('click', () => closeCookie(
       '<span class="eyebrow reveal in"><span class="idx">Cahier des charges</span>Cadrons votre projet ensemble</span>' +
       '<h1 class="hand h-md" style="margin:18px 0 22px">' + (projet ? 'Votre projet,<br />' + escapeHtml(projet) + '.' : 'Quelques questions,<br />guidées.') + '</h1>' +
       '<p class="lead muted cahier-intro">Répondez en quelques clics — aucune question technique, uniquement des choix concrets sur votre activité. Comptez environ 5 minutes. Rien n\'est figé : ce cahier des charges sert de base de discussion, pas un engagement.</p>' +
-      '<button class="btn solid-dark" id="cahierStart">Commencer <span class="ar">→</span></button>';
-    document.getElementById('cahierStart').addEventListener('click', function(){
-      phase = 'questions'; render();
+      '<p class="cahier-cat" style="margin-top:28px">Vous cherchez plutôt…</p>' +
+      '<div class="cahier-choices">' +
+        '<button type="button" class="cahier-choice" data-type="devis">Un devis chiffré</button>' +
+        '<button type="button" class="cahier-choice" data-type="apercu">Un aperçu / une maquette de mon outil</button>' +
+      '</div>';
+    root.querySelectorAll('.cahier-choice').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        requestType = btn.getAttribute('data-type');
+        phase = 'questions'; render();
+      });
     });
   }
 
@@ -2467,12 +2480,14 @@ document.getElementById('ckRefuse').addEventListener('click', () => closeCookie(
     var emailVal = data.get('email') || '';
     var projetVal = data.get('projet') || projet || '(non précisé)';
     var libreVal = data.get('libre') || '';
-    var message = 'Projet / structure : ' + projetVal + '\n\n' + buildSummary() +
+    var typeInfo = REQUEST_TYPES[requestType];
+    var typeLabel = typeInfo ? typeInfo.label : '(non précisé)';
+    var message = 'Type de demande : ' + typeLabel + '\nProjet / structure : ' + projetVal + '\n\n' + buildSummary() +
       '\n\nPrécisions supplémentaires :\n' + (libreVal || '(aucune)');
 
     var params = {
       nom: nomVal, email: emailVal, tel: data.get('tel') || '—',
-      prestation: 'Cahier des charges guidé' + (projetVal ? ' — ' + projetVal : ''),
+      prestation: 'Cahier des charges guidé — ' + typeLabel + (projetVal ? ' — ' + projetVal : ''),
       budget: answers['contraintes'] || '—',
       message: message,
       date: new Date().toLocaleString('fr-FR'),
@@ -2500,11 +2515,12 @@ document.getElementById('ckRefuse').addEventListener('click', () => closeCookie(
   }
 
   function renderDone(){
+    var typeInfo = REQUEST_TYPES[requestType] || { doneTitle: 'On en parle<br />très vite.', doneText: "J'ai bien reçu votre cahier des charges et je reviens vers vous rapidement avec une proposition adaptée." };
     root.innerHTML =
       '<div class="cahier-done">' +
         '<span class="eyebrow reveal in"><span class="idx">Merci</span>C\'est envoyé</span>' +
-        '<h2 class="hand h-md" style="margin:18px 0 22px">On en parle<br />très vite.</h2>' +
-        '<p class="lead muted">J\'ai bien reçu votre cahier des charges et je reviens vers vous rapidement avec une proposition adaptée.</p>' +
+        '<h2 class="hand h-md" style="margin:18px 0 22px">' + typeInfo.doneTitle + '</h2>' +
+        '<p class="lead muted">' + typeInfo.doneText + '</p>' +
         '<a class="btn solid-dark" href="#" id="cahierDoneHome" style="margin-top:20px;display:inline-flex">Retour au site <span class="ar">→</span></a>' +
       '</div>';
     document.getElementById('cahierDoneHome').addEventListener('click', function(e){
