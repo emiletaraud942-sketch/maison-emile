@@ -259,9 +259,13 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
 .hero .vign { position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(to top, var(--black), transparent 26%, transparent 72%, rgba(12,11,10,.7)); }
 .hero-inner { position: relative; z-index: 5; width: 100%; }
-.blur-in { filter: blur(16px); opacity: 0; animation: hero-focus 1.1s cubic-bezier(.2,.7,.2,1) .15s forwards; }
-@media (prefers-reduced-motion: reduce){ .blur-in { filter:none; opacity:1; animation:none; } .hero .gblob { animation: none; } }
-@keyframes hero-focus { to{ filter: blur(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce){ .hero .gblob { animation: none; } }
+
+.hero h1.kinetic-title { position: relative; opacity: 1; transition: opacity .4s ease; }
+.hero h1.kinetic-title.kt-hide { opacity: 0; }
+.hero-kinetic-canvas { position: absolute; top: 0; left: 0; pointer-events: none; opacity: 0; transition: opacity .4s ease; z-index: 6; }
+.hero-kinetic-canvas.kt-show { opacity: 1; }
+@media (prefers-reduced-motion: reduce){ .hero h1.kinetic-title { opacity: 1 !important; } .hero-kinetic-canvas { display: none !important; } }
 
 .hero .badge {
   display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px;
@@ -271,7 +275,7 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
 .hero .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-glow);
   box-shadow: 0 0 0 0 rgba(192,82,90,.5); animation: pulse 2.6s infinite; }
 @keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(192,82,90,.4);} 70%{ box-shadow:0 0 0 9px rgba(192,82,90,0);} 100%{ box-shadow:0 0 0 0 rgba(192,82,90,0);} }
-.hero h1 { margin: 26px 0 34px; max-width: 18ch; font-size: clamp(42px, 7.4vw, 100px); line-height: 1.05; }
+.hero h1 { margin: 26px 0 34px; font-size: clamp(42px, 7.4vw, 100px); line-height: 1.05; }
 .hero h1 em { font-family: var(--font-serif); font-style: italic; font-weight: 500; }
 .hero .cta-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; margin-top: 8px; }
 .hero-sig { font-family: var(--font-hand); font-size: 24px; color: var(--muted-dark); }
@@ -1242,7 +1246,8 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
   <div class="glow"><span class="gblob g1"></span><span class="gblob g2"></span><span class="ggrain"></span></div>
   <div class="container hero-inner">
     <span class="badge reveal"><span class="dot"></span>Logiciels de gestion sur-mesure · Rouen</span>
-    <h1 class="serif-display blur-in">Votre logiciel,<br /><em>vraiment</em> à vous.</h1>
+    <h1 class="serif-display kinetic-title" id="heroTitle">Votre logiciel,<br /><em>vraiment</em> à vous.</h1>
+    <canvas class="hero-kinetic-canvas" id="heroKineticCanvas" aria-hidden="true"></canvas>
     <p class="lead muted-d reveal">Planning d'équipe et rôles, suivi financier et stock valorisé, communication client, pilotage en temps réel : je conçois des logiciels de gestion complets et sur-mesure — pas de simples automatismes, de vraies suites métier — pour les structures avec une complexité réelle à gérer (entrepôts, logistique, distribution, établissements médico-sociaux…). Les sites vitrines restent un bon point d'entrée, mais c'est mon vrai terrain de jeu désormais. Conçus sur-mesure, propriété de vos données garantie — jamais un logiciel générique qu'on vous loue à vie.</p>
     <div class="cta-row reveal">
       <a class="btn solid-light" href="#devis">Parler de votre besoin <span class="ar">→</span></a>
@@ -1253,6 +1258,241 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
   <div class="scrollcue"><span class="l"></span><span>Faites défiler</span></div>
   <div class="vign"></div>
 </header>
+
+<script>
+/* ---- Titre du hero : assemblage cinétique (éclats → texte), une fois au chargement ---- */
+(function () {
+  'use strict';
+  var h1 = document.getElementById('heroTitle');
+  var canvas = document.getElementById('heroKineticCanvas');
+  if (!h1 || !canvas) return;
+  var wrap = h1.parentElement;
+  var ctx = canvas.getContext('2d');
+
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var ACCENT = '#8a2d34', ACCENT_GLOW = '#c0525a';
+  var LINE1 = 'Votre logiciel,';
+  var LINE2_EM = 'vraiment';
+  var LINE2_REST = ' à vous.';
+  var FONT = "'Cormorant Garamond', Georgia, serif";
+
+  function fitFontSize(maxWidth){
+    var size = 170;
+    while (size > 28){
+      ctx.font = '500 ' + size + 'px ' + FONT;
+      var w1 = ctx.measureText(LINE1).width;
+      ctx.font = 'italic 400 ' + size + 'px ' + FONT;
+      var w2 = ctx.measureText(LINE2_EM).width;
+      ctx.font = '500 ' + size + 'px ' + FONT;
+      w2 += ctx.measureText(LINE2_REST).width;
+      if (Math.max(w1, w2) <= maxWidth) break;
+      size -= 2;
+    }
+    return size;
+  }
+
+  function applySize(){
+    var rect = wrap.getBoundingClientRect();
+    var size = fitFontSize(rect.width * 0.97);
+    size = Math.max(40, Math.min(size, 170));
+    h1.style.fontSize = size + 'px';
+    h1.style.lineHeight = '.98';
+    return size;
+  }
+
+  if (reduced){
+    applySize();
+    canvas.remove();
+    var roR = new ResizeObserver(function(){ applySize(); });
+    roR.observe(wrap);
+    return;
+  }
+
+  var W, H, DPR, size, lineH, bbox, shards = [];
+
+  function build(){
+    size = applySize();
+    lineH = size * 0.98;
+    var rect = wrap.getBoundingClientRect();
+    W = Math.ceil(rect.width);
+    H = Math.ceil(lineH * 2 + size * 0.3);
+
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    var wrapRect = wrap.getBoundingClientRect();
+    var h1Rect = h1.getBoundingClientRect();
+    canvas.style.left = (h1Rect.left - wrapRect.left) + 'px';
+    canvas.style.top = (h1Rect.top - wrapRect.top) + 'px';
+
+    sample();
+  }
+
+  function sample(){
+    var off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    var octx = off.getContext('2d');
+    octx.textBaseline = 'alphabetic';
+    octx.fillStyle = '#fff';
+
+    var baseline1 = size * 0.80;
+    var baseline2 = baseline1 + lineH;
+
+    octx.font = '500 ' + size + 'px ' + FONT;
+    octx.fillText(LINE1, 0, baseline1);
+
+    octx.font = 'italic 400 ' + size + 'px ' + FONT;
+    octx.fillText(LINE2_EM, 0, baseline2);
+    var w2a = octx.measureText(LINE2_EM).width;
+    octx.font = '500 ' + size + 'px ' + FONT;
+    octx.fillText(LINE2_REST, w2a, baseline2);
+
+    var data = octx.getImageData(0, 0, W, H).data;
+    var stride = Math.max(2, Math.round(size / 15));
+    var pts = [];
+    var minX = W, maxX = 0, minY = H, maxY = 0;
+    for (var y = 0; y < H; y += stride){
+      for (var x = 0; x < W; x += stride){
+        var a = data[(y * W + x) * 4 + 3];
+        if (a > 140){
+          pts.push({ x: x, y: y });
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    bbox = { minX: minX, maxX: maxX, minY: minY, maxY: maxY, w: maxX - minX, h: maxY - minY };
+
+    var MAX = 260;
+    if (pts.length > MAX){
+      for (var i = pts.length - 1; i > 0; i--){
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = pts[i]; pts[i] = pts[j]; pts[j] = tmp;
+      }
+      pts = pts.slice(0, MAX);
+    }
+
+    var cx = bbox.minX + bbox.w / 2 + bbox.w * 0.1;
+    var cy = bbox.minY + bbox.h / 2;
+    shards = pts.map(function (p){
+      var ang = Math.random() * Math.PI * 2;
+      var rad = 0.4 + Math.random() * 0.6;
+      return {
+        tx: p.x, ty: p.y,
+        scx: cx + Math.cos(ang) * bbox.w * 0.65 * rad,
+        scy: cy + Math.sin(ang) * bbox.h * 1.6 * rad,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.6 + Math.random() * 0.8,
+        amp: 8 + Math.random() * 16,
+        rsize: 4 + Math.random() * 7,
+        rot0: (Math.random() - 0.5) * Math.PI,
+        delay: Math.random() * 140
+      };
+    });
+  }
+
+  function lerp(a, b, t){ return a + (b - a) * t; }
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+  function easeOutBack(t){ var c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }
+
+  var SCATTER_MS = 750, ASSEMBLE_MS = 620;
+  var start = null, done = false;
+
+  function frame(now){
+    if (start === null) start = now;
+    var elapsed = now - start;
+    var vanishX = -W * 0.6, vanishY = H * 2.2;
+
+    ctx.clearRect(0, 0, W, H);
+
+    if (elapsed < SCATTER_MS + ASSEMBLE_MS){
+      var assembleT = Math.max(0, elapsed - SCATTER_MS) / ASSEMBLE_MS;
+      var lineAlpha = 0.14 * (1 - easeOutCubic(Math.min(1, assembleT * 1.3)));
+      ctx.lineWidth = 1;
+
+      shards.forEach(function (s, i){
+        if (i % 2) return;
+        var sx = s.scx + Math.cos(elapsed * 0.0012 * s.speed + s.phase) * s.amp;
+        var sy = s.scy + Math.sin(elapsed * 0.0015 * s.speed + s.phase) * s.amp;
+        var px = assembleT > 0 ? lerp(sx, s.tx, easeOutCubic(assembleT)) : sx;
+        var py = assembleT > 0 ? lerp(sy, s.ty, easeOutCubic(assembleT)) : sy;
+        ctx.strokeStyle = 'rgba(192,82,90,' + lineAlpha.toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.moveTo(vanishX, vanishY);
+        ctx.lineTo(px, py);
+        ctx.stroke();
+      });
+
+      shards.forEach(function (s){
+        var sx = s.scx + Math.cos(elapsed * 0.0012 * s.speed + s.phase) * s.amp;
+        var sy = s.scy + Math.sin(elapsed * 0.0015 * s.speed + s.phase) * s.amp;
+        var localElapsed = Math.max(0, elapsed - SCATTER_MS - s.delay * 0.3);
+        var t = Math.max(0, Math.min(1, localElapsed / ASSEMBLE_MS));
+        var e = easeOutBack(t);
+        var px = elapsed < SCATTER_MS ? sx : lerp(sx, s.tx, Math.max(0, Math.min(1, e)));
+        var py = elapsed < SCATTER_MS ? sy : lerp(sy, s.ty, Math.max(0, Math.min(1, e)));
+        var rot = lerp(s.rot0, 0, Math.max(0, Math.min(1, e)));
+        var sc = lerp(1.2, 1, Math.max(0, Math.min(1, e)));
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(rot);
+        ctx.shadowColor = ACCENT_GLOW;
+        ctx.shadowBlur = 9;
+        var grad = ctx.createLinearGradient(-s.rsize, -s.rsize, s.rsize, s.rsize);
+        grad.addColorStop(0, ACCENT);
+        grad.addColorStop(1, ACCENT_GLOW);
+        ctx.fillStyle = grad;
+        var r = s.rsize * sc;
+        ctx.beginPath();
+        ctx.moveTo(-r, r);
+        ctx.lineTo(r, r * 0.6);
+        ctx.lineTo(r * 0.2, -r);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      });
+
+      requestAnimationFrame(frame);
+    } else if (!done){
+      done = true;
+      canvas.classList.remove('kt-show');
+      h1.classList.remove('kt-hide');
+      setTimeout(function(){ canvas.remove(); }, 420);
+    }
+  }
+
+  function run(){
+    build();
+    canvas.classList.add('kt-show');
+    h1.classList.add('kt-hide');
+    requestAnimationFrame(frame);
+  }
+
+  var fontsReady = (document.fonts && document.fonts.ready) ? Promise.all([
+    document.fonts.load('500 100px "Cormorant Garamond"'),
+    document.fonts.load('italic 400 100px "Cormorant Garamond"')
+  ]).then(function(){ return document.fonts.ready; }) : Promise.resolve();
+
+  fontsReady.then(run, run);
+
+  var resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      if (!done) return;
+      applySize();
+    }, 150);
+  });
+})();
+</script>
 
 <!-- ===================== SERVICES ===================== -->
 <section class="section on-cream" id="services">
