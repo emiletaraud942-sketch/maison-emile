@@ -263,7 +263,7 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
 
 .hero h1.kinetic-title { position: relative; opacity: 1; transition: opacity .4s ease; }
 .hero h1.kinetic-title.kt-hide { opacity: 0; }
-.hero-kinetic-canvas { position: absolute; top: 0; left: 0; pointer-events: none; opacity: 0; transition: opacity .4s ease; z-index: 6; }
+.hero-kinetic-canvas { position: absolute; top: 0; left: 0; pointer-events: none; opacity: 0; transition: opacity .4s ease; z-index: 6; will-change: opacity; }
 .hero-kinetic-canvas.kt-show { opacity: 1; }
 @media (prefers-reduced-motion: reduce){ .hero h1.kinetic-title { opacity: 1 !important; } .hero-kinetic-canvas { display: none !important; } }
 
@@ -1318,7 +1318,7 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
     W = Math.ceil(rect.width);
     H = Math.ceil(lineH * 2 + size * 0.3);
 
-    DPR = Math.min(2, window.devicePixelRatio || 1);
+    DPR = Math.min(1.5, window.devicePixelRatio || 1);
     canvas.style.width = W + 'px';
     canvas.style.height = H + 'px';
     canvas.width = Math.round(W * DPR);
@@ -1393,7 +1393,8 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
         amp: 8 + Math.random() * 16,
         rsize: 4 + Math.random() * 7,
         rot0: (Math.random() - 0.5) * Math.PI,
-        delay: Math.random() * 140
+        delay: Math.random() * 140,
+        color: Math.random() < 0.5 ? ACCENT : ACCENT_GLOW
       };
     });
   }
@@ -1415,22 +1416,15 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
     if (elapsed < SCATTER_MS + ASSEMBLE_MS){
       var assembleT = Math.max(0, elapsed - SCATTER_MS) / ASSEMBLE_MS;
       var lineAlpha = 0.14 * (1 - easeOutCubic(Math.min(1, assembleT * 1.3)));
-      ctx.lineWidth = 1;
+      var drawLines = lineAlpha > 0.003;
 
-      shards.forEach(function (s, i){
-        if (i % 2) return;
-        var sx = s.scx + Math.cos(elapsed * 0.0012 * s.speed + s.phase) * s.amp;
-        var sy = s.scy + Math.sin(elapsed * 0.0015 * s.speed + s.phase) * s.amp;
-        var px = assembleT > 0 ? lerp(sx, s.tx, easeOutCubic(assembleT)) : sx;
-        var py = assembleT > 0 ? lerp(sy, s.ty, easeOutCubic(assembleT)) : sy;
-        ctx.strokeStyle = 'rgba(192,82,90,' + lineAlpha.toFixed(3) + ')';
-        ctx.beginPath();
-        ctx.moveTo(vanishX, vanishY);
-        ctx.lineTo(px, py);
-        ctx.stroke();
-      });
+      var linePath = drawLines ? new Path2D() : null;
+      var pathHalo = new Path2D();
+      var pathA = new Path2D(); // ACCENT
+      var pathB = new Path2D(); // ACCENT_GLOW
 
-      shards.forEach(function (s){
+      for (var i = 0; i < shards.length; i++){
+        var s = shards[i];
         var sx = s.scx + Math.cos(elapsed * 0.0012 * s.speed + s.phase) * s.amp;
         var sy = s.scy + Math.sin(elapsed * 0.0015 * s.speed + s.phase) * s.amp;
         var localElapsed = Math.max(0, elapsed - SCATTER_MS - s.delay * 0.3);
@@ -1441,24 +1435,45 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
         var rot = lerp(s.rot0, 0, Math.max(0, Math.min(1, e)));
         var sc = lerp(1.2, 1, Math.max(0, Math.min(1, e)));
 
-        ctx.save();
-        ctx.translate(px, py);
-        ctx.rotate(rot);
-        ctx.shadowColor = ACCENT_GLOW;
-        ctx.shadowBlur = 9;
-        var grad = ctx.createLinearGradient(-s.rsize, -s.rsize, s.rsize, s.rsize);
-        grad.addColorStop(0, ACCENT);
-        grad.addColorStop(1, ACCENT_GLOW);
-        ctx.fillStyle = grad;
+        if (linePath && (i % 2) === 0){
+          linePath.moveTo(vanishX, vanishY);
+          linePath.lineTo(px, py);
+        }
+
         var r = s.rsize * sc;
-        ctx.beginPath();
-        ctx.moveTo(-r, r);
-        ctx.lineTo(r, r * 0.6);
-        ctx.lineTo(r * 0.2, -r);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-      });
+        var cos = Math.cos(rot), sin = Math.sin(rot);
+        var v1x = px + (-r) * cos - r * sin, v1y = py + (-r) * sin + r * cos;
+        var v2x = px + r * cos - (r * 0.6) * sin, v2y = py + r * sin + (r * 0.6) * cos;
+        var v3x = px + (r * 0.2) * cos - (-r) * sin, v3y = py + (r * 0.2) * sin + (-r) * cos;
+
+        var path = (s.color === ACCENT) ? pathA : pathB;
+        path.moveTo(v1x, v1y);
+        path.lineTo(v2x, v2y);
+        path.lineTo(v3x, v3y);
+        path.closePath();
+
+        // cheap glow: a bigger, low-opacity copy of the same triangle (no shadowBlur — much lighter to rasterize)
+        var hr = r * 2.1;
+        pathHalo.moveTo(px + (-hr) * cos - hr * sin, py + (-hr) * sin + hr * cos);
+        pathHalo.lineTo(px + hr * cos - (hr * 0.6) * sin, py + hr * sin + (hr * 0.6) * cos);
+        pathHalo.lineTo(px + (hr * 0.2) * cos - (-hr) * sin, py + (hr * 0.2) * sin + (-hr) * cos);
+        pathHalo.closePath();
+      }
+
+      if (linePath){
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(192,82,90,' + lineAlpha.toFixed(3) + ')';
+        ctx.stroke(linePath);
+      }
+
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = ACCENT_GLOW;
+      ctx.fill(pathHalo);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = ACCENT;
+      ctx.fill(pathA);
+      ctx.fillStyle = ACCENT_GLOW;
+      ctx.fill(pathB);
 
       requestAnimationFrame(frame);
     } else if (!done){
