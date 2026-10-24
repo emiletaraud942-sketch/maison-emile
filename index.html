@@ -331,19 +331,13 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
 .presta-panel-wrap { position: sticky; top: 30px; display: none; }
 @media (min-width: 861px){ .presta-panel-wrap { display: block; } .presta-inline { display: none; } }
 
-.presta-card { border: 1px solid var(--line-dark); border-radius: 4px; overflow: hidden; background: var(--black-2); }
-.presta-media { aspect-ratio: 4/3; position: relative; background: #1c1916; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.presta-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.presta-media .abstract-inner { text-align: center; padding: 24px; }
-.presta-media .abstract-inner .idx { font-family: var(--font-serif); font-style: italic; font-size: 48px; color: var(--accent-glow); opacity: .6; display: block; margin-bottom: 8px; }
-.presta-media .abstract-inner .lbl { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-dark); }
-.presta-media.abstract::after{
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: repeating-linear-gradient(135deg, transparent 0 28px, var(--line-dark) 28px 29px);
+.presta-card {
+  border: 1px solid var(--line-dark); border-radius: 28px; overflow: hidden; background: var(--black-2);
+  min-height: 320px; display: flex; align-items: center; justify-content: center;
 }
-.presta-body { padding: 24px 26px 28px; }
-.presta-body p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--muted-dark); }
-.presta-body p .presta-note { display: block; margin-top: 14px; opacity: .8; font-size: 14px; }
+.presta-body { padding: clamp(32px, 4vw, 56px); text-align: center; }
+.presta-body p { margin: 0; font-size: 16px; line-height: 1.75; color: var(--muted-dark); max-width: 46ch; margin-inline: auto; }
+.presta-body p .presta-note { display: block; margin-top: 16px; opacity: .8; font-size: 14px; }
 .presta-fade-in { animation: presta-fade .5s var(--ease); }
 @keyframes presta-fade { from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce){ .presta-fade-in, .presta-inline { animation: none !important; transition: none !important; } }
@@ -2070,35 +2064,24 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
   const ITEMS = [
     {
       title: "Automatisation & gestion",
-      media: { type: "abstract", label: "aperçu à venir" },
       desc: "Des logiciels de gestion complets, pas de simples automatismes : planning d'équipe et rôles, suivi financier et stock valorisé, communication client, alertes, tableaux de bord en temps réel. Construits avec la rigueur d'un vrai éditeur de logiciel — base de données sécurisée, droits d'accès par rôle.",
       note: "Licence d'usage avec redevance mensuelle, maintenance et évolutions incluses."
     },
     {
       title: "Sites web sur-mesure",
-      media: { type: "abstract", label: "aperçu à venir" },
       desc: "Vitrine, page de présentation ou boutique légère : un site rapide, élégant et pensé pour convertir vos visiteurs. Souvent le premier pas avant un outil de gestion plus poussé."
     },
     {
       title: "Rendez-vous, devis & formulaires",
-      media: { type: "image", src: "img/devis-form-preview.png", label: "le vrai formulaire de devis du site" },
       desc: "Prise de rendez-vous avec tableau de bord, formulaires de devis sur-mesure : vos clients réservent ou décrivent leur besoin en ligne, vous recevez tout, qualifié, sans plateforme payante ni mensualité."
     },
     {
       title: "Accompagnement IA sur-mesure",
-      media: { type: "abstract", label: "aperçu à venir" },
       desc: "Intégrer l'IA sans bouleverser ce qui fonctionne déjà : j'audite vos équipes, vos outils et votre architecture existante avant de proposer où l'IA apporte une vraie valeur — aide à la décision, génération de contenu, automatisation de tâches répétitives. Jamais un gadget plaqué sur votre activité."
     }
   ];
 
   let active = 0;
-
-  function mediaHtml(item, idx) {
-    if (item.media.type === 'image') {
-      return '<div class="presta-media"><img src="' + item.media.src + '" alt="' + item.media.label + '" /></div>';
-    }
-    return '<div class="presta-media abstract"><div class="abstract-inner"><span class="idx">0' + (idx + 1) + '</span><span class="lbl">' + item.media.label + '</span></div></div>';
-  }
 
   function bodyHtml(item) {
     return '<div class="presta-body"><p>' + item.desc + (item.note ? '<span class="presta-note">' + item.note + '</span>' : '') + '</p></div>';
@@ -2106,7 +2089,7 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
 
   function renderPanel() {
     const item = ITEMS[active];
-    panelEl.innerHTML = mediaHtml(item, active) + bodyHtml(item);
+    panelEl.innerHTML = bodyHtml(item);
     panelEl.classList.remove('presta-fade-in');
     void panelEl.offsetWidth;
     panelEl.classList.add('presta-fade-in');
@@ -2121,7 +2104,7 @@ h1.serif-display em, h2.serif-display em { font-style: italic; font-weight: 400;
             '<span class="presta-title">' + item.title + '</span>' +
           '</div>' +
           '<div class="presta-inline"><div class="presta-inline-inner"><div class="presta-inline-pad"><div class="presta-card">' +
-            mediaHtml(item, i) + bodyHtml(item) +
+            bodyHtml(item) +
           '</div></div></div></div>' +
         '</div>'
       );
