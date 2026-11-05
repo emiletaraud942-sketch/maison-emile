@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--ARTIFACT-START-->
+<title>Cockpit Maison Émile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
+<style>
+/* Layout : scène fixe 1600×1000 mise à l'échelle de l'écran — logo + compteurs, panneau PILOTE à gauche,
+   orbe ORCHESTRATEUR relié à 12 agents, panneau STUDIO à droite, frise d'activité, 3 terminaux en bas. */
+:root{
+  color-scheme:dark;
+  --void:#07040d; --panel:#120a1f; --panel-2:#1a0f2b; --line:#3a1f52;
+  --pink:#ff2e88; --orange:#ff8a3d; --violet:#9d5cff; --cyan:#3de0ff; --green:#52ff9a; --red:#ff4258;
+  --text:#ecdff7; --dim:#9a86b3; --faint:#5d4a78;
+  --px:'Silkscreen','Courier New',monospace;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --g-site:var(--cyan); --g-metier:var(--orange); --g-croissance:var(--pink); --g-tiktok:var(--green); --g-renfort:var(--violet);
+}
+html,body{background:var(--void);color:var(--text);min-height:100%}
+body{font-family:var(--mono);overflow-x:hidden;padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+*{box-sizing:border-box}
+#wrap{position:relative;width:100%;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1600px;height:1000px;transform-origin:0 0;
+  background:
+    radial-gradient(900px 520px at 50% 40%,rgba(157,92,255,.20),transparent 70%),
+    radial-gradient(700px 400px at 8% 0%,rgba(255,46,136,.18),transparent 70%),
+    radial-gradient(600px 380px at 100% 10%,rgba(255,138,61,.14),transparent 70%),
+    linear-gradient(rgba(157,92,255,.05) 1px,transparent 1px) 0 0/40px 40px,
+    linear-gradient(90deg,rgba(157,92,255,.05) 1px,transparent 1px) 0 0/40px 40px,
+    var(--void);
+  overflow:hidden}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);
+  box-shadow:inset 0 0 180px rgba(0,0,0,.85);animation:flick 6s infinite steps(1)}
+@keyframes flick{0%,100%{opacity:1}47%{opacity:.86}48%{opacity:1}83%{opacity:.93}}
+
+/* ---------- En-tête ---------- */
+.hdr{position:absolute;left:16px;right:16px;top:12px;height:92px;display:flex;align-items:flex-start;gap:24px}
+.logo{font:700 46px/1 var(--px);letter-spacing:-2px;white-space:nowrap;padding-top:6px;
+  background:linear-gradient(180deg,#ffd0e6 0%,var(--pink) 45%,var(--orange) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 14px rgba(255,46,136,.55));position:relative}
+.logo::before{content:attr(data-t);position:absolute;left:3px;top:0;color:var(--cyan);opacity:.35;mix-blend-mode:screen;-webkit-text-fill-color:var(--cyan);animation:glitch 4s infinite}
+@keyframes glitch{0%,92%,100%{transform:none;opacity:0}93%{transform:translate(-4px,1px);opacity:.5}95%{transform:translate(3px,-1px);opacity:.4}}
+.brand-sub{display:flex;flex-direction:column;gap:6px;padding-top:4px}
+.brand-sub .l1{font:700 13px var(--px);color:var(--text);letter-spacing:1px;white-space:nowrap}
+.brand-sub .l1 b{color:var(--orange)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:400 11px var(--px);padding:3px 9px;border-radius:4px;border:1px solid var(--pink);color:var(--pink);background:rgba(255,46,136,.08);width:max-content}
+.chip.live{border-color:var(--green);color:var(--green);background:rgba(82,255,154,.08)}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+.clock{font:700 34px var(--px);color:var(--text);text-shadow:0 0 10px rgba(236,223,247,.4);margin-left:6px;padding-top:2px}
+.stats{margin-left:auto;display:flex;gap:10px}
+.stat{width:142px;height:84px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel-2),var(--panel));border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.stat .k{font:400 10px var(--px);color:var(--dim);letter-spacing:.5px}
+.stat .v{font:700 34px var(--px);color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+.stat .bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.stat .bar i{display:block;height:100%;width:0;background:var(--c,var(--pink));box-shadow:0 0 8px var(--c,var(--pink));transition:width .5s}
+.stat.hot{border-color:var(--c);box-shadow:0 0 18px -4px var(--c)}
+
+.tabs{position:absolute;left:16px;right:16px;top:112px;height:28px;display:flex;gap:8px;align-items:center}
+.tab{font:400 11px var(--px);color:var(--dim);border:1px solid var(--line);background:var(--panel);padding:5px 12px;border-radius:5px;cursor:pointer}
+.tab:hover{color:var(--text);border-color:var(--violet)}
+.tab.on{color:#160a20;background:var(--pink);border-color:var(--pink);box-shadow:0 0 14px rgba(255,46,136,.6)}
+.tab:focus-visible,.node:focus-visible,.btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.tabs .sp{flex:1}
+.btn{font:700 11px var(--px);color:var(--text);border:1px solid var(--violet);background:rgba(157,92,255,.12);padding:5px 12px;border-radius:5px;cursor:pointer}
+.btn:hover{background:rgba(157,92,255,.3)}
+
+/* ---------- Panneaux latéraux ---------- */
+.side{position:absolute;top:186px;width:284px;height:444px;border:1px solid var(--pink);border-radius:8px;
+  background:linear-gradient(180deg,rgba(26,15,43,.92),rgba(18,10,31,.92));box-shadow:0 0 24px -6px rgba(255,46,136,.5),inset 0 0 30px rgba(255,46,136,.06);padding:12px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.side.l{left:16px}
+.side.r{right:16px;border-color:var(--orange);box-shadow:0 0 24px -6px rgba(255,138,61,.5),inset 0 0 30px rgba(255,138,61,.06)}
+.side .tag{font:700 10px var(--px);color:#160a20;background:var(--pink);padding:2px 7px;border-radius:3px;width:max-content}
+.side.r .tag{background:var(--orange)}
+.side h2{margin:0;font:700 34px/1 var(--px);color:var(--pink);text-shadow:0 0 12px rgba(255,46,136,.6);letter-spacing:1px}
+.side.r h2{color:var(--orange);text-shadow:0 0 12px rgba(255,138,61,.6)}
+.side .who{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(0,0,0,.25);min-height:44px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.sec{font:400 10px var(--px);color:var(--dim);display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:3px}
+.rows{display:flex;flex-direction:column;gap:4px;font-size:11px}
+.row{display:flex;gap:8px;align-items:center;min-width:0}
+.row .n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .c{color:var(--dim);font-variant-numeric:tabular-nums}
+.row .b{width:52px;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.row .b i{display:block;height:100%;background:var(--c,var(--pink))}
+.empty{font-size:11px;color:var(--faint)}
+.pipe{display:flex;flex-direction:column;gap:6px}
+.step{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;font-size:11px;border:1px solid var(--line);border-radius:5px;padding:5px 8px;background:rgba(0,0,0,.25)}
+.step .i{font:700 10px var(--px);color:var(--faint)}
+.step .s{font:400 9px var(--px);color:var(--faint)}
+.step.on{border-color:var(--green);box-shadow:0 0 12px -2px var(--green)}
+.step.on .s{color:var(--green)}
+.step.done .s{color:var(--orange)}
+
+/* ---------- Liaisons & nœuds ---------- */
+#links{position:absolute;inset:0;width:1600px;height:1000px;pointer-events:none;z-index:1}
+#links path.base{fill:none;stroke:var(--line);stroke-width:1.6}
+#links path.flow{fill:none;stroke-width:2.4;stroke-dasharray:8 10;opacity:0;transition:opacity .3s}
+#links path.flow.on{opacity:1;animation:dash .7s linear infinite}
+#links path.flow.rev.on{animation-direction:reverse}
+@keyframes dash{to{stroke-dashoffset:-18}}
+#links .arc-base{fill:none;stroke:rgba(255,46,136,.45);stroke-width:2}
+#links .arc-flow{fill:none;stroke:var(--pink);stroke-width:3;stroke-dasharray:3 14;opacity:.25;animation:dash 1.2s linear infinite}
+#links .arc-flow.on{opacity:1;filter:drop-shadow(0 0 6px var(--pink))}
+#fx{position:absolute;inset:0;width:1600px;height:1000px;pointer-events:none;z-index:3}
+.arc-label{position:absolute;left:690px;top:150px;width:220px;text-align:center;font:700 10px var(--px);color:#160a20;background:var(--pink);border-radius:4px;padding:4px 0;z-index:4;box-shadow:0 0 16px rgba(255,46,136,.7)}
+.arc-sub{position:absolute;top:150px;font:400 9px var(--px);color:var(--dim);z-index:4;border:1px solid var(--line);background:var(--panel);padding:3px 8px;border-radius:4px}
+
+.node{position:absolute;width:232px;height:58px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(26,15,43,.95),rgba(14,8,24,.95));
+  display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:6px 10px;cursor:pointer;z-index:5;transition:border-color .25s,box-shadow .25s,opacity .3s,transform .2s;color:var(--text);text-align:left;font-family:var(--mono)}
+.node:hover{transform:translateY(-1px);border-color:var(--c)}
+.node .ix{grid-row:1/3;font:700 11px var(--px);color:var(--c);border:1px solid var(--c);border-radius:4px;padding:3px 5px;opacity:.85}
+.node .nm{font:700 12px var(--px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.node .st{grid-column:2/4;font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.node .ct{font:400 10px var(--px);color:var(--dim);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:5px}
+.node .led{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.node.on{border-color:var(--c);box-shadow:0 0 22px -4px var(--c),inset 0 0 18px -8px var(--c)}
+.node.on .led{background:var(--c);box-shadow:0 0 10px var(--c);animation:blink .6s infinite}
+.node.on .st{color:var(--text)}
+.node.flash{animation:flash .9s}
+@keyframes flash{0%{box-shadow:0 0 0 0 var(--c)}30%{box-shadow:0 0 30px 4px var(--c)}100%{box-shadow:none}}
+.node.dim{opacity:.22}
+.col-h{position:absolute;top:186px;font:400 10px var(--px);color:var(--dim);z-index:4;border:1px solid var(--line);background:var(--panel);padding:3px 8px;border-radius:4px}
+
+/* ---------- Orbe ---------- */
+.orb{position:absolute;left:700px;top:290px;width:200px;height:200px;z-index:6;--o:var(--violet)}
+.orb .ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+  background:conic-gradient(from 0deg,transparent 0 20%,var(--o) 30%,transparent 45% 70%,var(--o) 85%,transparent 95%) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);
+  animation:spin 6s linear infinite;filter:drop-shadow(0 0 8px var(--o))}
+.orb .ring.r2{inset:16px;animation-duration:3.6s;animation-direction:reverse;opacity:.8}
+.orb .ring.r3{inset:-14px;animation-duration:11s;opacity:.45}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orb .core{position:absolute;inset:36px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:radial-gradient(circle at 40% 35%,color-mix(in srgb,var(--o) 75%,white 25%),color-mix(in srgb,var(--o) 45%,#000) 60%,#0b0614 100%);
+  box-shadow:0 0 40px var(--o),0 0 90px -10px var(--o),inset 0 0 30px rgba(0,0,0,.6);animation:breathe 2.6s ease-in-out infinite;text-align:center}
+@keyframes breathe{50%{transform:scale(1.05);box-shadow:0 0 60px var(--o),0 0 120px -6px var(--o),inset 0 0 30px rgba(0,0,0,.6)}}
+.orb .core .a{font:700 10px var(--px);color:#fff;letter-spacing:.5px}
+.orb .core .b{font:700 15px var(--px);color:#fff;text-shadow:0 0 8px rgba(0,0,0,.6)}
+.orb .core .c{font-size:9px;color:rgba(255,255,255,.8)}
+.orb.work{--o:var(--green)} .orb.err{--o:var(--red)}
+.orb-btn{position:absolute;left:715px;top:556px;width:170px;text-align:center;z-index:6;font:700 11px var(--px);color:var(--green);border:1px solid var(--green);background:rgba(82,255,154,.08);border-radius:5px;padding:7px 0;box-shadow:0 0 16px -4px var(--green);cursor:pointer}
+.orb-btn.demo{color:var(--orange);border-color:var(--orange);background:rgba(255,138,61,.08);box-shadow:0 0 16px -4px var(--orange)}
+.orb-cap{position:absolute;left:640px;top:512px;width:320px;text-align:center;font-size:10px;color:var(--dim);z-index:6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- Frise ---------- */
+.tl{position:absolute;left:16px;right:16px;top:644px;height:44px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:6px 10px;display:flex;flex-direction:column;gap:5px}
+.tl .h{display:flex;justify-content:space-between;font:400 10px var(--px);color:var(--dim)}
+.tl .h b{color:var(--pink);font-weight:700}
+.cells{display:grid;grid-template-columns:repeat(120,1fr);gap:2px;height:12px}
+.cells i{background:var(--line);border-radius:1px;opacity:.5}
+
+/* ---------- Terminaux ---------- */
+.term{position:absolute;border:1px solid var(--line);border-radius:6px;background:rgba(10,5,18,.94);display:flex;flex-direction:column;overflow:hidden}
+.term .h{display:flex;justify-content:space-between;align-items:center;font:700 11px var(--px);color:var(--text);padding:6px 10px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(255,46,136,.16),transparent)}
+.term .h span{font-weight:400;color:var(--dim);font-size:10px}
+.term .b{flex:1;overflow:hidden;padding:6px 10px;font-size:11.5px;line-height:1.55;display:flex;flex-direction:column;justify-content:flex-end}
+.ln{display:flex;gap:10px;white-space:nowrap;min-width:0}
+.ln .t{color:var(--faint);font-variant-numeric:tabular-nums}
+.ln .a{color:var(--c,var(--violet));min-width:150px}
+.ln .k{color:var(--orange);min-width:84px}
+.ln .d{color:var(--text);overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.ln .ok{color:var(--green)} .ln .ko{color:var(--red)}
+.ln.prompt{background:rgba(255,46,136,.12);border-left:2px solid var(--pink);padding-left:6px;margin-left:-8px}
+.ln.prompt .d{color:#ffd0e6}
+.ln.new{animation:in .35s ease-out}
+@keyframes in{from{opacity:0;transform:translateX(-8px)}}
+.t1{left:16px;top:700px;width:930px;height:284px}
+.t2{left:960px;top:700px;width:624px;height:136px}
+.t3{left:960px;top:848px;width:624px;height:136px}
+.t2 .ln .a{min-width:120px}
+.cursor{display:inline-block;width:7px;height:12px;background:var(--pink);vertical-align:middle;animation:blink 1s infinite}
+
+/* ---------- Fiche agent (hors scène, lisible sur téléphone) ---------- */
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:100;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(180deg,#1a0f2b,#0d0717);border-top:2px solid var(--c,var(--pink));box-shadow:0 -10px 40px rgba(0,0,0,.6);max-height:70vh;overflow:auto}
+#sheet .in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+#sheet .top{display:flex;align-items:center;gap:10px}
+#sheet h3{margin:0;font:700 22px var(--px);color:var(--c,var(--pink))}
+#sheet .grp{font:400 10px var(--px);color:var(--dim)}
+#sheet .x{margin-left:auto}
+#sheet p{margin:0;font-size:13px;line-height:1.55;color:var(--text);max-width:65ch}
+#sheet .meta{font-size:12px;color:var(--dim)}
+#sheet .cmd{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+#sheet code{flex:1;min-width:0;font:12px var(--mono);background:#07040d;border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--green);overflow-wrap:anywhere}
+#sheet .hist{display:flex;flex-direction:column;gap:3px;font-size:11.5px}
+#mlist{display:none;flex-direction:column;gap:6px;padding:14px max(16px,env(safe-area-inset-right,0px)) 4px max(16px,env(safe-area-inset-left,0px))}
+#mlist .mh{font:700 12px var(--px);color:var(--pink);display:flex;justify-content:space-between}
+#mlist .mh span{color:var(--dim);font-weight:400}
+.mrow{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:9px 12px;background:var(--panel);color:var(--text);font:13px var(--mono);text-align:left;cursor:pointer;width:100%}
+.mrow .led{width:9px;height:9px;border-radius:50%;background:var(--faint)}
+.mrow.on{border-color:var(--c);box-shadow:0 0 14px -4px var(--c)}
+.mrow.on .led{background:var(--c);box-shadow:0 0 8px var(--c);animation:blink .6s infinite}
+.mrow .nm{font-weight:700;min-width:0}
+.mrow .nm small{display:block;font-weight:400;color:var(--dim);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrow .ct{color:var(--dim);font-size:12px;font-variant-numeric:tabular-nums}
+@media (max-width:900px){#mlist{display:flex}}
+.help{color:var(--dim);font-size:12px;line-height:1.6;padding:14px max(16px,env(safe-area-inset-left,0px)) 24px;max-width:900px;margin:0 auto}
+.help b{color:var(--text)}
+.help code{color:var(--green);background:#120a1f;border:1px solid var(--line);padding:1px 6px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div id="wrap"><div id="stage">
+  <svg id="links" viewBox="0 0 1600 1000" aria-hidden="true"></svg>
+  <canvas id="fx" width="1600" height="1000" aria-hidden="true"></canvas>
+
+  <header class="hdr">
+    <div class="logo" data-t="MAISON ÉMILE">MAISON ÉMILE</div>
+    <div class="brand-sub">
+      <div class="l1">OPS <b>//</b> 12 AGENTS <b>×</b> CLAUDE CODE</div>
+      <span class="chip" id="modeChip"><span class="dot"></span><span id="modeTxt">MODE DÉMO</span></span>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+    <div class="stats">
+      <div class="stat" style="--c:var(--green)" id="sActive"><span class="k">AGENTS ACTIFS</span><span class="v">0</span><span class="bar"><i></i></span></div>
+      <div class="stat" style="--c:var(--cyan)" id="sTools"><span class="k">APPELS OUTILS</span><span class="v">0</span><span class="bar"><i></i></span></div>
+      <div class="stat" style="--c:var(--orange)" id="sFiles"><span class="k">FICHIERS MODIFIÉS</span><span class="v">0</span><span class="bar"><i></i></span></div>
+      <div class="stat" style="--c:var(--pink)" id="sVideos"><span class="k">VIDÉOS TIKTOK</span><span class="v">0</span><span class="bar"><i></i></span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-g="all">COCKPIT</button>
+    <button class="tab" data-g="site">SITE</button>
+    <button class="tab" data-g="metier">MÉTIER CLIENTS</button>
+    <button class="tab" data-g="croissance">CROISSANCE</button>
+    <button class="tab" data-g="tiktok">STUDIO TIKTOK</button>
+    <span class="sp"></span>
+    <button class="btn" id="replay">▶ REJOUER LA DÉMO</button>
+  </nav>
+
+  <aside class="side l">
+    <span class="tag">01 · PILOTE</span>
+    <h2>ÉMILE</h2>
+    <div class="sec"><span>DEMANDE EN COURS</span><span id="sid">—</span></div>
+    <div class="who" id="prompt">En attente d'une demande…</div>
+    <div class="sec"><span>AGENTS SOLLICITÉS</span><span>APPELS</span></div>
+    <div class="rows" id="topAgents"></div>
+    <div class="sec"><span>FICHIERS TOUCHÉS</span><span id="nFiles">0</span></div>
+    <div class="rows" id="files"></div>
+  </aside>
+
+  <aside class="side r">
+    <span class="tag">02 · PRODUCTION</span>
+    <h2>STUDIO</h2>
+    <div class="sec"><span>CHAÎNE TIKTOK</span><span>ÉTAT</span></div>
+    <div class="pipe" id="pipe"></div>
+    <div class="sec"><span>BRIEFS</span><span id="nBriefs">0</span></div>
+    <div class="rows" id="briefs"></div>
+    <div class="sec"><span>VIDÉOS RENDUES</span><span id="nVids">0</span></div>
+    <div class="rows" id="vids"></div>
+  </aside>
+
+  <div class="arc-label" id="arcLabel">LIAISON PILOTE ⇄ STUDIO</div>
+  <div class="col-h" style="left:340px">SITE · MÉTIER</div>
+  <div class="col-h" style="left:1028px">CROISSANCE · TIKTOK</div>
+
+  <div id="nodes"></div>
+
+  <div class="orb" id="orb">
+    <div class="ring r3"></div><div class="ring"></div><div class="ring r2"></div>
+    <div class="core"><span class="a">ORCHESTRATEUR</span><span class="b" id="orbState">EN VEILLE</span><span class="c" id="orbSub">claude code</span></div>
+  </div>
+  <div class="orb-cap" id="orbCap">—</div>
+  <button class="orb-btn demo" id="orbBtn">◌ MODE DÉMO</button>
+
+  <section class="tl">
+    <div class="h"><span><b>ACTIVITÉ</b> // 10 DERNIÈRES MINUTES · 1 case = 5 s</span><span id="tlCount">0 événement</span></div>
+    <div class="cells" id="cells"></div>
+  </section>
+
+  <section class="term t1"><div class="h">JOURNAL // ORCHESTRATEUR <span id="t1n">0 ligne</span></div><div class="b" id="log"></div></section>
+  <section class="term t2"><div class="h">OUTILS // APPELS EN COURS <span id="t2n">0 en cours</span></div><div class="b" id="toolsNow"></div></section>
+  <section class="term t3"><div class="h">LIVRABLES // FICHIERS &amp; VIDÉOS <span id="t3n">0</span></div><div class="b" id="deliv"></div></section>
+</div></div>
+
+<section id="mlist" aria-label="Agents"><div class="mh">AGENTS <span id="mcount">0 actif</span></div><div id="mrows" style="display:flex;flex-direction:column;gap:6px"></div></section>
+
+<div class="help" id="help">
+  <b>Mode démo</b> : la scène rejoue une session type (vidéo TikTok, correctif du site, prospection). Touchez un agent pour voir sa fiche.<br>
+  <b>En direct sur ton ordi</b> : dans le dossier <code>maison-emile</code>, lance <code>node ops/cockpit.mjs</code> puis ouvre <code>http://localhost:4949</code>. Chaque prompt, agent et outil de Claude Code s'allume ici en temps réel.
+</div>
+
+<div id="sheet" hidden></div>
+
+<script>
+(() => {
+'use strict';
+// ---------------- Données ----------------
+const GROUPS = { site:'SITE', metier:'MÉTIER CLIENTS', croissance:'CROISSANCE', tiktok:'STUDIO TIKTOK', renfort:'RENFORT' };
+const AGENTS = [
+  { id:'code', g:'site', role:'Implémente les changements du site', tools:'Read, Edit, Write, Bash, Grep, Glob',
+    about:'Modifie index.html (HTML/CSS/JS vanilla, charte noir/crème, Caveat · Cormorant · Hanken Grotesk). Aucun framework.' },
+  { id:'qa', g:'site', role:'Vérifie le rendu réel', tools:'Read, Grep, Glob, Bash',
+    about:'Sert le site en local, capture mobile 390 px et desktop 1440 px avec Playwright, relève les erreurs console. Ne valide jamais sur simple relecture.' },
+  { id:'security-reviewer', g:'site', role:'Audit sécurité & légal', tools:'Read, Grep, Glob',
+    about:'Lecture seule : XSS (innerHTML), secrets, formulaire de devis, pages légales, en-têtes HTTP, ressources externes.' },
+  { id:'rh', g:'metier', role:'Planning & équipes des clients', tools:'Read, Grep, Glob',
+    about:'Conseille sur les plannings, rôles et onboarding des démos clients. Signale les données RGPD sensibles.' },
+  { id:'compta', g:'metier', role:'Devis & factures des clients', tools:'Read, Grep, Glob',
+    about:'Mentions obligatoires, TVA, acomptes, valorisation de stock dans les démos clients. Ne remplace pas un comptable.' },
+  { id:'marketing', g:'metier', role:'Copy & com des clients', tools:'Read, Grep, Glob',
+    about:'Textes de landing, confirmations, relances, dans la voix du client. Aucun chiffre ni témoignage inventé.' },
+  { id:'prospection', g:'croissance', role:'Leads & brouillons Gmail', tools:'Read, Grep, Glob, WebSearch, WebFetch, Gmail (brouillon)',
+    about:'Cible les PME normandes, qualifie les leads sur sources publiques, rédige messages et relances. Dépose des brouillons Gmail, n’envoie jamais.' },
+  { id:'tiktok-strategie', g:'tiktok', role:'Ligne édito & calendrier', tools:'Read, Grep, Glob, WebSearch, WebFetch, Write',
+    about:'Piliers de contenu, 3 vidéos/semaine, idées classées, veille, bilan des stats que tu lui colles. Tient tiktok/calendrier.md.' },
+  { id:'tiktok-script', g:'tiktok', role:'Hooks, scripts, briefs vidéo', tools:'Read, Grep, Glob, Write',
+    about:'Écrit le script (hook, texte à l’écran, légende, hashtags) et le brief JSON tiktok/briefs/<slug>.json.' },
+  { id:'video', g:'tiktok', role:'Rendu MP4 1080×1920', tools:'Read, Write, Edit, Bash, Grep, Glob',
+    about:'Lance node tiktok/make-video.mjs (Playwright + ffmpeg), puis contrôle la vidéo image par image avant de la déclarer prête.' },
+  { id:'tiktok-publication', g:'tiktok', role:'Paquet prêt à publier', tools:'Read, Write, Grep, Glob, Bash',
+    about:'Écrit PUBLIER.md : légende, hashtags, créneau, checklist de conformité. Tu publies toi-même depuis ton téléphone.' },
+  { id:'renfort', g:'renfort', role:'Explore · Plan · généraliste', tools:'Agents intégrés de Claude Code',
+    about:'Les agents intégrés (Explore, Plan, general-purpose) lancés pour une recherche ou un plan.' },
+];
+const BY = Object.fromEntries(AGENTS.map(a => [a.id, a]));
+const ORCH = 'orchestrateur';
+const PIPE = [['tiktok-strategie','STRATÉGIE'],['tiktok-script','SCRIPT'],['video','VIDÉO'],['tiktok-publication','PUBLICATION']];
+const gColor = g => getComputedStyle(document.documentElement).getPropertyValue('--g-' + g).trim() || '#9d5cff';
+const colorOf = id => BY[id] ? `var(--g-${BY[id].g})` : 'var(--pink)';
+
+// ---------------- Helpers DOM (aucun innerHTML avec des données) ----------------
+const $ = id => document.getElementById(id);
+function h(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === 'class') e.className = v; else if (k === 'style') e.style.cssText = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+}
+const hhmmss = t => new Date(t).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+
+// ---------------- Mise à l'échelle ----------------
+const wrap = $('wrap'), stage = $('stage');
+function fit() {
+  const w = wrap.clientWidth;
+  let s = w / 1600;
+  if (innerWidth > innerHeight) s = Math.min(s, (innerHeight - 4) / 1000);
+  stage.style.transform = `scale(${s})`;
+  stage.style.left = Math.max(0, (w - 1600 * s) / 2) + 'px';
+  wrap.style.height = 1000 * s + 'px';
+}
+addEventListener('resize', fit); fit();
+
+// ---------------- Nœuds + liaisons ----------------
+const ORB = { x: 800, y: 390 };
+const NODE_W = 232, NODE_H = 58;
+const pos = {};
+AGENTS.forEach((a, i) => {
+  const left = i < 6, k = left ? i : i - 6;
+  pos[a.id] = { x: left ? 340 : 1028, y: 214 + k * 70, left };
+});
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svg = $('links');
+const svgEl = (t, at) => { const e = document.createElementNS(SVGNS, t); for (const k in at) e.setAttribute(k, at[k]); return e; };
+const defs = svgEl('defs', {});
+svg.append(defs);
+const paths = {};
+for (const a of AGENTS) {
+  const p = pos[a.id];
+  const ex = p.left ? p.x + NODE_W : p.x, ey = p.y + NODE_H / 2;
+  const ang = Math.atan2(ey - ORB.y, ex - ORB.x);
+  const ox = ORB.x + Math.cos(ang) * 104, oy = ORB.y + Math.sin(ang) * 104;
+  const mx = (ox + ex) / 2;
+  const d = `M ${ox.toFixed(1)} ${oy.toFixed(1)} C ${mx} ${oy.toFixed(1)}, ${mx} ${ey}, ${ex} ${ey}`;
+  svg.append(svgEl('path', { d, class:'base' }));
+  const f = svgEl('path', { d, class:'flow', stroke: gColor(a.g), style:`filter:drop-shadow(0 0 5px ${gColor(a.g)})` });
+  svg.append(f);
+  paths[a.id] = f;
+}
+// Arc PILOTE ⇄ STUDIO (comme la liaison du haut de la vidéo)
+const ARC = 'M 300 210 C 330 120, 560 162, 800 162 C 1040 162, 1270 120, 1300 210';
+svg.append(svgEl('path', { d: ARC, class:'arc-base' }));
+const arcFlow = svgEl('path', { d: ARC, class:'arc-flow' }); svg.append(arcFlow);
+// Liaison orbe → bouton
+svg.append(svgEl('path', { d:'M 800 494 L 800 512', class:'base' }));
+// Liaison orbe → frise
+svg.append(svgEl('path', { d:'M 800 588 L 800 644', class:'base' }));
+
+const nodeEls = {};
+AGENTS.forEach((a, i) => {
+  const p = pos[a.id];
+  const el = h('button', { class:'node', style:`left:${p.x}px;top:${p.y}px;--c:${colorOf(a.id)}`, 'aria-label':`Agent ${a.id}`, onclick:() => openSheet(a.id) },
+    h('span', { class:'ix' }, String(i + 1).padStart(2, '0')),
+    h('span', { class:'nm' }, a.id),
+    h('span', { class:'ct' }, h('span', { class:'led' }), h('span', { class:'n' }, '0')),
+    h('span', { class:'st' }, '▸ en veille · ' + a.role));
+  nodeEls[a.id] = el;
+  $('nodes').append(el);
+});
+
+// Particules qui voyagent sur les liaisons actives
+const fx = $('fx').getContext('2d');
+const particles = [];
+function spawn(id, rev) {
+  const p = id === 'arc' ? arcFlow : paths[id]; if (!p) return;
+  particles.push({ p, len: p.getTotalLength(), t: 0, rev, c: id === 'arc' ? '#ff2e88' : gColor(BY[id].g), sp: 0.012 + Math.random() * 0.01 });
+}
+function loop() {
+  fx.clearRect(0, 0, 1600, 1000);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const q = particles[i]; q.t += q.sp;
+    if (q.t >= 1) { particles.splice(i, 1); continue; }
+    const pt = q.p.getPointAtLength((q.rev ? 1 - q.t : q.t) * q.len);
+    fx.beginPath(); fx.fillStyle = q.c; fx.shadowColor = q.c; fx.shadowBlur = 14;
+    fx.arc(pt.x, pt.y, 3.2, 0, Math.PI * 2); fx.fill();
+  }
+  requestAnimationFrame(loop);
+}
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!reduce) requestAnimationFrame(loop);
+setInterval(() => {
+  if (reduce) return;
+  for (const id of S.active.keys()) if (Math.random() < .7) spawn(id, Math.random() < .35);
+  if (arcOn()) spawn('arc', Math.random() < .5);
+}, 220);
+
+// ---------------- État ----------------
+const S = {
+  active: new Map(), stack: [], counts: {}, last: {}, hist: {}, files: [], fileSet: new Set(),
+  tools: 0, videos: 0, events: [], pending: new Map(), working: false, lastAt: 0, prompt: '', sid: '',
+  studio: { briefs: [], videos: [] }, done: new Set(), err: false,
+};
+const arcOn = () => [...S.active.keys()].some(id => BY[id]?.g === 'tiktok') || (S.working && Date.now() - S.lastAt < 2500 && S.stack.length === 0 && S.lastKind === 'prompt');
+
+function norm(id) {
+  if (!id) return null;
+  if (BY[id]) return id;
+  if (['general-purpose','Explore','Plan','claude'].includes(id)) return 'renfort';
+  return 'renfort';
+}
+function activate(id, desc, live) {
+  if (!id || !BY[id]) return;
+  if (!S.active.has(id)) { S.counts[id] = (S.counts[id] || 0) + 1; }
+  S.active.set(id, Date.now());
+  if (!S.stack.includes(id)) S.stack.push(id);
+  if (desc) S.last[id] = desc;
+  S.done.delete(id);
+  if (live) for (let i = 0; i < 4; i++) setTimeout(() => spawn(id, false), i * 120);
+}
+function deactivate(id, live) {
+  if (!id) return;
+  S.active.delete(id);
+  S.stack = S.stack.filter(x => x !== id);
+  if (BY[id]?.g === 'tiktok') S.done.add(id);
+  if (live && nodeEls[id]) { const e = nodeEls[id]; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); for (let i = 0; i < 4; i++) setTimeout(() => spawn(id, true), i * 120); }
+}
+
+function handle(ev, live = true) {
+  S.events.push(ev); if (S.events.length > 600) S.events.shift();
+  S.lastAt = live ? Date.now() : ev.t; if (ev.sid) S.sid = ev.sid;
+  // Les versions récentes de Claude Code indiquent l'agent dans le hook : dans ce cas, sans champ = orchestrateur.
+  if (ev.agent) S.agentField = true;
+  let who = norm(ev.agent) || (S.agentField ? ORCH : S.stack[S.stack.length - 1]) || ORCH;
+  const isAgentTool = ev.tool === 'Agent' || ev.tool === 'Task';
+  S.lastKind = '';
+  switch (ev.ev) {
+    case 'SessionStart': log(ev, ORCH, 'SESSION', 'nouvelle session Claude Code', live); break;
+    case 'UserPromptSubmit':
+      S.working = true; S.err = false; S.prompt = ev.desc || ''; S.lastKind = 'prompt'; S.done.clear();
+      log(ev, 'émile', 'PROMPT', ev.desc, live, 'prompt'); break;
+    case 'Stop':
+      S.working = false; S.active.clear(); S.stack = [];
+      log(ev, ORCH, 'FIN', 'réponse terminée', live); break;
+    case 'SubagentStart': if (ev.agent) activate(norm(ev.agent), null, live); break;
+    case 'SubagentStop': if (ev.agent) deactivate(norm(ev.agent), live); break;
+    case 'PreToolUse':
+      S.working = true; S.tools++;
+      if (isAgentTool) {
+        const sub = norm(ev.sub);
+        log(ev, who, 'DÉLÈGUE', `→ ${ev.sub}${ev.desc ? ' · ' + ev.desc : ''}`, live);
+        activate(sub, ev.desc, live);
+        S.pending.set(key(ev), { ...ev, who: sub });
+      } else {
+        if (who !== ORCH && BY[who]) { S.last[who] = `${ev.tool} ${ev.desc || ''}`.trim(); if (live) spawn(who, false); }
+        S.pending.set(key(ev), { ...ev, who });
+        log(ev, who, ev.tool, ev.desc, live);
+        if ((ev.tool === 'Edit' || ev.tool === 'Write' || ev.tool === 'NotebookEdit') && ev.desc && !S.fileSet.has(ev.desc)) {
+          S.fileSet.add(ev.desc); S.files.unshift(ev.desc);
+          deliver(ev, who, ev.desc, live);
+          const m = ev.desc.match(/^tiktok\/briefs\/(.+)\.json$/); if (m && !S.studio.briefs.includes(m[1])) S.studio.briefs.push(m[1]);
+        }
+      }
+      break;
+    case 'PostToolUse': {
+      const k = key(ev); const p = S.pending.get(k) || [...S.pending.values()].find(x => x.tool === ev.tool);
+      if (p) S.pending.delete(key(p));
+      if (isAgentTool) deactivate(norm(ev.sub), live);
+      if (ev.ok === false) { S.err = true; log(ev, p?.who || who, ev.tool, 'échec · ' + (ev.desc || ''), live, 'ko'); }
+      if (ev.tool === 'Bash' && ev.ok !== false && /make-video\.mjs/.test(ev.desc || '')) {
+        S.videos++;
+        const slug = ((ev.desc.match(/briefs\/([\w-]+)\.json/) || [])[1]) || 'video';
+        if (!S.studio.videos.some(v => v.slug === slug)) S.studio.videos.push({ slug, pret:false });
+        deliver(ev, p?.who || 'video', `tiktok/out/${slug}/video.mp4`, live);
+      }
+      if (ev.tool === 'Write' && /PUBLIER\.md$/.test(ev.desc || '')) {
+        const slug = (ev.desc.match(/out\/([\w-]+)\//) || [])[1]; const v = S.studio.videos.find(x => x.slug === slug); if (v) v.pret = true;
+      }
+      break;
+    }
+  }
+  if (live) render();
+}
+const key = ev => `${ev.sid}|${ev.tool}|${ev.desc || ''}|${ev.sub || ''}`;
+
+// ---------------- Journal / terminaux ----------------
+let nLog = 0, nDeliv = 0;
+function log(ev, who, kind, desc, live, cls) {
+  const box = $('log');
+  const line = h('div', { class:'ln' + (live ? ' new' : '') + (cls === 'prompt' ? ' prompt' : ''), style:`--c:${who === 'émile' ? 'var(--pink)' : colorOf(who)}` },
+    h('span', { class:'t' }, hhmmss(ev.t)),
+    h('span', { class:'a' }, '[' + who + ']'),
+    h('span', { class:'k' }, kind),
+    h('span', { class:'d' + (cls === 'ko' ? ' ko' : '') }, desc || ''));
+  box.append(line); nLog++;
+  while (box.children.length > 16) box.firstChild.remove();
+  $('t1n').textContent = nLog + (nLog > 1 ? ' lignes' : ' ligne');
+}
+function deliver(ev, who, what, live) {
+  const box = $('deliv');
+  box.append(h('div', { class:'ln' + (live ? ' new' : ''), style:`--c:${colorOf(who)}` },
+    h('span', { class:'t' }, hhmmss(ev.t)), h('span', { class:'a', style:'min-width:130px' }, '[' + who + ']'), h('span', { class:'d' }, what), h('span', { class:'ok' }, '✓')));
+  while (box.children.length > 6) box.firstChild.remove();
+  nDeliv++; $('t3n').textContent = String(nDeliv);
+}
+
+// ---------------- Rendu ----------------
+function setStat(id, v, max) {
+  const e = $(id); e.querySelector('.v').textContent = v; e.querySelector('i').style.width = Math.min(100, v / max * 100) + '%';
+}
+function render() {
+  // Nœuds
+  for (const a of AGENTS) {
+    const e = nodeEls[a.id], on = S.active.has(a.id);
+    e.classList.toggle('on', on);
+    e.querySelector('.n').textContent = S.counts[a.id] || 0;
+    e.querySelector('.st').textContent = on ? '▸ actif · ' + (S.last[a.id] || a.role) : (S.counts[a.id] ? '▸ fait · ' + (S.last[a.id] || a.role) : '▸ en veille · ' + a.role);
+    paths[a.id].classList.toggle('on', on);
+  }
+  arcFlow.classList.toggle('on', arcOn());
+  // Orbe
+  const orb = $('orb'), st = S.err ? 'err' : (S.working ? 'work' : '');
+  orb.className = 'orb ' + st;
+  $('orbState').textContent = S.err ? 'ERREUR' : (S.working ? (S.active.size ? 'DÉLÈGUE' : 'AU TRAVAIL') : 'EN VEILLE');
+  $('orbSub').textContent = S.active.size ? S.active.size + ' agent' + (S.active.size > 1 ? 's' : '') + ' actif' + (S.active.size > 1 ? 's' : '') : 'claude code';
+  const lastEv = S.events[S.events.length - 1];
+  $('orbCap').textContent = lastEv ? `${hhmmss(lastEv.t)} · ${lastEv.tool || lastEv.ev}${lastEv.desc ? ' · ' + lastEv.desc : ''}` : '—';
+  // Stats
+  setStat('sActive', S.active.size, 12); $('sActive').classList.toggle('hot', S.active.size > 0);
+  setStat('sTools', S.tools, Math.max(50, S.tools));
+  setStat('sFiles', S.fileSet.size, Math.max(10, S.fileSet.size));
+  const nv = Math.max(S.videos, S.studio.videos.length);
+  setStat('sVideos', nv, Math.max(5, nv));
+  // Pilote
+  $('prompt').textContent = S.prompt || 'En attente d’une demande…';
+  $('sid').textContent = S.sid ? 'session ' + S.sid : '—';
+  const top = Object.entries(S.counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const max = top.length ? top[0][1] : 1;
+  $('topAgents').replaceChildren(...(top.length ? top.map(([id, c]) => h('div', { class:'row', style:`--c:${colorOf(id)}` },
+    h('span', { class:'n' }, id), h('span', { class:'b' }, h('i', { style:`width:${c / max * 100}%` })), h('span', { class:'c' }, '×' + c))) : [h('div', { class:'empty' }, 'Aucun agent appelé pour l’instant.')]));
+  $('files').replaceChildren(...(S.files.length ? S.files.slice(0, 5).map(f => h('div', { class:'row' }, h('span', { class:'n' }, f))) : [h('div', { class:'empty' }, 'Aucun fichier modifié.')]));
+  $('nFiles').textContent = S.fileSet.size;
+  // Studio
+  $('pipe').replaceChildren(...PIPE.map(([id, label], i) => {
+    const on = S.active.has(id), done = S.done.has(id);
+    return h('div', { class:'step' + (on ? ' on' : done ? ' done' : '') }, h('span', { class:'i' }, String(i + 1).padStart(2, '0')), h('span', {}, label), h('span', { class:'s' }, on ? 'ACTIF' : done ? 'FAIT' : 'VEILLE'));
+  }));
+  $('briefs').replaceChildren(...(S.studio.briefs.length ? S.studio.briefs.slice(-3).map(b => h('div', { class:'row' }, h('span', { class:'n' }, b + '.json'))) : [h('div', { class:'empty' }, 'Aucun brief.')]));
+  $('nBriefs').textContent = S.studio.briefs.length;
+  $('vids').replaceChildren(...(S.studio.videos.length ? S.studio.videos.slice(-3).map(v => h('div', { class:'row' },
+    h('span', { class:'n' }, v.slug + '.mp4'), h('span', { class:'c', style:`color:${v.pret ? 'var(--green)' : 'var(--orange)'}` }, v.pret ? 'PRÊTE' : 'À PUBLIER'))) : [h('div', { class:'empty' }, 'Aucune vidéo rendue.')]));
+  $('nVids').textContent = S.studio.videos.length;
+  // Outils en cours
+  const now = [...S.pending.values()].filter(p => p.tool !== 'Agent' && p.tool !== 'Task').slice(-5);
+  $('toolsNow').replaceChildren(...now.map(p => h('div', { class:'ln', style:`--c:${colorOf(p.who)}` },
+    h('span', { class:'a' }, '[' + p.who + ']'), h('span', { class:'k' }, p.tool), h('span', { class:'d' }, p.desc || ''), h('span', { class:'cursor' }))));
+  $('t2n').textContent = now.length + ' en cours';
+  // Liste lisible (téléphone)
+  $('mrows').replaceChildren(...AGENTS.map(a => {
+    const on = S.active.has(a.id);
+    return h('button', { class:'mrow' + (on ? ' on' : ''), style:`--c:${colorOf(a.id)}`, onclick:() => openSheet(a.id) },
+      h('span', { class:'led' }), h('span', { class:'nm' }, a.id, h('small', {}, on ? 'actif · ' + (S.last[a.id] || a.role) : a.role)), h('span', { class:'ct' }, '×' + (S.counts[a.id] || 0)));
+  }));
+  $('mcount').textContent = S.active.size + (S.active.size > 1 ? ' actifs' : ' actif');
+}
+
+// Frise : 120 cases de 5 s
+const cells = $('cells');
+for (let i = 0; i < 120; i++) cells.append(h('i'));
+function renderTimeline() {
+  const now = Date.now(), b = Array.from({ length: 120 }, () => ({ n: 0, g: null }));
+  let n = 0;
+  for (const e of S.events) {
+    const age = now - (e._seen || e.t); if (age < 0 || age > 600000) continue;
+    const i = 119 - Math.floor(age / 5000); n++;
+    b[i].n++; const who = norm(e.agent) || norm(e.sub); if (who && BY[who]) b[i].g = BY[who].g; else if (!b[i].g && e.ev === 'UserPromptSubmit') b[i].g = 'croissance';
+  }
+  [...cells.children].forEach((c, i) => {
+    const x = b[i];
+    if (!x.n) { c.style.cssText = ''; return; }
+    const col = x.g ? gColor(x.g) : '#9d5cff';
+    c.style.cssText = `background:${col};opacity:${Math.min(1, .35 + x.n * .2)};box-shadow:0 0 6px ${col}`;
+  });
+  $('tlCount').textContent = n + (n > 1 ? ' événements' : ' événement');
+}
+setInterval(renderTimeline, 1000);
+setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }); }, 1000);
+$('clock').textContent = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+// Retour en veille si plus rien ne bouge
+setInterval(() => { if (S.working && Date.now() - S.lastAt > 90000) { S.working = false; render(); } }, 5000);
+
+// ---------------- Onglets ----------------
+$('tabs').addEventListener('click', e => {
+  const t = e.target.closest('.tab'); if (!t) return;
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  const g = t.dataset.g;
+  for (const a of AGENTS) nodeEls[a.id].classList.toggle('dim', g !== 'all' && a.g !== g && !(g === 'site' && a.g === 'renfort'));
+});
+
+// ---------------- Fiche agent ----------------
+function openSheet(id) {
+  const a = BY[id], sh = $('sheet');
+  const hist = S.events.filter(e => norm(e.agent) === id || norm(e.sub) === id || (S.last[id] && e.desc && S.last[id].includes(e.desc))).slice(-5);
+  const cmd = id === 'renfort' ? 'Utilise un agent Explore pour …' : `Utilise l'agent ${id} pour …`;
+  const copyBtn = h('button', { class:'btn', onclick: async ev => {
+    try { await navigator.clipboard.writeText(cmd); ev.target.textContent = 'COPIÉ'; } catch { const r = document.createRange(); r.selectNodeContents(code); getSelection().removeAllRanges(); getSelection().addRange(r); ev.target.textContent = 'SÉLECTIONNÉ'; }
+  } }, 'COPIER');
+  const code = h('code', {}, cmd);
+  sh.style.setProperty('--c', colorOf(id));
+  sh.replaceChildren(h('div', { class:'in' },
+    h('div', { class:'top' }, h('h3', {}, a.id), h('span', { class:'grp' }, GROUPS[a.g]), h('button', { class:'btn x', onclick:() => { sh.hidden = true; } }, 'FERMER')),
+    h('p', {}, a.about),
+    h('div', { class:'meta' }, 'Outils : ' + a.tools + ' · Appels : ' + (S.counts[id] || 0) + (S.active.has(id) ? ' · ACTIF MAINTENANT' : '')),
+    h('div', { class:'cmd' }, code, copyBtn),
+    hist.length ? h('div', { class:'hist' }, ...hist.map(e => h('div', { class:'ln', style:`--c:${colorOf(id)}` }, h('span', { class:'t' }, hhmmss(e.t)), h('span', { class:'k' }, e.tool || e.ev), h('span', { class:'d' }, e.desc || '')))) : null));
+  sh.hidden = false;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('sheet').hidden = true; });
+
+// ---------------- Mode démo ----------------
+const P = '/home/emile/maison-emile/';
+const DEMO = [
+  [600, { ev:'SessionStart' }],
+  [900, { ev:'UserPromptSubmit', desc:'Fais une vidéo TikTok sur le vrai coût d’un logiciel SaaS à vie, prête à publier' }],
+  [1200, { ev:'PreToolUse', tool:'Agent', sub:'tiktok-strategie', desc:'Choisir l’angle et le hook' }],
+  [700, { ev:'PreToolUse', tool:'Read', desc:'index.html', agent:'tiktok-strategie' }],
+  [500, { ev:'PostToolUse', tool:'Read', desc:'index.html', ok:true, agent:'tiktok-strategie' }],
+  [600, { ev:'PreToolUse', tool:'WebSearch', desc:'formats TikTok tendance entrepreneurs B2B', agent:'tiktok-strategie' }],
+  [1400, { ev:'PostToolUse', tool:'WebSearch', desc:'formats TikTok tendance entrepreneurs B2B', ok:true, agent:'tiktok-strategie' }],
+  [500, { ev:'PreToolUse', tool:'Write', desc:'tiktok/calendrier.md', agent:'tiktok-strategie' }],
+  [500, { ev:'PostToolUse', tool:'Write', desc:'tiktok/calendrier.md', ok:true, agent:'tiktok-strategie' }],
+  [600, { ev:'PostToolUse', tool:'Agent', sub:'tiktok-strategie', desc:'Choisir l’angle et le hook', ok:true }],
+  [700, { ev:'PreToolUse', tool:'Agent', sub:'tiktok-script', desc:'Script + brief calcul-saas' }],
+  [800, { ev:'PreToolUse', tool:'Grep', desc:'id="calcul"', agent:'tiktok-script' }],
+  [400, { ev:'PostToolUse', tool:'Grep', desc:'id="calcul"', ok:true, agent:'tiktok-script' }],
+  [900, { ev:'PreToolUse', tool:'Write', desc:'tiktok/briefs/calcul-saas.json', agent:'tiktok-script' }],
+  [500, { ev:'PostToolUse', tool:'Write', desc:'tiktok/briefs/calcul-saas.json', ok:true, agent:'tiktok-script' }],
+  [600, { ev:'PostToolUse', tool:'Agent', sub:'tiktok-script', desc:'Script + brief calcul-saas', ok:true }],
+  [700, { ev:'PreToolUse', tool:'Agent', sub:'video', desc:'Rendre calcul-saas en 1080×1920' }],
+  [700, { ev:'PreToolUse', tool:'Bash', desc:'node tiktok/make-video.mjs tiktok/briefs/calcul-saas.json', agent:'video' }],
+  [4200, { ev:'PostToolUse', tool:'Bash', desc:'node tiktok/make-video.mjs tiktok/briefs/calcul-saas.json', ok:true, agent:'video' }],
+  [500, { ev:'PreToolUse', tool:'Bash', desc:'ffprobe tiktok/out/calcul-saas/video.mp4', agent:'video' }],
+  [600, { ev:'PostToolUse', tool:'Bash', desc:'ffprobe tiktok/out/calcul-saas/video.mp4', ok:true, agent:'video' }],
+  [500, { ev:'PreToolUse', tool:'Read', desc:'tiktok/out/calcul-saas/frame-05s.png', agent:'video' }],
+  [500, { ev:'PostToolUse', tool:'Read', desc:'tiktok/out/calcul-saas/frame-05s.png', ok:true, agent:'video' }],
+  [500, { ev:'PostToolUse', tool:'Agent', sub:'video', desc:'Rendre calcul-saas en 1080×1920', ok:true }],
+  [700, { ev:'PreToolUse', tool:'Agent', sub:'tiktok-publication', desc:'Paquet de publication' }],
+  [900, { ev:'PreToolUse', tool:'Write', desc:'tiktok/out/calcul-saas/PUBLIER.md', agent:'tiktok-publication' }],
+  [500, { ev:'PostToolUse', tool:'Write', desc:'tiktok/out/calcul-saas/PUBLIER.md', ok:true, agent:'tiktok-publication' }],
+  [500, { ev:'PostToolUse', tool:'Agent', sub:'tiktok-publication', desc:'Paquet de publication', ok:true }],
+  [900, { ev:'Stop' }],
+  [2400, { ev:'UserPromptSubmit', desc:'Le bouton du formulaire de devis est mal aligné sur mobile, corrige' }],
+  [900, { ev:'PreToolUse', tool:'Agent', sub:'code', desc:'Corriger le bouton du devis' }],
+  [700, { ev:'PreToolUse', tool:'Edit', desc:'index.html', agent:'code' }],
+  [600, { ev:'PostToolUse', tool:'Edit', desc:'index.html', ok:true, agent:'code' }],
+  [500, { ev:'PostToolUse', tool:'Agent', sub:'code', desc:'Corriger le bouton du devis', ok:true }],
+  [600, { ev:'PreToolUse', tool:'Agent', sub:'qa', desc:'Vérifier à 390 px et 1440 px' }],
+  [600, { ev:'PreToolUse', tool:'Bash', desc:'python3 -m http.server 8123 & node qa-shot.mjs', agent:'qa' }],
+  [2200, { ev:'PostToolUse', tool:'Bash', desc:'python3 -m http.server 8123 & node qa-shot.mjs', ok:true, agent:'qa' }],
+  [400, { ev:'PostToolUse', tool:'Agent', sub:'qa', desc:'Vérifier à 390 px et 1440 px', ok:true }],
+  [500, { ev:'PreToolUse', tool:'Agent', sub:'security-reviewer', desc:'Relire le formulaire de devis' }],
+  [600, { ev:'PreToolUse', tool:'Grep', desc:'innerHTML', agent:'security-reviewer' }],
+  [700, { ev:'PostToolUse', tool:'Grep', desc:'innerHTML', ok:true, agent:'security-reviewer' }],
+  [400, { ev:'PostToolUse', tool:'Agent', sub:'security-reviewer', desc:'Relire le formulaire de devis', ok:true }],
+  [800, { ev:'Stop' }],
+  [2400, { ev:'UserPromptSubmit', desc:'Trouve 5 garages autour de Rouen à démarcher et prépare les mails' }],
+  [800, { ev:'PreToolUse', tool:'Agent', sub:'prospection', desc:'5 garages Rouen + brouillons' }],
+  [500, { ev:'PreToolUse', tool:'Agent', sub:'Explore', desc:'Relire le pitch existant' }],
+  [700, { ev:'PreToolUse', tool:'WebSearch', desc:'garage indépendant Rouen site web', agent:'prospection' }],
+  [1600, { ev:'PostToolUse', tool:'WebSearch', desc:'garage indépendant Rouen site web', ok:true, agent:'prospection' }],
+  [300, { ev:'PostToolUse', tool:'Agent', sub:'Explore', desc:'Relire le pitch existant', ok:true }],
+  [600, { ev:'PreToolUse', tool:'mcp__Gmail__create_draft', desc:'brouillon · garage [à vérifier]', agent:'prospection' }],
+  [700, { ev:'PostToolUse', tool:'mcp__Gmail__create_draft', desc:'brouillon · garage [à vérifier]', ok:true, agent:'prospection' }],
+  [500, { ev:'PostToolUse', tool:'Agent', sub:'prospection', desc:'5 garages Rouen + brouillons', ok:true }],
+  [900, { ev:'Stop' }],
+  [5000, null],
+];
+let demoTimer = null, demoOn = false;
+function resetState() {
+  Object.assign(S, { active:new Map(), stack:[], counts:{}, last:{}, hist:{}, files:[], fileSet:new Set(), tools:0, videos:0, events:[], pending:new Map(), working:false, prompt:'', sid:'', studio:{ briefs:[], videos:[] }, done:new Set(), err:false, agentField:false });
+  $('log').replaceChildren(); $('deliv').replaceChildren(); nLog = 0; nDeliv = 0; $('t3n').textContent = '0';
+  render();
+}
+function runDemo() {
+  clearTimeout(demoTimer); resetState(); demoOn = true;
+  let i = 0;
+  const step = () => {
+    if (!demoOn) return;
+    if (i >= DEMO.length) { i = 0; resetState(); }
+    const [delay, ev] = DEMO[i++];
+    demoTimer = setTimeout(() => { if (ev) handle({ sid:'démo0001', ...ev, t: Date.now() }); step(); }, delay);
+  };
+  step();
+}
+$('replay').addEventListener('click', () => { if (!live) runDemo(); });
+$('orbBtn').addEventListener('click', () => { if (!live) runDemo(); });
+
+// ---------------- Mode direct (serveur local ops/cockpit.mjs) ----------------
+let live = false;
+async function tryLive() {
+  if (location.protocol === 'file:' || /[?&#]demo\b/.test(location.href)) return false;
+  try {
+    const r = await fetch('api/agents', { cache:'no-store' });
+    if (!r.ok) return false;
+    const j = await r.json();
+    if (!Array.isArray(j.agents)) return false;
+    S.studio = { briefs: j.studio?.briefs || [], videos: j.studio?.videos || [] };
+    return true;
+  } catch { return false; }
+}
+tryLive().then(ok => {
+  if (!ok) { runDemo(); return; }
+  live = true; demoOn = false;
+  $('modeChip').classList.add('live'); $('modeTxt').textContent = 'EN DIRECT';
+  $('orbBtn').className = 'orb-btn'; $('orbBtn').textContent = '● EN DIRECT';
+  $('replay').hidden = true; $('help').hidden = true;
+  const es = new EventSource('api/events');
+  es.addEventListener('replay', m => {
+    resetState();
+    const list = JSON.parse(m.data);
+    for (const ev of list) handle(ev, false);
+    // Une session restée ouverte au rechargement : on garde l'état, sinon veille.
+    if (list.length && Date.now() - list[list.length - 1].t > 90000) { S.working = false; S.active.clear(); S.stack = []; }
+    render();
+  });
+  es.addEventListener('studio', m => { const st = JSON.parse(m.data); S.studio = st; render(); });
+  es.onmessage = m => { try { const ev = JSON.parse(m.data); ev._seen = Date.now(); handle(ev, true); } catch {} };
+  es.onerror = () => { $('modeTxt').textContent = 'RECONNEXION…'; };
+  es.onopen = () => { $('modeTxt').textContent = 'EN DIRECT'; };
+});
+render();
+})();
+</script>
+<!--ARTIFACT-END-->
+</html>

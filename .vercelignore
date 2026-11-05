@@ -1,0 +1,5 @@
+# Outils internes : jamais déployés sur maison-emile.fr
+.claude/
+ops/
+tiktok/
+CLAUDE.md
