@@ -23,6 +23,17 @@ Au-delà du site vitrine, ce repo accueille régulièrement des **démos constru
 - **`security-reviewer`** — à utiliser avant de merger un changement touchant le formulaire de devis, des liens/iframes externes, une insertion DOM via `innerHTML`, les pages légales (CGV/mentions légales/confidentialité), ou la config de déploiement — vérifie XSS, secrets, cohérence juridique, et audite aussi périodiquement la posture sécurité globale (en-têtes HTTP via `vercel.json`, actuellement absent, exposition de données, ressources externes non épinglées).
 - **`rh`**, **`compta`**, **`marketing`** — agents métier consultés quand une démo/un projet client dans ce repo touche à la gestion d'équipe, à la facturation/devis, ou au contenu marketing **du client concerné** (jamais de Maison Émile elle-même, qui n'a ni salariés ni comptabilité gérée ici). Ils conseillent et rédigent, ne remplacent jamais un vrai comptable/juriste/RH pour une question à conséquence légale réelle.
 - **`prospection`** — à part des trois précédents : celui-ci travaille **pour Maison Émile elle-même**, pas pour un client. Aide à cibler des segments de prospects (salons, garages, artisans, associations en Normandie/Rouen), qualifier des leads à partir de sources publiques, rédiger des premiers messages et relances, préparer un pitch de démo et un script d'appel/visite, et tenir le pipeline. Ne contacte, n'appelle ni ne réserve jamais rien lui-même : pour un email il peut déposer un **brouillon Gmail** (jamais un envoi direct) qu'Émile relit et envoie d'un clic ; pour les autres canaux (SMS, LinkedIn), il livre un texte qu'Émile envoie manuellement.
+- **Studio TikTok** (pour Maison Émile elle-même, comme `prospection`) — chaîne en 4 agents :
+  - **`tiktok-strategie`** — ligne éditoriale, piliers, calendrier (`tiktok/calendrier.md`), idées classées, veille, bilan des stats qu'Émile colle.
+  - **`tiktok-script`** — script (hook, texte à l'écran, légende, hashtags) + brief JSON `tiktok/briefs/<slug>.json`.
+  - **`video`** — rend la vidéo 1080×1920 avec `node tiktok/make-video.mjs tiktok/briefs/<slug>.json` (Playwright + ffmpeg), puis la contrôle image par image. Sortie dans `tiktok/out/<slug>/` (non versionné).
+  - **`tiktok-publication`** — prépare `PUBLIER.md` (légende, hashtags, créneau, checklist conformité). **Ne publie jamais** : Émile poste lui-même depuis son téléphone. Aucun client ni démo montré sans accord écrit.
+
+Flux TikTok : `tiktok-strategie` → `tiktok-script` → `video` → `tiktok-publication` → Émile publie.
+
+## Cockpit des agents (`ops/`)
+
+Interface en direct de tous les agents : `node ops/cockpit.mjs` puis http://localhost:4949. Les hooks de `.claude/settings.json` appellent `.claude/hooks/ops-event.mjs`, qui écrit chaque prompt / délégation / appel d'outil dans `.claude/ops/events.jsonl` (local, non versionné) ; le cockpit le diffuse en temps réel. Le hook ne doit jamais bloquer ni écrire sur la sortie. `ops/`, `tiktok/` et `.claude/` sont exclus du déploiement Vercel (`.vercelignore`).
 
 Flux recommandé pour un changement non trivial : `code` implémente → `qa` vérifie le rendu → `security-reviewer` relit si le changement touche formulaire/liens/pages légales → `rh`/`compta`/`marketing` apportent leur avis métier si la démo en a besoin → l'utilisateur valide avant merge.
 

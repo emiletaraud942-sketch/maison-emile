@@ -1,0 +1,12 @@
+{
+  "slug": "calcul-saas",
+  "caption": "Tu loues ton logiciel… ou il t'appartient ? Le vrai calcul pour une PME 👇",
+  "hashtags": ["rouen", "normandie", "entrepreneur", "logiciel", "pme", "gestion"],
+  "scenes": [
+    { "type": "card", "eyebrow": "Gérants de PME", "text": "50 € par mois.\nÀ vie.", "sub": "Pour un outil qui n'est même pas à toi.", "theme": "black", "size": 86, "duration": 3 },
+    { "type": "page", "path": "index.html", "anchor": "#calcul", "scroll": 520, "caption": "Plateforme générique : tu loues, tes données restent chez eux", "tag": "le vrai calcul", "duration": 5.5 },
+    { "type": "card", "eyebrow": "L'autre option", "text": "Un logiciel\nvraiment à toi.", "sub": "Planning, stock, alertes, tableaux de bord — conçus pour ton activité.", "theme": "cream", "duration": 3.5 },
+    { "type": "page", "path": "index.html", "anchor": "#services", "scroll": 700, "caption": "Conçu sur-mesure, à Rouen", "tag": "maison-emile.fr", "duration": 5 },
+    { "type": "card", "eyebrow": "Devis sans engagement", "text": "Parle-moi\nde ton projet.", "sub": "Lien en bio · maison-emile.fr", "theme": "black", "duration": 3 }
+  ]
+}

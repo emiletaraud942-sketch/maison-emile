@@ -1,0 +1,5 @@
+# Journal local du cockpit (hooks Claude Code)
+.claude/ops/
+# Vidéos TikTok générées (lourdes)
+tiktok/out/
+node_modules/
